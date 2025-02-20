@@ -1,12 +1,12 @@
 import express from "express";
 import envConfig from "./config.js";
-import healthRouter from "./interfaces/routers/healthRouter.js";
+import router from "./interfaces/routers/index.js";
 
 const app = express();
 
 app.use(express.json());
 
-app.use("/", healthRouter);
+app.use("/", router);
 
 app.listen(envConfig.PORT, () => {
   console.log("Server started at http://localhost:" + envConfig.PORT);

@@ -1,6 +1,6 @@
 import { IHttpRequest, IHttpResponse } from "../adapter/ExpressAdapter.js";
 
-class HealthController {
+class PingController {
   async ping(_: IHttpRequest): Promise<IHttpResponse<"pong">> {
     return Promise.resolve({
       code: 200,
@@ -11,4 +11,4 @@ class HealthController {
   }
 }
 
-export default HealthController;
+export default PingController;

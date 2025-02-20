@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import HealthController from "./HealthController.js";
 import { IHttpRequest } from "../adapter/ExpressAdapter.js";
+import PingController from "./PingController.js";
 
-describe("HealthController.ts", () => {
-  let healthController: HealthController;
+describe("PingController.ts", () => {
+  let pingController: PingController;
   let testHttpRequest: IHttpRequest;
 
   beforeEach(() => {
@@ -13,11 +13,11 @@ describe("HealthController.ts", () => {
       query: undefined,
     };
 
-    healthController = new HealthController();
+    pingController = new PingController();
   });
 
   it("should return pong", async () => {
-    const response = await healthController.ping(testHttpRequest);
+    const response = await pingController.ping(testHttpRequest);
     expect(response.code).toBe(200);
     expect(response.success).toBe(true);
     expect(response.result).toBe("pong");
