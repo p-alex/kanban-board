@@ -8,8 +8,13 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev"
+    "build": "npm run clean && turbo run build",
+    "dev": "turbo run dev",
+    "cleanDist": "npx rimraf --glob apps/**/dist packages/**/dist",
+    "cleanTurbo": "npx rimraf --glob apps/**/.turbo packages/**/.turbo",
+    "cleanBuildInfo": "npx rimraf --glob apps/**/tsconfig.tsbuildinfo packages/**/tsconfig.tsbuildinfo",
+    "cleanNodeModules": "npx rimarf --glob apps/**/node_modules && npx rimraf --glob packages/**/node_modules",
+    "clean": "npm run cleanDist && npm run cleanTurbo && npm run cleanBuildInfo && npm run cleanNodeModules"
   },
   "packageManager": "npm@11.1.0",
   "keywords": [],
@@ -17,6 +22,7 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "rimraf": "^6.0.1",
     "turbo": "^2.4.4"
   }
 }

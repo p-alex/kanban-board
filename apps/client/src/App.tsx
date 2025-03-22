@@ -1,8 +1,14 @@
+import LoggedInLayout from "./components/LoggedInLayout/LoggedInLayout";
+import { ThemeContextProvider } from "./context/ThemeContext";
+import useLocalStorage from "./hooks/useLocalStorage";
+
 function App() {
+  const localStorage = useLocalStorage();
+
   return (
-    <>
-      <div>hello</div>
-    </>
+    <ThemeContextProvider localStorage={localStorage}>
+      <LoggedInLayout></LoggedInLayout>
+    </ThemeContextProvider>
   );
 }
 

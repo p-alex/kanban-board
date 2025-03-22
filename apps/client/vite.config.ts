@@ -8,6 +8,11 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
   test: {
+    coverage: {
+      provider: "v8", // Ensure V8 is used
+      include: ["src/components", "src/utils", "src/hooks", "src/context"],
+      exclude: ["**/index.ts", "**/*Container.tsx"],
+    },
     globals: true,
     environment: "jsdom",
     setupFiles: "src/setupTests.ts",

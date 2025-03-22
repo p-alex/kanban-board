@@ -1,8 +1,8 @@
 {
   "files": [],
-
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "exclude": ["**/__tests__/**", "**/*.test.ts", "node_modules", "dist"]
 }

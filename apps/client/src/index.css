@@ -1,1 +1,42 @@
 @import "tailwindcss";
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+html {
+  min-height: 100vh;
+}
+
+body {
+  min-height: 100vh;
+  @apply bg-(--siteBgLightTheme) dark:bg-(--siteBgDarkTheme) text-(--textLightTheme) dark:text-(--textDarkTheme);
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --siteBgLightTheme: #f4f7fd;
+  --textLightTheme: #000;
+  --textMutedLightTheme: #828fa3;
+  --uiBgLightTheme: #fff;
+  --uiMutedBgLightTheme: #f4f7fd;
+  --borderColorLightTheme: #e4ebfa;
+
+  --siteBgDarkTheme: #20212c;
+  --textDarkTheme: #fff;
+  --textMutedDarkTheme: #828fa3;
+  --uiBgDarkTheme: #2b2c37;
+  --uiMutedBgDarkTheme: #20212c;
+  --borderColorDarkTheme: #3e3f4e;
+
+  --primaryColor: #635fc7;
+}
