@@ -15,8 +15,8 @@ function SideBarButton({ text, icon, isSelected, ...buttonProps }: Props) {
         `${
           isSelected
             ? "text-white bg-(--primaryColor)"
-            : "text-(--textMutedLightTheme)"
-        } py-3 px-8 rounded-tr-full rounded-br-full w-[90%] text-left cursor-pointer font-bold flex items-center gap-4 capitalize`,
+            : "text-(--textMutedLightTheme) hover:bg-(--sideBarButtonHoverBgLightTheme) dark:hover:bg-(--sideBarButtonHoverBgDarkTheme) hover:text-(--primaryColor)"
+        } py-3 px-8 rounded-tr-full rounded-br-full w-[90%] text-left cursor-pointer font-bold flex items-center gap-4 capitalize transition-colors`,
         buttonProps.className
       )}
     >

@@ -7,7 +7,7 @@ function App() {
 
   return (
     <ThemeContextProvider localStorage={localStorage}>
-      <LoggedInLayout></LoggedInLayout>
+      <LoggedInLayout localStorage={localStorage}>sadasdasdasd</LoggedInLayout>
     </ThemeContextProvider>
   );
 }

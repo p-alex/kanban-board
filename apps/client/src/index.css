@@ -30,6 +30,7 @@ body {
   --uiBgLightTheme: #fff;
   --uiMutedBgLightTheme: #f4f7fd;
   --borderColorLightTheme: #e4ebfa;
+  --sideBarButtonHoverBgLightTheme: #635fc720;
 
   --siteBgDarkTheme: #20212c;
   --textDarkTheme: #fff;
@@ -37,6 +38,27 @@ body {
   --uiBgDarkTheme: #2b2c37;
   --uiMutedBgDarkTheme: #20212c;
   --borderColorDarkTheme: #3e3f4e;
+  --sideBarButtonHoverBgDarkTheme: #ffffff;
 
   --primaryColor: #635fc7;
+}
+
+@keyframes slide-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+    display: none;
+  }
+}
+
+@keyframes slide-right {
+  0% {
+    transform: translateX(-100%);
+    display: none;
+  }
+  100% {
+    transform: translateX(0);
+  }
 }

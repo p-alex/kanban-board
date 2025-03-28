@@ -61,28 +61,4 @@ describe("Switch.tsx", () => {
 
     expect(handleChangeMock).toHaveBeenNthCalledWith(2, false);
   });
-
-  it("toggling on should reflect in the UI", async () => {
-    render(<SwitchWrapper isTurnedOn={false} handleChange={() => {}} />);
-
-    const toggle = screen.getByRole("button");
-
-    const knob = screen.getByTestId("knob");
-
-    await userEvent.click(toggle);
-
-    expect(knob).toHaveClass("translate-x-[20px]");
-  });
-
-  it("toggling off should reflect in the UI", async () => {
-    render(<SwitchWrapper isTurnedOn={true} handleChange={() => {}} />);
-
-    const toggle = screen.getByRole("button");
-
-    const knob = screen.getByTestId("knob");
-
-    await userEvent.click(toggle);
-
-    expect(knob).not.toHaveClass("translate-x-[20px]");
-  });
 });

@@ -1,3 +1,6 @@
+import { motion } from "framer-motion";
+import { config } from "../../config";
+
 interface Props {
   value: boolean;
   handleChange: (value: boolean) => void;
@@ -12,12 +15,14 @@ function Switch(props: Props) {
       onClick={() => props.handleChange(!props.value)}
       title={props.title}
     >
-      <div
+      <motion.div
+        animate={{
+          transform: props.value ? "translateX(20px)" : "none",
+          transition: { duration: config.animationDuration },
+        }}
         data-testid="knob"
-        className={`${
-          props.value ? "translate-x-[20px]" : ""
-        } bg-white rounded-full w-3 h-3`}
-      ></div>
+        className={`bg-white rounded-full w-3 h-3 transition-transform`}
+      ></motion.div>
     </button>
   );
 }
