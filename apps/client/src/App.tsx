@@ -7,7 +7,9 @@ function App() {
 
   return (
     <ThemeContextProvider localStorage={localStorage}>
-      <LoggedInLayout localStorage={localStorage}>sadasdasdasd</LoggedInLayout>
+      <LoggedInLayout localStorage={localStorage}>
+        This is the container!!
+      </LoggedInLayout>
     </ThemeContextProvider>
   );
 }

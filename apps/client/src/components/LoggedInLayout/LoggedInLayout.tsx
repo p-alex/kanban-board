@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { LocalStorage } from "../../hooks/useLocalStorage/useLocalStorage";
 import SideBar from "../SideBar";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { config } from "../../config";
+import { ShowIcon } from "../../icons";
+import { slideX } from "../../animations";
 
 interface Props {
   localStorage: LocalStorage;
@@ -39,14 +41,32 @@ function LoggedInLayout(props: Props) {
   }, []);
 
   return (
-    <div className="flex justify-end">
-      <SideBar isOpen={isSideBarOpen} toggleSideBar={toggleSideBar} />
+    <div className="flex justify-end items-start overflow-hidden">
+      <AnimatePresence>
+        {isSideBarOpen && <SideBar toggleSideBar={toggleSideBar} />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {!isSideBarOpen && (
+          <motion.button
+            {...slideX}
+            data-testid="showSideBarButton"
+            onClick={toggleSideBar}
+            className="flex left-0 items-center justify-center w-14 h-12 rounded-tr-full rounded-br-full bg-(--primaryColor) text-white fixed bottom-8 cursor-pointer z-100 hover:opacity-65 transition-opacity"
+            title="show sidebar"
+          >
+            <ShowIcon className="mr-1" />
+          </motion.button>
+        )}
+      </AnimatePresence>
       <motion.div
-        initial={{ width: "100%" }}
-        animate={{ width: isSideBarOpen ? "calc(100% - 300px)" : "100%" }}
+        initial={{ transform: "translateX(0px)" }}
+        animate={{
+          transform: isSideBarOpen ? "translateX(300px)" : "translateX(0px)",
+        }}
         transition={{
           duration: config.animationDuration,
         }}
+        className="w-full"
       >
         {props.children}
       </motion.div>

@@ -6,7 +6,7 @@ describe("SideBar.tsx", () => {
   it("click hide side bar button should call toggleSideBar", async () => {
     const toggleSideBarMock = vi.fn();
 
-    render(<SideBar isOpen={true} toggleSideBar={toggleSideBarMock} />);
+    render(<SideBar toggleSideBar={toggleSideBarMock} />);
 
     const hideSideBarButton = screen.getByTestId("hideSideBarButton");
 

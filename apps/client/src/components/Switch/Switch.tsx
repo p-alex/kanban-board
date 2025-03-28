@@ -17,7 +17,7 @@ function Switch(props: Props) {
     >
       <motion.div
         animate={{
-          transform: props.value ? "translateX(20px)" : "none",
+          transform: props.value ? "translateX(20px)" : "translateX(0px)",
           transition: { duration: config.animationDuration },
         }}
         data-testid="knob"
