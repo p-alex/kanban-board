@@ -17,7 +17,7 @@ function SideBar(props: Props) {
       {...slideX}
       id="site_sidebar"
       className={`fixed left-0 top-0
-         bg-(--uiBgLightTheme) dark:bg-(--uiBgDarkTheme) w-[300px] h-screen border-r border-(--borderColorLightTheme) dark:border-(--borderColorDarkTheme) flex flex-col gap-6 z-100 overflow-y-scroll no-scrollbar`}
+         bg-(--uiBgLightTheme) dark:bg-(--uiBgDarkTheme) w-[300px] h-dvh border-r border-(--borderColorLightTheme) dark:border-(--borderColorDarkTheme) flex flex-col gap-6 z-100 overflow-y-scroll no-scrollbar`}
       data-testid="site_sidebar"
     >
       <div className="py-8 px-8">
