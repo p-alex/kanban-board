@@ -31,7 +31,7 @@ function useCreateNewBoardModal(props: AddNewBoardModalProps) {
 
   const submit = handleSubmit(async (data: AddNewBoardFormData) => {
     try {
-      const result = await props.submitRequest.mutateAsync({ ...data });
+      const result = await props.submitFunc({ data, userId: "userId" });
       if (result.success) {
         props.visibilityProps.toggleVisibility();
         props.displayNotification("Board created!");

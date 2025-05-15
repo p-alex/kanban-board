@@ -2,7 +2,6 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import AddNewBoardModal from "./CreateNewBoardModal.js";
 import { IVisibilityContentProps } from "../VisibilityProvider/VisibilityProvider.js";
-import { CreateBoardReq } from "../../hooks/api/board/useCreateBoard.js";
 
 async function fillFormWithValidInfo() {
   const addNewColumnBtn = screen.getByRole("button", {
@@ -39,9 +38,7 @@ describe("CreateNewBoardModal.tsx", () => {
             setCanToggleOff: (_: boolean) => {},
           } as IVisibilityContentProps
         }
-        submitRequest={
-          { mutateAsync: submitRequestMock } as unknown as CreateBoardReq
-        }
+        submitFunc={submitRequestMock}
       />
     );
 
@@ -69,9 +66,7 @@ describe("CreateNewBoardModal.tsx", () => {
             toggleVisibility: vi.fn(),
           } as IVisibilityContentProps
         }
-        submitRequest={
-          { mutateAsync: submitRequestMock } as unknown as CreateBoardReq
-        }
+        submitFunc={submitRequestMock}
       />
     );
 
@@ -101,9 +96,7 @@ describe("CreateNewBoardModal.tsx", () => {
             setCanToggleOff: (_: boolean) => {},
           } as IVisibilityContentProps
         }
-        submitRequest={
-          { mutateAsync: submitRequestMock } as unknown as CreateBoardReq
-        }
+        submitFunc={submitRequestMock}
       />
     );
 
@@ -133,9 +126,7 @@ describe("CreateNewBoardModal.tsx", () => {
             setCanToggleOff: (_: boolean) => {},
           } as IVisibilityContentProps
         }
-        submitRequest={
-          { mutateAsync: submitRequestMock } as unknown as CreateBoardReq
-        }
+        submitFunc={submitRequestMock}
       />
     );
 

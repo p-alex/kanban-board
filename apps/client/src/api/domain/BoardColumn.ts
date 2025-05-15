@@ -4,10 +4,12 @@ import { CryptoUtil, DateUtil } from "@kanban/utils";
 import generateHexColor, {
   GenerateHexColor,
 } from "../../utils/generateHexColor.js";
+import { userSchema } from "./User.js";
 
 export const BoardColumnSchema = z.object({
   id: z.string().uuid(),
   boardId: BoardSchema.shape.id,
+  userId: userSchema.shape.id,
   title: z.string().min(1, "Can't be empty").max(24, "Max 24 characters"),
   index: z.number(),
   hexColor: z.string().length(7, "Invalid hex color"),
@@ -23,16 +25,19 @@ class BoardColumnFactory {
 
   create({
     boardId,
+    userId,
     title,
     index,
   }: {
     boardId: string;
+    userId: string;
     title: string;
     index: number;
   }) {
     return {
       id: this._cryptoUtil.randomUUID(),
       boardId,
+      userId,
       title,
       hexColor: this._generateHexColor(),
       index,

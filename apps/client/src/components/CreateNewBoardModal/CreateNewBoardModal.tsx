@@ -7,12 +7,12 @@ import Item from "../ItemList/Item.js";
 import useCreateNewBoardModal from "./useCreateNewBoardModal.js";
 import { IVisibilityContentProps } from "../VisibilityProvider/VisibilityProvider.js";
 import NotificationCenter from "../../utils/NotificationCenter/NotificationCenter.js";
-import { CreateBoardReq } from "../../hooks/api/board/useCreateBoard.js";
+import { CreateBoardUsecase } from "../../api/application/usecases/board/createBoardUsecase.js";
 
 export interface AddNewBoardModalProps {
   displayNotification: NotificationCenter["display"];
   visibilityProps: IVisibilityContentProps;
-  submitRequest: CreateBoardReq;
+  submitFunc: CreateBoardUsecase;
 }
 
 function CreateNewBoardModal(props: AddNewBoardModalProps) {

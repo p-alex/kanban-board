@@ -1,8 +1,10 @@
 import { CryptoUtil, DateUtil } from "@kanban/utils";
 import { z } from "zod";
+import { userSchema } from "./User";
 
 export const BoardSchema = z.object({
   id: z.string().uuid(),
+  userId: userSchema.shape.id,
   title: z.string().min(1, "Can't be empty").max(32, "Max 32 letters"),
   createdAt: z.string(),
 });
@@ -13,9 +15,10 @@ class BoardFactory {
     private readonly _dateUtil: DateUtil
   ) {}
 
-  create({ title }: { title: string }): Board {
+  create({ userId, title }: Pick<Board, "title" | "userId">): Board {
     return {
       id: this._cryptoUtil.randomUUID(),
+      userId,
       title,
       createdAt: this._dateUtil.getUtcOfNow(),
     };

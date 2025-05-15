@@ -1,7 +1,6 @@
 import { slideX } from "../../animations";
 import VisibilityProvider from "../VisibilityProvider";
 import { BoardIcon, HideIcon } from "../../icons";
-import AddNewBoardModal from "../CreateNewBoardModal/CreateNewBoardModal";
 import BigLogoContainer from "../BigLogo/BigLogoContainer";
 import SideBarButton from "./SideBarButton";
 import SideBarButtonList from "./SideBarButtonList";
@@ -10,6 +9,7 @@ import SideBarThemeToggleContainer from "./SideBarThemeToggle/SideBarThemeToggle
 import { motion } from "framer-motion";
 import notificationCenter from "../../utils/NotificationCenter";
 import useCreateBoard from "../../hooks/api/board/useCreateBoard";
+import CreateNewBoardModal from "../CreateNewBoardModal";
 
 interface Props {
   toggleSideBar: () => void;
@@ -52,10 +52,10 @@ function SideBar(props: Props) {
               />
             )}
             content={(visibilityProps) => (
-              <AddNewBoardModal
+              <CreateNewBoardModal
                 displayNotification={notificationCenter.display}
                 visibilityProps={visibilityProps}
-                submitRequest={createBoard}
+                submitFunc={createBoard.mutateAsync}
               />
             )}
             options={{ shouldTrapFocus: true }}
