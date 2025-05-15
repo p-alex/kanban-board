@@ -51,7 +51,7 @@ function LoggedInLayout(props: Props) {
             {...slideX}
             data-testid="showSideBarButton"
             onClick={toggleSideBar}
-            className="flex left-0 items-center justify-center w-14 h-12 rounded-tr-full rounded-br-full bg-(--primaryColor) text-white fixed bottom-8 cursor-pointer z-100 hover:opacity-65 transition-opacity"
+            className="flex left-0 items-center justify-center w-14 h-12 rounded-tr-full rounded-br-full bg-(--primaryColor) text-white fixed bottom-8 cursor-pointer z-10 hover:opacity-65 transition-opacity"
             title="show sidebar"
           >
             <ShowIcon className="mr-1" />

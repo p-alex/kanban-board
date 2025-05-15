@@ -8,7 +8,7 @@ function SideBarButtonList(props: Props) {
   return (
     <ul>
       {props.buttons.map((button) => {
-        return <li key={CryptoUtil.randomUUID()}>{button}</li>;
+        return <li key={new CryptoUtil().randomUUID()}>{button}</li>;
       })}
     </ul>
   );

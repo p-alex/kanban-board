@@ -1,6 +1,6 @@
 import { Router } from "express";
 import ExpressAdapter from "../adapter/ExpressAdapter.js";
-import PingController from "../controllers/PingController.js";
+import PingController from "../controllers/PingController/index.js";
 
 const expressAdapter = new ExpressAdapter();
 

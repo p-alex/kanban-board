@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import LoggedInLayout from "./LoggedInLayout";
 import userEvent from "@testing-library/user-event";
 import { LocalStorage } from "../../hooks/useLocalStorage/useLocalStorage";
+import { TestComponentWrapper } from "../../testComponentWrapper";
 
 describe("LoggedInLayout.tsx", () => {
   let localStorageMock: LocalStorage;
@@ -15,7 +16,9 @@ describe("LoggedInLayout.tsx", () => {
 
   it("should display children", () => {
     render(
-      <LoggedInLayout localStorage={localStorageMock}>hello</LoggedInLayout>
+      <TestComponentWrapper>
+        <LoggedInLayout localStorage={localStorageMock}>hello</LoggedInLayout>
+      </TestComponentWrapper>
     );
 
     const text = screen.getByText("hello");
@@ -27,7 +30,9 @@ describe("LoggedInLayout.tsx", () => {
     localStorageMock.get = vi.fn().mockReturnValue(null);
 
     render(
-      <LoggedInLayout localStorage={localStorageMock}>hello</LoggedInLayout>
+      <TestComponentWrapper>
+        <LoggedInLayout localStorage={localStorageMock}>hello</LoggedInLayout>
+      </TestComponentWrapper>
     );
 
     expect(screen.getByRole("navigation")).toBeInTheDocument();
@@ -37,7 +42,9 @@ describe("LoggedInLayout.tsx", () => {
     window.localStorage.setItem("isSideBarOpen", "false");
 
     render(
-      <LoggedInLayout localStorage={localStorageMock}>hello</LoggedInLayout>
+      <TestComponentWrapper>
+        <LoggedInLayout localStorage={localStorageMock}>hello</LoggedInLayout>
+      </TestComponentWrapper>
     );
 
     expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
@@ -47,7 +54,9 @@ describe("LoggedInLayout.tsx", () => {
     window.localStorage.setItem("isSideBarOpen", "false");
 
     render(
-      <LoggedInLayout localStorage={localStorageMock}>Hello</LoggedInLayout>
+      <TestComponentWrapper>
+        <LoggedInLayout localStorage={localStorageMock}>hello</LoggedInLayout>
+      </TestComponentWrapper>
     );
 
     const showSideBarToggle = screen.getByTestId("showSideBarButton");

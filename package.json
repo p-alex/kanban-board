@@ -4,8 +4,9 @@
   "description": "",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/client",
+    "apps/server",
+    "packages/utils"
   ],
   "scripts": {
     "build": "npm run clean && turbo run build",
@@ -14,15 +15,15 @@
     "cleanTurbo": "npx rimraf --glob apps/**/.turbo packages/**/.turbo",
     "cleanBuildInfo": "npx rimraf --glob apps/**/tsconfig.tsbuildinfo packages/**/tsconfig.tsbuildinfo",
     "cleanNodeModules": "npx rimarf --glob apps/**/node_modules && npx rimraf --glob packages/**/node_modules",
-    "clean": "npm run cleanDist && npm run cleanTurbo && npm run cleanBuildInfo && npm run cleanNodeModules"
+    "clean": "npm run cleanDist && npm run cleanTurbo && npm run cleanBuildInfo"
   },
-  "packageManager": "npm@11.1.0",
+  "packageManager": "npm@11.3.0",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
     "rimraf": "^6.0.1",
-    "turbo": "^2.4.4"
+    "turbo": "^2.5.0"
   }
 }

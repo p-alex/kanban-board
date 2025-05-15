@@ -1,1 +1,6 @@
-<svg width="15" height="15" xmlns="http://www.w3.org/2000/svg"><g fill="#828FA3" fill-rule="evenodd"><path d="m12.728 0 2.122 2.122L2.122 14.85 0 12.728z"/><path d="M0 2.122 2.122 0 14.85 12.728l-2.122 2.122z"/></g></svg>
+Direct Addressing: The address field contains the memory address of the operand. The contents at that address are loaded into the ACC (Accumulator).
+Indirect Addressing: The address field points to a memory location that contains the address of the operand. The contents at that second address are loaded into the ACC.
+Indexed Addressing: The effective address is calculated by adding the value in the Index Register (IR) to the address part of the instruction. The operand at that calculated address is then accessed.
+Relative Addressing: The effective address is determined by adding an offset to the current value of the Program Counter (PC). This allows for relocatable code and is commonly used in branching.
+Conditional Jump: The jump to another instruction occurs only if a specific condition is true (e.g., result of a comparison). It's like using an if statement.
+Unconditional Jump: The program control always jumps to the specified address without checking any condition.

@@ -21,26 +21,58 @@ body {
   @apply bg-(--siteBgLightTheme) dark:bg-(--siteBgDarkTheme) text-(--textLightTheme) dark:text-(--textDarkTheme);
 }
 
+button {
+  cursor: pointer;
+}
+
+input {
+  @apply outline-0 w-full;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  /* Light Theme */
   --siteBgLightTheme: #f4f7fd;
+
   --textLightTheme: #000;
   --textMutedLightTheme: #828fa3;
+
   --uiBgLightTheme: #fff;
   --uiMutedBgLightTheme: #f4f7fd;
+
   --borderColorLightTheme: #e4ebfa;
+
   --sideBarButtonHoverBgLightTheme: #635fc720;
 
+  --buttonBgLightTheme: var(--veryFadedPrimaryColor);
+  --buttonHoverBgLightTheme: var(--fadedPrimaryColor);
+  --buttonTextLightTheme: var(--primaryColor);
+
+  /* Dark Theme */
   --siteBgDarkTheme: #20212c;
+
   --textDarkTheme: #fff;
   --textMutedDarkTheme: #828fa3;
+
   --uiBgDarkTheme: #2b2c37;
   --uiMutedBgDarkTheme: #20212c;
+
   --borderColorDarkTheme: #3e3f4e;
+
   --sideBarButtonHoverBgDarkTheme: #ffffff;
 
+  --buttonBgDarkTheme: #fff;
+  --buttonHoverBgDarkTheme: #fff;
+  --buttonTextDarkTheme: var(--primaryColor);
+
+  /* Colors */
   --primaryColor: #635fc7;
+  --fadedPrimaryColor: #635fc725;
+  --veryFadedPrimaryColor: #635fc710;
+
+  /* Border Radius */
+  --uiRadius: 6px;
 }
 
 @keyframes slide-left {

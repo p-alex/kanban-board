@@ -1,5 +1,5 @@
 class CryptoUtil {
-  static randomUUID() {
+  randomUUID() {
     return crypto.randomUUID();
   }
 }
