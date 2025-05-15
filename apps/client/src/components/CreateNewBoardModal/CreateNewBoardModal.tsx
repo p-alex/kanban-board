@@ -7,7 +7,7 @@ import Item from "../ItemList/Item.js";
 import useCreateNewBoardModal from "./useCreateNewBoardModal.js";
 import { IVisibilityContentProps } from "../VisibilityProvider/VisibilityProvider.js";
 import NotificationCenter from "../../utils/NotificationCenter/NotificationCenter.js";
-import { CreateBoardReq } from "../../api/application/usecases/hooks/useCreateBoard.js";
+import { CreateBoardReq } from "../../hooks/api/board/useCreateBoard.js";
 
 export interface AddNewBoardModalProps {
   displayNotification: NotificationCenter["display"];

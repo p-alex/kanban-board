@@ -1,10 +1,11 @@
-import { CreateNewBoardFormData } from "../../../components/CreateNewBoardModal/CreateNewBoardValidation";
-import { boardFactory } from "../../domain/Board";
-import BoardColumn, { boardColumFactory } from "../../domain/BoardColumn";
+import { CreateNewBoardFormData } from "../../../../components/CreateNewBoardModal/CreateNewBoardValidation.js";
+import { boardFactory } from "../../../domain/Board.js";
+import BoardColumn, { boardColumFactory } from "../../../domain/BoardColumn.js";
+import { ServerResponse } from "../index.js";
 
 function createBoardUsecase(
   data: CreateNewBoardFormData
-): Promise<{ success: boolean }> {
+): Promise<ServerResponse> {
   const board = boardFactory.create({ title: data.boardTitle });
 
   const boardColumns: BoardColumn[] = data.boardColumns.map((column, index) =>
@@ -17,7 +18,10 @@ function createBoardUsecase(
 
   return new Promise((resolve) => {
     console.log({ board, boardColumns });
-    resolve({ success: true });
+    resolve({
+      success: true,
+      message: { shouldDisplay: false, text: "Board created!" },
+    });
   });
 }
 

@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import AddNewBoardModal from "./CreateNewBoardModal.js";
 import { IVisibilityContentProps } from "../VisibilityProvider/VisibilityProvider.js";
-import { CreateBoardReq } from "../../api/application/usecases/hooks/useCreateBoard.js";
+import { CreateBoardReq } from "../../hooks/api/board/useCreateBoard.js";
 
 async function fillFormWithValidInfo() {
   const addNewColumnBtn = screen.getByRole("button", {

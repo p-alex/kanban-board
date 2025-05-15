@@ -9,7 +9,7 @@ import SideBarGroup from "./SideBarGroup";
 import SideBarThemeToggleContainer from "./SideBarThemeToggle/SideBarThemeToggleContainer";
 import { motion } from "framer-motion";
 import notificationCenter from "../../utils/NotificationCenter";
-import useCreateBoard from "../../api/application/usecases/hooks/useCreateBoard";
+import useCreateBoard from "../../hooks/api/board/useCreateBoard";
 
 interface Props {
   toggleSideBar: () => void;

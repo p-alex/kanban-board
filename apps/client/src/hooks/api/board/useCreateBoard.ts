@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import createBoardUsecase from "../createBoardUseCase";
-import { CreateNewBoardFormData } from "../../../../components/CreateNewBoardModal/CreateNewBoardValidation";
+import { CreateNewBoardFormData } from "../../../components/CreateNewBoardModal/CreateNewBoardValidation";
+import createBoardUsecase from "../../../api/application/usecases/board/createBoardUsecase";
 
 function useCreateBoard() {
   return useMutation({
