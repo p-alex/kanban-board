@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import NotificationCenter from "./NotificationCenter.js";
-import userEvent from "@testing-library/user-event";
 
 vi.mock("framer-motion/dom", () => ({
   animate: () => ({

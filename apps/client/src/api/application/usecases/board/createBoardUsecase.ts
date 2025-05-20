@@ -1,17 +1,15 @@
 import { CreateNewBoardFormData } from "../../../../components/CreateNewBoardModal/CreateNewBoardValidation.js";
 import { boardFactory } from "../../../domain/Board.js";
 import BoardColumn, { boardColumFactory } from "../../../domain/BoardColumn.js";
-import { User } from "../../../domain/User.js";
-import { ServerResponse } from "../index.js";
+import { IUser } from "../../../domain/User.js";
+import { Response } from "../index.js";
 
 export interface CreateBoardUsecaseArgs {
   data: CreateNewBoardFormData;
-  userId: User["id"];
+  userId: IUser["id"];
 }
 
-function createBoardUsecase(
-  args: CreateBoardUsecaseArgs
-): Promise<ServerResponse> {
+function createBoardUsecase(args: CreateBoardUsecaseArgs): Promise<Response> {
   const board = boardFactory.create({
     userId: args.userId,
     title: args.data.boardTitle,
@@ -30,8 +28,10 @@ function createBoardUsecase(
   return new Promise((resolve) => {
     console.log({ board, boardColumns });
     resolve({
+      code: 200,
+      errors: [],
+      result: { data: "data" },
       success: true,
-      message: { shouldDisplay: false, text: "Board created!" },
     });
   });
 }

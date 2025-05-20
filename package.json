@@ -4,9 +4,8 @@
   "description": "",
   "private": true,
   "workspaces": [
-    "apps/client",
-    "apps/server",
-    "packages/utils"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "build": "npm run clean && turbo run build",
@@ -17,7 +16,7 @@
     "cleanNodeModules": "npx rimarf --glob apps/**/node_modules && npx rimraf --glob packages/**/node_modules",
     "clean": "npm run cleanDist && npm run cleanTurbo && npm run cleanBuildInfo"
   },
-  "packageManager": "npm@11.3.0",
+  "packageManager": "npm@11.4.0",
   "keywords": [],
   "author": "",
   "license": "ISC",

@@ -8,11 +8,11 @@ import Form from "../Form/Form";
 import Container from "../Container/Container";
 import { Link } from "react-router-dom";
 import NotificationCenter from "../../utils/NotificationCenter/NotificationCenter";
-import { RegisterUserUsecase } from "../../api/application/usecases/user/registerUserUsecase";
+import { RegisterUser } from "../../hooks/api/user/useRegisterUser";
 
 interface Props {
   displayNotification: NotificationCenter["display"];
-  submitFunc: RegisterUserUsecase;
+  submitFunc: RegisterUser;
 }
 
 function RegisterForm(props: Props) {
@@ -29,7 +29,7 @@ function RegisterForm(props: Props) {
 
   const submit = async (data: RegisterFormData) => {
     try {
-      const result = await props.submitFunc(data);
+      const result = await props.submitFunc({ data, accessToken: "" });
       if (result.success) {
         props.displayNotification("Account created!");
         reset();

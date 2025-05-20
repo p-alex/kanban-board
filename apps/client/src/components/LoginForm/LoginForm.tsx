@@ -6,34 +6,21 @@ import TextFieldGroup from "../TextFieldGroup";
 import { LoginFormData, loginFormSchema } from "./LoginFormValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
-import { LoginUsecase } from "../../api/application/usecases/auth/loginUsecase";
 import NotificationCenter from "../../utils/NotificationCenter/NotificationCenter";
 
 interface Props {
   displayNotification: NotificationCenter["display"];
-  submitFunc: LoginUsecase;
+  submitFunc: () => {};
 }
 
-function LoginForm(props: Props) {
-  const { register, handleSubmit, formState, reset } = useForm<LoginFormData>({
+function LoginForm(_: Props) {
+  const { register, handleSubmit, formState } = useForm<LoginFormData>({
     defaultValues: { email: "", password: "" },
     resolver: zodResolver(loginFormSchema),
   });
 
-  const submit = async (data: LoginFormData) => {
-    try {
-      const result = await props.submitFunc(data);
-      if (result.success) {
-        props.displayNotification(result.message.text);
-        reset();
-      }
-    } catch (error) {
-      props.displayNotification("Failed to log in. Try again later.");
-    }
-  };
-
   return (
-    <Form onSubmit={handleSubmit(submit)}>
+    <Form onSubmit={handleSubmit(() => {})}>
       <div className="w-full text-center flex items-center flex-col gap-6 mb-6">
         <BigLogoContainer />
       </div>

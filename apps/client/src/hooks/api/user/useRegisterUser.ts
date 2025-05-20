@@ -5,8 +5,16 @@ import registerUserUsecase from "../../../api/application/usecases/user/register
 function useRegisterUser() {
   return useMutation({
     mutationKey: ["register-user"],
-    mutationFn: (data: RegisterFormData) => registerUserUsecase(data),
+    mutationFn: ({
+      data,
+      accessToken,
+    }: {
+      data: RegisterFormData;
+      accessToken: string;
+    }) => registerUserUsecase(data, accessToken),
   });
 }
+
+export type RegisterUser = ReturnType<typeof useRegisterUser>["mutateAsync"];
 
 export default useRegisterUser;

@@ -18,6 +18,11 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "vitest": "^3.0.8"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "crypto-js": "^4.2.0"
   }
 }

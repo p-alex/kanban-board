@@ -1,0 +1,32 @@
+{
+  "name": "@kanban/dtos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "exports": {
+    "./ServerResponseDto": {
+      "import": "./dist/server/types/index.js",
+      "types": "./dist/server/types/index.d.ts"
+    },
+    "./UserDtos": {
+      "import": "./dist/user/schemas/index.js",
+      "types": "./dist/user/schemas/index.d.ts"
+    },
+    "./UserDtoTypes": {
+      "import": "./dist/user/types/index.js",
+      "types": "./dist/user/types/index.d.ts"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "zod": "^3.24.4",
+    "@kanban/schemavalidations": "*"
+  }
+}

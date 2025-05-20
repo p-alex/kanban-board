@@ -1,7 +1,8 @@
 interface IBoardColumn {
   id: string;
-  title: string;
   board_id: string;
+  user_id: string;
+  title: string;
   index: number;
   color: string;
   created_at: string;

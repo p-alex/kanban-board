@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { userSchema } from "../../api/domain/User";
+import { userSchemas } from "@kanban/schemavalidations/schemas";
 
 export const registerFormSchema = z
   .object({
-    username: userSchema.shape.username,
-    email: userSchema.shape.email,
-    password: userSchema.shape.password,
-    confirmPassword: userSchema.shape.password,
+    username: userSchemas.userUsernameSchema,
+    email: userSchemas.userEmailSchema,
+    password: userSchemas.userPasswordSchema,
+    confirmPassword: userSchemas.userPasswordSchema,
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords must match",

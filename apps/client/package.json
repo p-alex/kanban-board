@@ -13,9 +13,12 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
+    "@kanban/dtos": "*",
     "@kanban/utils": "*",
+    "@kanban/schemavalidations": "*",
     "@tanstack/react-query": "^5.75.7",
     "@tanstack/react-query-devtools": "^5.75.7",
+    "axios": "^1.9.0",
     "framer-motion": "^12.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

@@ -19,15 +19,28 @@ class ExpressAdapter implements Adapter {
     controller: (httpRequest: IHttpRequest) => Promise<IHttpResponse<any>>
   ) {
     return async (req: Request, res: Response) => {
-      const httpRequest: IHttpRequest = {
-        body: req.body,
-        params: req.params,
-        query: req.query,
-      };
+      try {
+        const httpRequest: IHttpRequest = {
+          body: req.body,
+          params: req.params,
+          query: req.query,
+        };
 
-      const response = await controller(httpRequest);
+        const response = await controller(httpRequest);
 
-      res.json(response);
+        res.json(response);
+      } catch (error: any) {
+        console.error(error.message);
+
+        res.status(500);
+
+        res.json({
+          code: 500,
+          result: null,
+          errors: ["Something went wrong. Please try again later."],
+          success: false,
+        } as IHttpResponse<null>);
+      }
     };
   }
 }

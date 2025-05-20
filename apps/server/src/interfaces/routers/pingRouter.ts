@@ -8,6 +8,6 @@ const pingRouter = Router();
 
 const pingController = new PingController();
 
-pingRouter.get("/ping", expressAdapter.adapt(pingController.ping));
+pingRouter.get("/", expressAdapter.adapt(pingController.ping));
 
 export default pingRouter;

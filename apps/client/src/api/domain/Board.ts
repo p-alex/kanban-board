@@ -1,10 +1,9 @@
 import { CryptoUtil, DateUtil } from "@kanban/utils";
 import { z } from "zod";
-import { userSchema } from "./User";
 
 export const BoardSchema = z.object({
   id: z.string().uuid(),
-  userId: userSchema.shape.id,
+  userId: z.string().uuid(),
   title: z.string().min(1, "Can't be empty").max(32, "Max 32 letters"),
   createdAt: z.string(),
 });

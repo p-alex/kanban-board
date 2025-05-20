@@ -2,7 +2,8 @@ import { render, screen } from "@testing-library/react";
 import { TestComponentWrapper } from "../../testComponentWrapper";
 import userEvent from "@testing-library/user-event";
 import RegisterForm from "./RegisterForm";
-import { ServerResponse } from "../../api/application/usecases";
+import { Response } from "../../api/application/usecases";
+import { Mock } from "vitest";
 
 async function fillFormWithValidData() {
   const username = screen.getByLabelText(/username/i);
@@ -87,17 +88,20 @@ describe("RegisterForm.tsx", () => {
   });
 
   it("should reset form if submittion was successfull", async () => {
-    const submitFuncMock = vi.fn<() => Promise<ServerResponse>>(() =>
+    const submitFuncMock = vi.fn<() => Promise<Response<null>>>(() =>
       Promise.resolve({
         success: true,
-        message: { shouldDisplay: true, text: "test" },
+        code: 200,
+        errors: [],
+        result: null,
       })
     );
+
     render(
       <TestComponentWrapper>
         <RegisterForm
           displayNotification={() => {}}
-          submitFunc={submitFuncMock}
+          submitFunc={submitFuncMock as Mock}
         />
       </TestComponentWrapper>
     );

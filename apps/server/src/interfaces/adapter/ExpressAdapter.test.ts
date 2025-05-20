@@ -49,4 +49,35 @@ describe("ExpressAdapter", () => {
       errors: [],
     });
   });
+
+  it("should handle other errors correctly", async () => {
+    const req = {
+      body: {},
+      params: {},
+      query: {},
+    } as unknown as Request;
+
+    const res = {
+      json: vi.fn(),
+      status: vi.fn(),
+    } as unknown as Response;
+
+    const response: IHttpResponse<null> = {
+      code: 500,
+      errors: ["Something went wrong. Please try again later."],
+      result: null,
+      success: false,
+    };
+
+    const controllerMock = vi.fn(() => {
+      throw new Error("other error");
+    });
+
+    const adapter = new ExpressAdapter();
+    const adaptedHandler = adapter.adapt(controllerMock);
+
+    await adaptedHandler(req, res);
+
+    expect(res.json).toHaveBeenCalledWith(response);
+  });
 });
