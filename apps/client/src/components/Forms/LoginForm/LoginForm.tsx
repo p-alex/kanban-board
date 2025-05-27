@@ -1,12 +1,12 @@
 import { useForm } from "react-hook-form";
-import BigLogoContainer from "../BigLogo/BigLogoContainer";
-import Form from "../Form/Form";
-import PrimaryButton from "../PrimaryButton";
-import TextFieldGroup from "../TextFieldGroup";
-import { LoginFormData, loginFormSchema } from "./LoginFormValidation";
+import BigLogoContainer from "../../BigLogo/BigLogoContainer.js";
+import Form from "../../Form/Form.js";
+import PrimaryButton from "../../PrimaryButton/index.js";
+import TextFieldGroup from "../../TextFieldGroup/index.js";
+import { LoginFormData, loginFormSchema } from "./LoginFormValidation.js";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
-import NotificationCenter from "../../utils/NotificationCenter/NotificationCenter";
+import NotificationCenter from "../../../utils/NotificationCenter/NotificationCenter.js";
 
 interface Props {
   displayNotification: NotificationCenter["display"];

@@ -1,12 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CryptoUtil, DateUtil } from "@kanban/utils";
 import UserFactory, { UserFactoryData } from "./UserFactory.js";
+import IUser from "./IUser.js";
 
 describe("UserFactory.ts", () => {
   const cryptoMock = {
     randomUUID: vi.fn().mockReturnValue("uuid"),
     encrypt: vi.fn().mockReturnValue("encryptedText"),
     slowHash: vi.fn().mockResolvedValue("slowHash"),
+    sha256: vi.fn().mockReturnValue("sha256"),
   } as unknown as CryptoUtil;
 
   const utcNow = new DateUtil().getUtcOfNow();
@@ -51,14 +53,17 @@ describe("UserFactory.ts", () => {
       userData.password,
       passwordSaltRounds
     );
+    expect(cryptoMock.sha256).toHaveBeenCalledWith(userData.email);
     expect(dateMock.getUtcOfNow).toHaveBeenCalled();
 
     expect(user).toEqual({
       id: "uuid",
       username: userData.username,
-      email: "encryptedText",
+      encrypted_email: "encryptedText",
+      hashed_email: "sha256",
       password: "slowHash",
+      is_verified: false,
       created_at: utcNow,
-    });
+    } as IUser);
   });
 });

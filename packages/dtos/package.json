@@ -20,6 +20,14 @@
     "./UserDtoTypes": {
       "import": "./dist/user/types/index.js",
       "types": "./dist/user/types/index.d.ts"
+    },
+    "./VerificationCodeDto": {
+      "import": "./dist/verificationCode/schemas/index.js",
+      "types": "./dist/verificationCode/schemas/index.d.ts"
+    },
+    "./VerificationCodeDtoTypes": {
+      "import": "./dist/verificationCode/types/index.js",
+      "types": "./dist/verificationCode/types/index.d.ts"
     }
   },
   "keywords": [],

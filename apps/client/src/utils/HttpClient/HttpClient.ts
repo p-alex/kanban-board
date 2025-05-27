@@ -1,3 +1,4 @@
+import { Response } from "../../api/application/usecases/index.js";
 import HttpError from "./HttpError.js";
 
 interface Options {
@@ -9,13 +10,16 @@ interface Options {
 }
 
 interface IHttpClient {
-  query: <TResult>(url: string, options?: Options) => Promise<TResult>;
+  query: <TResult>(
+    url: string,
+    options?: Options
+  ) => Promise<Response<TResult>>;
   mutate: <TBody extends object, TResult>(
     url: string,
     method: "POST" | "PUT" | "PATCH" | "DELETE",
     body: TBody,
     options?: Options
-  ) => Promise<TResult>;
+  ) => Promise<Response<TResult>>;
 }
 
 class HttpClient implements IHttpClient {
@@ -68,9 +72,12 @@ class HttpClient implements IHttpClient {
       body: JSON.stringify(body),
       ...this._getOptionsObject(options),
     });
+
+    const result = (await response.json()) as Response<TResult>;
+
     if (!response.ok)
-      throw new HttpError(response.statusText, response.status, url, method);
-    const result = (await response.json()) as TResult;
+      throw new HttpError(result.errors[0], response.status, url, method);
+
     return result;
   };
 }

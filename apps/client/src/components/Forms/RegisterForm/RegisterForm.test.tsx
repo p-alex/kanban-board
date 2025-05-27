@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { TestComponentWrapper } from "../../testComponentWrapper";
+import { TestComponentWrapper } from "../../../testComponentWrapper.js";
 import userEvent from "@testing-library/user-event";
-import RegisterForm from "./RegisterForm";
-import { Response } from "../../api/application/usecases";
+import RegisterForm from "./RegisterForm.js";
+import { Response } from "../../../api/application/usecases/index.js";
 import { Mock } from "vitest";
 
 async function fillFormWithValidData() {
@@ -48,7 +48,7 @@ function checkIfFormIsEmpty() {
 
 describe("RegisterForm.tsx", () => {
   it("should not call submitFunc if form is invalid", async () => {
-    const submitFuncMock = vi.fn();
+    const submitFuncMock = vi.fn().mockResolvedValue({ success: false });
     const displayNotificationMock = vi.fn();
 
     render(
@@ -56,6 +56,7 @@ describe("RegisterForm.tsx", () => {
         <RegisterForm
           displayNotification={displayNotificationMock}
           submitFunc={submitFuncMock}
+          callback={() => {}}
         />
       </TestComponentWrapper>
     );
@@ -68,7 +69,7 @@ describe("RegisterForm.tsx", () => {
   });
 
   it("should call submitFunc and display notification if form is valid", async () => {
-    const submitFuncMock = vi.fn();
+    const submitFuncMock = vi.fn().mockResolvedValue({ success: true });
     const displayNotificationMock = vi.fn();
 
     render(
@@ -76,6 +77,7 @@ describe("RegisterForm.tsx", () => {
         <RegisterForm
           displayNotification={displayNotificationMock}
           submitFunc={submitFuncMock}
+          callback={() => {}}
         />
       </TestComponentWrapper>
     );
@@ -102,6 +104,7 @@ describe("RegisterForm.tsx", () => {
         <RegisterForm
           displayNotification={() => {}}
           submitFunc={submitFuncMock as Mock}
+          callback={() => {}}
         />
       </TestComponentWrapper>
     );

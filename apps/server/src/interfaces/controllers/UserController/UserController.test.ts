@@ -1,17 +1,19 @@
 import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import UserController from "./UserController.js";
-import UserService from "apps/server/src/application/services/UserService.js";
 import { IHttpRequest } from "../../adapter/ExpressAdapter.js";
+import UserService from "../../../application/services/user/UserService.js";
 import {
   CreateUserRequestDto,
   CreateUserResponseDto,
-} from "packages/dtos/dist/user/types/CreateUserDto.js";
+} from "@kanban/dtos/UserDtoTypes";
+import { EmailVerificationRequestDto } from "@kanban/dtos/VerificationCodeDtoTypes";
 
 describe("UserController.ts", () => {
   let userController: UserController;
 
   let userServiceMock = {
     create: vi.fn(),
+    verifyEmail: vi.fn(),
   } as unknown as UserService;
 
   beforeEach(() => {
@@ -37,6 +39,25 @@ describe("UserController.ts", () => {
       code: 201,
       errors: [],
       result: createReturnValue,
+      success: true,
+    });
+  });
+
+  it("verifyEmail function should work correctly", async () => {
+    const httpReqMock = {
+      body: { verification_code: "code" },
+    } as IHttpRequest<EmailVerificationRequestDto>;
+
+    const result = await userController.verifyEmail(httpReqMock);
+
+    expect(userServiceMock.verifyEmail).toHaveBeenCalledWith(
+      httpReqMock.body.verification_code
+    );
+
+    expect(result).toEqual({
+      code: 200,
+      errors: [],
+      result: null,
       success: true,
     });
   });

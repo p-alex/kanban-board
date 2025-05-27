@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Adapter from "./Adapter.js";
+import AppException from "../../exceptions/AppException.js";
 
 export interface IHttpRequest<TBody = any, TParams = any, TQuery = any> {
   body: TBody;
@@ -31,6 +32,19 @@ class ExpressAdapter implements Adapter {
         res.json(response);
       } catch (error: any) {
         console.error(error.message);
+
+        if (error instanceof AppException) {
+          res.status(error.code);
+
+          res.json({
+            code: error.code,
+            result: null,
+            errors: [error.message],
+            success: false,
+          } as IHttpResponse<null>);
+
+          return;
+        }
 
         res.status(500);
 

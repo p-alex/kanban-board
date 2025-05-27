@@ -48,4 +48,12 @@ describe("DateUtil.ts", () => {
 
     expect(dateUtil.getIsoOfNow()).toBe(value);
   });
+
+  it("isDateInThePast should work", () => {
+    const pastDate = "2022-03-28T10:40:00.000Z";
+    const futureDate = "2099-03-28T10:40:00.000Z";
+
+    expect(dateUtil.isDateInThePast(pastDate)).toBe(true);
+    expect(dateUtil.isDateInThePast(futureDate)).toBe(false);
+  });
 });

@@ -3,11 +3,11 @@ import envConfig from "../config.js";
 import Database from "./Database.js";
 
 const kanbanDatabase = new Database({
-  host: envConfig.DATABASE.HOST,
-  user: envConfig.DATABASE.USER,
-  database: envConfig.DATABASE.NAME,
-  password: envConfig.DATABASE.PASS,
-  port: envConfig.DATABASE.PORT,
+  host: envConfig.DATABASE_CONFIG.HOST,
+  user: envConfig.DATABASE_CONFIG.USER,
+  database: envConfig.DATABASE_CONFIG.NAME,
+  password: envConfig.DATABASE_CONFIG.PASS,
+  port: envConfig.DATABASE_CONFIG.PORT,
 });
 
 export type QueryDb = <TEntity>(
@@ -25,6 +25,7 @@ export const queryDb: QueryDb = async <TEntity>(
     client.release();
     return res.rows as TEntity[];
   } catch (error: any) {
+    console.error(error);
     throw new Error("Failed to query db: " + error.code);
   }
 };

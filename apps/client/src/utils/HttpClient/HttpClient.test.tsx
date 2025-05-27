@@ -83,7 +83,7 @@ describe("HttpClient.ts", () => {
 
     global.fetch = mockFetch;
 
-    const result: { data: "data" } = await httpClient.mutate("/", "POST");
+    const result = await httpClient.mutate("/", "POST");
 
     expect(result).toEqual({ data: "data" });
   });

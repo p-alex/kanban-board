@@ -1,8 +1,10 @@
 interface IUser {
   id: string;
   username: string;
-  email: string;
+  encrypted_email: string;
+  hashed_email: string;
   password: string;
+  is_verified: boolean;
   created_at: string;
 }
 

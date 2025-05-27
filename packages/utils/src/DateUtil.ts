@@ -22,6 +22,10 @@ class DateUtil {
   getIsoOfNow() {
     return new Date(Date.now()).toISOString();
   }
+
+  isDateInThePast(date: string | number) {
+    return Date.now() > new Date(date).getTime();
+  }
 }
 
 export default DateUtil;

@@ -47,6 +47,23 @@ class CryptoUtil {
 
     return decrypted.toString(cryptoJs.enc.Utf8);
   };
+
+  generateCode = (length: number) => {
+    let numbers = "0123456789";
+
+    let result = "";
+
+    for (let i = 0; i < length; i++) {
+      const RNG = Math.floor(Math.random() * numbers.length);
+      result += numbers[RNG];
+    }
+
+    return result;
+  };
+
+  sha256 = (text: string) => {
+    return cryptoJs.SHA256(text).toString(cryptoJs.enc.Hex);
+  };
 }
 
 export default CryptoUtil;

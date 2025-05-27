@@ -4,6 +4,7 @@ import ExpressAdapter, {
   IHttpRequest,
   IHttpResponse,
 } from "./ExpressAdapter.js";
+import AppException from "../../exceptions/AppException.js";
 
 describe("ExpressAdapter", () => {
   it("should correctly adapt the controller response to Express", async () => {
@@ -71,6 +72,37 @@ describe("ExpressAdapter", () => {
 
     const controllerMock = vi.fn(() => {
       throw new Error("other error");
+    });
+
+    const adapter = new ExpressAdapter();
+    const adaptedHandler = adapter.adapt(controllerMock);
+
+    await adaptedHandler(req, res);
+
+    expect(res.json).toHaveBeenCalledWith(response);
+  });
+
+  it("should handle app exceptions correctly", async () => {
+    const req = {
+      body: {},
+      params: {},
+      query: {},
+    } as unknown as Request;
+
+    const res = {
+      json: vi.fn(),
+      status: vi.fn(),
+    } as unknown as Response;
+
+    const response: IHttpResponse<null> = {
+      code: 400,
+      errors: ["Bad Request"],
+      result: null,
+      success: false,
+    };
+
+    const controllerMock = vi.fn(() => {
+      throw new AppException(400, "Bad Request");
     });
 
     const adapter = new ExpressAdapter();

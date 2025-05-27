@@ -10,12 +10,6 @@
     "declaration": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      "@kanban/utils": ["packages/utils/dist"],
-      "@kanban/dtos": ["packages/dtos/dist"],
-      "@kanban/schemavalidations": ["packages/schemavalidations/dist"]
-    }
+    "forceConsistentCasingInFileNames": true
   }
 }

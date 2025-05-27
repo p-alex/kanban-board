@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { RegisterFormData } from "../../../components/RegisterForm/RegisterFormValidation";
+import { RegisterFormData } from "../../../components/Forms/RegisterForm/RegisterFormValidation";
 import registerUserUsecase from "../../../api/application/usecases/user/registerUserUsecase";
 
 function useRegisterUser() {

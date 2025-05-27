@@ -1,4 +1,5 @@
-import UserService from "apps/server/src/application/services/UserService.js";
+import { EmailVerificationRequestDto } from "@kanban/dtos/VerificationCodeDtoTypes";
+import UserService from "../../../application/services/user/UserService.js";
 import { IHttpRequest, IHttpResponse } from "../../adapter/ExpressAdapter.js";
 import {
   CreateUserRequestDto,
@@ -16,6 +17,19 @@ class UserController {
     return Promise.resolve({
       code: 201,
       result,
+      success: true,
+      errors: [],
+    });
+  };
+
+  verifyEmail = async (
+    httpReq: IHttpRequest<EmailVerificationRequestDto>
+  ): Promise<IHttpResponse<null>> => {
+    await this._userService.verifyEmail(httpReq.body.verification_code);
+
+    return Promise.resolve({
+      code: 200,
+      result: null,
       success: true,
       errors: [],
     });

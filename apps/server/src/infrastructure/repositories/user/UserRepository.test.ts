@@ -1,19 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import UserRepository from "./UserRepository.js";
-import IUser from "apps/server/src/domain/user/IUser.js";
+import { userFixture } from "../../../__fixtures__/user/index.js";
 
 describe("UserRepository.ts", () => {
   let userRepository: UserRepository;
 
   let queryDBMock: Mock;
-
-  const user: IUser = {
-    id: "id",
-    username: "username",
-    password: "password",
-    email: "email",
-    created_at: "create_at",
-  };
 
   beforeEach(() => {
     queryDBMock = vi.fn();
@@ -24,8 +16,21 @@ describe("UserRepository.ts", () => {
     vi.clearAllMocks();
   });
 
+  it("findById should work correctly", async () => {
+    queryDBMock.mockResolvedValue([userFixture]);
+
+    const result = await userRepository.findById("id");
+
+    expect(queryDBMock).toHaveBeenCalledWith(
+      "SELECT * FROM users WHERE id=$1",
+      ["id"]
+    );
+
+    expect(result).toEqual(userFixture);
+  });
+
   it("findByUsername should work correctly", async () => {
-    queryDBMock.mockResolvedValue([user]);
+    queryDBMock.mockResolvedValue([userFixture]);
 
     const result = await userRepository.findByUsername("username");
 
@@ -34,32 +39,84 @@ describe("UserRepository.ts", () => {
       ["username"]
     );
 
-    expect(result).toEqual(user);
+    expect(result).toEqual(userFixture);
   });
 
   it("findByEmail should work correctly", async () => {
-    queryDBMock.mockResolvedValue([user]);
+    queryDBMock.mockResolvedValue([userFixture]);
 
-    const result = await userRepository.findByEmail("email");
+    const result = await userRepository.findByEmail("hashed_email");
 
     expect(queryDBMock).toHaveBeenCalledWith(
-      "SELECT * FROM users WHERE email=$1",
-      ["email"]
+      "SELECT * FROM users WHERE hashed_email=$1",
+      ["hashed_email"]
     );
 
-    expect(result).toEqual(user);
+    expect(result).toEqual(userFixture);
   });
 
   it("create should work correctly", async () => {
-    queryDBMock.mockResolvedValue([user]);
+    queryDBMock.mockResolvedValue([userFixture]);
 
-    const result = await userRepository.create(user);
+    const result = await userRepository.create(userFixture);
 
     expect(queryDBMock).toHaveBeenCalledWith(
-      "INSERT INTO users (id, username, email, password, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [user.id, user.username, user.email, user.password, user.created_at]
+      "INSERT INTO users (id, username, encrypted_email, hashed_email, password, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [
+        userFixture.id,
+        userFixture.username,
+        userFixture.encrypted_email,
+        userFixture.hashed_email,
+        userFixture.password,
+        userFixture.created_at,
+      ]
     );
 
-    expect(result).toEqual(user);
+    expect(result).toEqual(userFixture);
+  });
+
+  it("update should work correctly", async () => {
+    queryDBMock.mockResolvedValue([userFixture]);
+
+    const result = await userRepository.update(userFixture);
+
+    expect(queryDBMock).toHaveBeenCalledWith(
+      "UPDATE users SET username = $1, encrypted_email = $2, hashed_email = $3, password = $4, is_verified=$5 WHERE users.id = $6 RETURNING *",
+      [
+        userFixture.username,
+        userFixture.encrypted_email,
+        userFixture.hashed_email,
+        userFixture.password,
+        `${userFixture.is_verified}`,
+        userFixture.id,
+      ]
+    );
+
+    expect(result).toEqual(userFixture);
+  });
+
+  it("update should work correctly", async () => {
+    queryDBMock.mockResolvedValue([userFixture]);
+
+    const result = await userRepository.deleteById("id");
+
+    expect(queryDBMock).toHaveBeenCalledWith(
+      "DELETE FROM users WHERE id = $1 RETURNING *",
+      ["id"]
+    );
+
+    expect(result).toEqual(userFixture);
+  });
+
+  it("user repository functions should use transaction query if option is set", async () => {
+    const transactionQueryMock = vi.fn().mockResolvedValue(["user"]);
+
+    queryDBMock.mockResolvedValue([userFixture]);
+
+    await userRepository.create(userFixture, {
+      transactionQuery: transactionQueryMock,
+    });
+
+    expect(transactionQueryMock).toHaveBeenCalled();
   });
 });

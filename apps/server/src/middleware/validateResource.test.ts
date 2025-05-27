@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { describe, expect, it, vi } from "vitest";
 import validateResource from "./validateResource.js";
-import { ZodSchema } from "node_modules/zod/lib/types.js";
 import { IHttpResponse } from "../interfaces/adapter/ExpressAdapter.js";
 
 describe("validateResource.ts", () => {
@@ -21,7 +20,7 @@ describe("validateResource.ts", () => {
         data,
         success: true,
       }),
-    } as unknown as ZodSchema;
+    } as any;
 
     const next = vi.fn();
 
@@ -62,7 +61,7 @@ describe("validateResource.ts", () => {
           }),
         },
       }),
-    } as unknown as ZodSchema;
+    } as any;
 
     const next = vi.fn();
 

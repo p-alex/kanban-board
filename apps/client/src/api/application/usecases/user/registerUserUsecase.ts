@@ -4,11 +4,11 @@ import {
 } from "@kanban/dtos/UserDtoTypes";
 import { ServerResponseDto } from "@kanban/dtos/ServerResponseDto";
 import { IUser } from "../../../domain/User.js";
-import { Response } from "../index.js";
-import { privateHttpClient } from "../../../../utils/HttpClient/index.js";
+import { httpClient } from "../../../../utils/HttpClient/index.js";
 import createResponse from "../../../createResponse.js";
 import userTransformer from "./userTransformer.js";
-import { RegisterFormData } from "../../../../components/RegisterForm/RegisterFormValidation.js";
+import { RegisterFormData } from "../../../../components/Forms/RegisterForm/RegisterFormValidation.js";
+import { Response } from "../index.js";
 
 async function registerUserUsecase(
   data: RegisterFormData,
@@ -21,7 +21,7 @@ async function registerUserUsecase(
   };
 
   const result: ServerResponseDto<CreateUserResponseDto> =
-    await privateHttpClient.mutate("/users", "POST", body, {
+    await httpClient.mutate("/users", "POST", body, {
       headers: {
         Authorization: "Bearer " + accessToken,
         "Content-Type": "application/json",
