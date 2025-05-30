@@ -8,7 +8,7 @@ describe("UserFactory.ts", () => {
     randomUUID: vi.fn().mockReturnValue("uuid"),
     encrypt: vi.fn().mockReturnValue("encryptedText"),
     slowHash: vi.fn().mockResolvedValue("slowHash"),
-    sha256: vi.fn().mockReturnValue("sha256"),
+    hmacSHA256: vi.fn().mockReturnValue("sha256"),
   } as unknown as CryptoUtil;
 
   const utcNow = new DateUtil().getUtcOfNow();
@@ -17,7 +17,8 @@ describe("UserFactory.ts", () => {
     getUtcOfNow: vi.fn().mockReturnValue(utcNow),
   } as unknown as DateUtil;
 
-  const emailSecret = "emailSecret";
+  const emailEncryptionSecret = "emailENCRYPTIONSecret";
+  const emailHashSecret = "emailHASHSecret";
   const passwordSaltRounds = 10;
 
   let userFactory: UserFactory;
@@ -26,7 +27,8 @@ describe("UserFactory.ts", () => {
     userFactory = new UserFactory(
       cryptoMock,
       dateMock,
-      emailSecret,
+      emailEncryptionSecret,
+      emailHashSecret,
       passwordSaltRounds
     );
   });
@@ -47,13 +49,16 @@ describe("UserFactory.ts", () => {
     expect(cryptoMock.randomUUID).toHaveBeenCalled();
     expect(cryptoMock.encrypt).toHaveBeenCalledWith(
       userData.email,
-      emailSecret
+      emailEncryptionSecret
     );
     expect(cryptoMock.slowHash).toHaveBeenCalledWith(
       userData.password,
       passwordSaltRounds
     );
-    expect(cryptoMock.sha256).toHaveBeenCalledWith(userData.email);
+    expect(cryptoMock.hmacSHA256).toHaveBeenCalledWith(
+      userData.email,
+      emailHashSecret
+    );
     expect(dateMock.getUtcOfNow).toHaveBeenCalled();
 
     expect(user).toEqual({

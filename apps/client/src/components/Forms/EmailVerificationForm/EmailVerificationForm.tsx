@@ -4,27 +4,27 @@ import PrimaryButton from "../../PrimaryButton";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  EmailVerificationFormData,
-  emailVerificationFormSchema,
+  AccountVerificationFormData,
+  accountVerificationFormData,
 } from "./EmailVerificationFormValidation";
 import NotificationCenter from "../../../utils/NotificationCenter/NotificationCenter";
-import { VerifyEmailUsecase } from "../../../api/application/usecases/verificationCode/verifyEmailUsecase";
 import Form from "../../Form/Form";
 import { HttpError } from "../../../utils/HttpClient";
+import { VerifyAccount } from "../../../api/application/usecases/user/verifyAccount";
 
 interface Props {
   displayNotification: NotificationCenter["display"];
-  submitFunc: VerifyEmailUsecase;
+  submitFunc: VerifyAccount;
   callback: () => void;
 }
 
 function EmailVerificationForm(props: Props) {
   const { register, formState, reset, handleSubmit } = useForm({
     defaultValues: { verificationCode: "" },
-    resolver: zodResolver(emailVerificationFormSchema),
+    resolver: zodResolver(accountVerificationFormData),
   });
 
-  const submit = async (data: EmailVerificationFormData) => {
+  const submit = async (data: AccountVerificationFormData) => {
     try {
       const result = await props.submitFunc(data);
       if (result.success) {

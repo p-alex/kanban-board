@@ -1,7 +1,7 @@
 import { GetEmailVerificationTemplate } from "../../../Mailer/emailTemplates/emailVerificationTemplate.js";
 import Mailer from "../../../Mailer/Mailer.js";
 
-class SendAccountVerificationEmail {
+class SendAccountVerificationEmailUsecase {
   constructor(
     private readonly _mailer: Mailer,
     private readonly _getTemplate: GetEmailVerificationTemplate
@@ -12,4 +12,4 @@ class SendAccountVerificationEmail {
   };
 }
 
-export default SendAccountVerificationEmail;
+export default SendAccountVerificationEmailUsecase;

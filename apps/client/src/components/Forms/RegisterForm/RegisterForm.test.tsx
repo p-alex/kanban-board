@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import RegisterForm from "./RegisterForm.js";
 import { Response } from "../../../api/application/usecases/index.js";
 import { Mock } from "vitest";
+import HttpError from "../../../utils/HttpClient/HttpError.js";
 
 async function fillFormWithValidData() {
   const username = screen.getByLabelText(/username/i);
@@ -47,6 +48,27 @@ function checkIfFormIsEmpty() {
 }
 
 describe("RegisterForm.tsx", () => {
+  it("should display a notification if the request fails", async () => {
+    const displayNotificationMock = vi.fn();
+
+    render(
+      <TestComponentWrapper>
+        <RegisterForm
+          displayNotification={displayNotificationMock}
+          submitFunc={vi.fn(() => {
+            throw new HttpError("", 1, "/", "POST");
+          })}
+          callback={() => {}}
+        />
+      </TestComponentWrapper>
+    );
+
+    await fillFormWithValidData();
+    await submitForm();
+
+    expect(displayNotificationMock).toHaveBeenCalled();
+  });
+
   it("should not call submitFunc if form is invalid", async () => {
     const submitFuncMock = vi.fn().mockResolvedValue({ success: false });
     const displayNotificationMock = vi.fn();

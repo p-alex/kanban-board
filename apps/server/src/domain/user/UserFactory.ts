@@ -11,7 +11,8 @@ class UserFactory {
   constructor(
     private readonly _crypto: CryptoUtil,
     private readonly _date: DateUtil,
-    private readonly _emailSecret: string,
+    private readonly _emailEncrpytionSecret: string,
+    private readonly _emailHashSecret: string,
     private readonly _passwordSaltRounds: number
   ) {}
 
@@ -19,8 +20,14 @@ class UserFactory {
     return {
       id: this._crypto.randomUUID(),
       username: userData.username,
-      encrypted_email: this._crypto.encrypt(userData.email, this._emailSecret),
-      hashed_email: this._crypto.sha256(userData.email),
+      encrypted_email: this._crypto.encrypt(
+        userData.email,
+        this._emailEncrpytionSecret
+      ),
+      hashed_email: this._crypto.hmacSHA256(
+        userData.email,
+        this._emailHashSecret
+      ),
       password: await this._crypto.slowHash(
         userData.password,
         this._passwordSaltRounds

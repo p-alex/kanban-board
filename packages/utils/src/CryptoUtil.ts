@@ -61,8 +61,8 @@ class CryptoUtil {
     return result;
   };
 
-  sha256 = (text: string) => {
-    return cryptoJs.SHA256(text).toString(cryptoJs.enc.Hex);
+  hmacSHA256 = (text: string, secret: string) => {
+    return cryptoJs.HmacSHA256(text, secret).toString(cryptoJs.enc.Hex);
   };
 }
 

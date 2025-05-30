@@ -1,5 +1,5 @@
 import { describe, expect, it, Mocked, vi } from "vitest";
-import SendAccountVerificationEmail from "./sendAccountVerificationEmail.js";
+import SendAccountVerificationEmail from "./SendAccountVerificationEmailUsecase.js";
 import Mailer from "../../../Mailer/Mailer.js";
 import { EmailTemplate } from "../../../Mailer/emailTemplates/index.js";
 
@@ -14,7 +14,7 @@ describe("sendAccountVerificationEmail.ts", () => {
     html: "html",
   };
 
-  const code = 5000;
+  const code = "5000";
 
   const getTemplate = vi.fn().mockReturnValue(emailTemplate);
 

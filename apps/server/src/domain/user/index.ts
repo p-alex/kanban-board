@@ -5,8 +5,9 @@ import { CryptoUtil, DateUtil } from "@kanban/utils";
 const userFactory = new UserFactory(
   new CryptoUtil(),
   new DateUtil(),
-  envConfig.EMAIL_ENCRYPTION_SECRET,
-  envConfig.PASSWORD_SALT_ROUNDS
+  envConfig.ENCRYPTION_SECRET.EMAIL,
+  envConfig.HASH_SECRET.EMAIL,
+  envConfig.SALT_ROUNDS.PASSWORD
 );
 
 export default userFactory;

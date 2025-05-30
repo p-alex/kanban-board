@@ -7,7 +7,8 @@ class VerificationCodeFactory {
   constructor(
     private readonly _crypto: CryptoUtil,
     private readonly _date: DateUtil,
-    private readonly _timeConverter: TimeConverter
+    private readonly _timeConverter: TimeConverter,
+    private readonly _verificationCodeHashSecret: string
   ) {}
 
   create = (
@@ -15,7 +16,10 @@ class VerificationCodeFactory {
     code: string,
     type: VerificationCodeType
   ): IVerificationCode => {
-    const hashedCode = this._crypto.sha256(code);
+    const hashedCode = this._crypto.hmacSHA256(
+      code,
+      this._verificationCodeHashSecret
+    );
 
     return {
       id: this._crypto.randomUUID(),

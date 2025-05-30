@@ -65,8 +65,8 @@ describe("CryptoUtil.ts", () => {
     expect(result).toBe("666666");
   });
 
-  it("should generate a correct sha256 hash", () => {
-    const sha256 = cryptoUtil.sha256("text");
+  it("should generate a correct hmacSHA256 hash", () => {
+    const sha256 = cryptoUtil.hmacSHA256("text", "key");
 
     const isValid = /\b[A-Fa-f0-9]{64}\b/g.test(sha256);
 

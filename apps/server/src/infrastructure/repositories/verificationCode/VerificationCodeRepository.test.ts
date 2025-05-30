@@ -75,7 +75,7 @@ describe("VerificationCodeRepository", () => {
   });
 
   describe("deleteByCode", () => {
-    it("should insert a verification code and return the result", async () => {
+    it("should delete by code correctly", async () => {
       mockQueryDB.mockResolvedValueOnce([verificationCodeFixture]);
 
       const result = await repository.deleteByCode("code");
@@ -83,6 +83,20 @@ describe("VerificationCodeRepository", () => {
       expect(mockQueryDB).toHaveBeenCalledWith(
         "DELETE FROM verification_codes WHERE code = $1 RETURNING *",
         ["code"]
+      );
+      expect(result).toEqual(verificationCodeFixture);
+    });
+  });
+
+  describe("deleteById", () => {
+    it("should delete by id correctly", async () => {
+      mockQueryDB.mockResolvedValueOnce([verificationCodeFixture]);
+
+      const result = await repository.deleteById("id");
+
+      expect(mockQueryDB).toHaveBeenCalledWith(
+        "DELETE FROM verification_codes WHERE id = $1 RETURNING *",
+        ["id"]
       );
       expect(result).toEqual(verificationCodeFixture);
     });

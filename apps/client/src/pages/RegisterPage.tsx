@@ -4,13 +4,13 @@ import RegisterForm from "../components/Forms/RegisterForm";
 import useRegisterUser from "../hooks/api/user/useRegisterUser";
 import notificationCenter from "../utils/NotificationCenter";
 import EmailVerificationForm from "../components/Forms/EmailVerificationForm";
-import useVerificationCode from "../hooks/api/verificationCode/useVerificationCode";
 import { useNavigate } from "react-router-dom";
 import Container from "../components/Container/Container";
+import useVerifyAccount from "../hooks/api/user/useVerifyAccount";
 
 function RegisterPage() {
   const register = useRegisterUser();
-  const verifyEmail = useVerificationCode();
+  const verifyAccount = useVerifyAccount();
   const navigate = useNavigate();
 
   return (
@@ -33,7 +33,7 @@ function RegisterPage() {
               content: (
                 <EmailVerificationForm
                   displayNotification={notificationCenter.display}
-                  submitFunc={verifyEmail.mutateAsync}
+                  submitFunc={verifyAccount.mutateAsync}
                   callback={() => navigate("/login")}
                 />
               ),

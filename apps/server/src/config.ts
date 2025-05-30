@@ -12,13 +12,27 @@ const envConfig = {
     NAME: process.env.DATABASE_CONFIG_NAME!,
     PORT: parseInt(process.env.DATABASE_CONFIG_PORT!),
   },
-  APP_EMAIL_SENDER: process.env.APP_EMAIL_SENDER!,
-  TEST_MAIL_API_USER: process.env.TEST_MAIL_API_USER!,
-  TEST_MAIL_API_PASS: process.env.TEST_MAIL_API_PASS!,
-  PASSWORD_SALT_ROUNDS: parseInt(process.env.PASSWORD_SALT_ROUNDS!),
-  EMAIL_ENCRYPTION_SECRET: process.env.EMAIL_ENCRYPTION_SECRET!,
-  VERIFICATION_CODE_ENCRYPTION_SECRET:
-    process.env.VERIFICATION_CODE_ENCRYPTION_SECRET!,
+  CACHE_CONFIG: {
+    USERNAME: process.env.CACHE_CONFIG_USERNAME!,
+    PASSWORD: process.env.CACHE_CONFIG_PASSWORD!,
+    HOST: process.env.CACHE_CONFIG_HOST!,
+    PORT: parseInt(process.env.CACHE_CONFIG_PORT!),
+  },
+  ENCRYPTION_SECRET: {
+    EMAIL: process.env.ENCRYPTION_SECRET_EMAIL!,
+  },
+  HASH_SECRET: {
+    VERIFICATION_CODE: process.env.HASH_SECRET_VERIFICATION_CODE!,
+    EMAIL: process.env.HASH_SECRET_EMAIL!,
+  },
+  SALT_ROUNDS: {
+    PASSWORD: parseInt(process.env.PASSWORD_SALT_ROUNDS!),
+  },
+  EMAIL_API: {
+    SENDER: process.env.EMAIL_API_SENDER!,
+    USER: process.env.EMAIL_API_USER!,
+    PASS: process.env.EMAIL_API_PASS!,
+  },
 };
 
 export default envConfig;

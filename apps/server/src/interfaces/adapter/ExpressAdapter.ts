@@ -31,7 +31,7 @@ class ExpressAdapter implements Adapter {
 
         res.json(response);
       } catch (error: any) {
-        console.error(error.message);
+        console.error(error);
 
         if (error instanceof AppException) {
           res.status(error.code);

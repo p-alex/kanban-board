@@ -11,9 +11,11 @@ describe("VerificationCodeFactory.ts", () => {
 
   const hashedCode = "hashed_code";
 
+  const verificationCodeHashSecret = "secret";
+
   beforeEach(() => {
     cryptoUtilMock = {
-      sha256: vi.fn().mockReturnValue(hashedCode),
+      hmacSHA256: vi.fn().mockReturnValue(hashedCode),
       randomUUID: vi.fn().mockReturnValue("uuid"),
     } as unknown as Mocked<CryptoUtil>;
 
@@ -30,7 +32,8 @@ describe("VerificationCodeFactory.ts", () => {
     verificationCodeFactory = new VerificationCodeFactory(
       cryptoUtilMock,
       dateUtilMock,
-      timeConverterMock
+      timeConverterMock,
+      verificationCodeHashSecret
     );
   });
 
@@ -38,10 +41,13 @@ describe("VerificationCodeFactory.ts", () => {
     const result = verificationCodeFactory.create(
       "user_id",
       "123",
-      "email_verification"
+      "user_verification"
     );
 
-    expect(cryptoUtilMock.sha256).toHaveBeenCalledWith("123");
+    expect(cryptoUtilMock.hmacSHA256).toHaveBeenCalledWith(
+      "123",
+      verificationCodeHashSecret
+    );
     expect(cryptoUtilMock.randomUUID).toHaveBeenCalledTimes(1);
     expect(dateUtilMock.getUtcOfNow).toHaveBeenCalledTimes(1);
     expect(dateUtilMock.getUtcOfNow).toHaveBeenCalledTimes(1);
@@ -50,7 +56,7 @@ describe("VerificationCodeFactory.ts", () => {
       id: "uuid",
       user_id: "user_id",
       code: hashedCode,
-      type: "email_verification",
+      type: "user_verification",
       created_at: "created_at",
       expires_at: "expires_at",
     } as IVerificationCode);

@@ -5,8 +5,8 @@ import NodemailerTransporter from "./MailTransporters/NodemailerTransporter.js";
 
 const testMailer = new Mailer(
   new NodemailerTransporter(
-    getTestMailApi(envConfig.TEST_MAIL_API_USER, envConfig.TEST_MAIL_API_PASS),
-    envConfig.APP_EMAIL_SENDER
+    getTestMailApi(envConfig.EMAIL_API.USER, envConfig.EMAIL_API.PASS),
+    envConfig.EMAIL_API.SENDER
   )
 );
 

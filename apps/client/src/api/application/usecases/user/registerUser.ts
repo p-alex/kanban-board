@@ -10,7 +10,7 @@ import userTransformer from "./userTransformer.js";
 import { RegisterFormData } from "../../../../components/Forms/RegisterForm/RegisterFormValidation.js";
 import { Response } from "../index.js";
 
-async function registerUserUsecase(
+async function registerUser(
   data: RegisterFormData,
   accessToken: string
 ): Promise<Response<{ user: IUser }>> {
@@ -36,6 +36,6 @@ async function registerUserUsecase(
   });
 }
 
-export type RegisterUserUsecase = typeof registerUserUsecase;
+export type RegisterUserUsecase = typeof registerUser;
 
-export default registerUserUsecase;
+export default registerUser;

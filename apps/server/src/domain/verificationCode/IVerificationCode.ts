@@ -1,4 +1,4 @@
-export type VerificationCodeType = "email_verification";
+export type VerificationCodeType = "user_verification";
 
 interface IVerificationCode {
   id: string;

@@ -49,6 +49,17 @@ class VerificationCodeRepository {
     return result[0];
   };
 
+  deleteById = async (id: string, options?: RepositoryOptions) => {
+    const queryFunc = this.getQueryFunction(options);
+
+    const result = await queryFunc<IVerificationCode>(
+      "DELETE FROM verification_codes WHERE id = $1 RETURNING *",
+      [id]
+    );
+
+    return result[0];
+  };
+
   private getQueryFunction = (options?: RepositoryOptions) => {
     return options?.transactionQuery !== undefined
       ? options.transactionQuery

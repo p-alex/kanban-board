@@ -14,7 +14,7 @@ create table
 		id varchar(255) primary key,
 		user_id varchar(255) REFERENCES users (id) ON DELETE CASCADE,
 		code varchar(255) unique,
-		type varchar(255) NOT NULL CHECK (type IN ('email_verification')),
+		type varchar(255) NOT NULL CHECK (type IN ('user_verification')),
 		created_at timestamptz default CURRENT_TIMESTAMP,
 		expires_at timestamptz not null
 	);

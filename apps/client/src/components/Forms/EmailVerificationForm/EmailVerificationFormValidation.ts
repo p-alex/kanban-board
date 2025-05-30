@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { verificationCodeSchemas } from "@kanban/schemavalidations/schemas";
 
-export const emailVerificationFormSchema = z.object({
+export const accountVerificationFormData = z.object({
   verificationCode: verificationCodeSchemas.verificationCodeSchema,
 });
 
-export type EmailVerificationFormData = z.infer<
-  typeof emailVerificationFormSchema
+export type AccountVerificationFormData = z.infer<
+  typeof accountVerificationFormData
 >;
