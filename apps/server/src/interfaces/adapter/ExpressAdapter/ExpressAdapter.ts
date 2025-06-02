@@ -1,21 +1,8 @@
 import { Request, Response } from "express";
-import Adapter from "./Adapter.js";
-import AppException from "../../exceptions/AppException.js";
+import AppException from "../../../exceptions/AppException.js";
+import { IHttpRequest, IHttpResponse } from "../index.js";
 
-export interface IHttpRequest<TBody = any, TParams = any, TQuery = any> {
-  body: TBody;
-  params: TParams;
-  query: TQuery;
-}
-
-export interface IHttpResponse<TResult> {
-  code: number;
-  success: boolean;
-  result: TResult;
-  errors: string[];
-}
-
-class ExpressAdapter implements Adapter {
+class ExpressAdapter {
   adapt(
     controller: (httpRequest: IHttpRequest) => Promise<IHttpResponse<any>>
   ) {
@@ -25,6 +12,9 @@ class ExpressAdapter implements Adapter {
           body: req.body,
           params: req.params,
           query: req.query,
+          client_ip: req.ip || req.socket.remoteAddress || "",
+          method: req.method,
+          url: req.url,
         };
 
         const response = await controller(httpRequest);
@@ -39,7 +29,7 @@ class ExpressAdapter implements Adapter {
           res.json({
             code: error.code,
             result: null,
-            errors: [error.message],
+            errors: error.errors,
             success: false,
           } as IHttpResponse<null>);
 

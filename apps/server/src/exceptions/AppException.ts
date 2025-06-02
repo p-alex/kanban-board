@@ -1,10 +1,10 @@
 class AppException {
   code: number;
-  message: string;
+  errors: string[];
 
-  constructor(code: number, message: string) {
+  constructor(code: number, errors: string[]) {
     this.code = code;
-    this.message = message;
+    this.errors = errors;
   }
 }
 

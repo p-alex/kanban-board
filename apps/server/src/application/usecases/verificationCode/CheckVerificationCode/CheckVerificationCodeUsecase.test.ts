@@ -42,7 +42,7 @@ describe("CheckVerificationCodeUsecase.ts", () => {
 
       if (error instanceof AppException) {
         expect(error.code).toBe(401);
-        expect(error.message).toBe("Invalid code");
+        expect(error.errors[0]).toBe("Invalid code");
       }
     }
   });
@@ -61,7 +61,7 @@ describe("CheckVerificationCodeUsecase.ts", () => {
 
       if (error instanceof AppException) {
         expect(error.code).toBe(401);
-        expect(error.message).toBe("Invalid code");
+        expect(error.errors[0]).toBe("Invalid code");
       }
     }
   });
@@ -80,7 +80,7 @@ describe("CheckVerificationCodeUsecase.ts", () => {
 
       if (error instanceof AppException) {
         expect(error.code).toBe(401);
-        expect(error.message).toBe(
+        expect(error.errors[0]).toBe(
           "Code expired. Log in again to trigger another account verification process."
         );
       }

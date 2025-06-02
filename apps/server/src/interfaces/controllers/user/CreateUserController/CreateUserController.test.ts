@@ -4,7 +4,7 @@ import CreateUserController from "./CreateUserController.js";
 import {
   IHttpRequest,
   IHttpResponse,
-} from "../../../adapter/ExpressAdapter.js";
+} from "../../../adapter/ExpressAdapter/ExpressAdapter.js";
 import {
   CreateUserRequestDto,
   CreateUserResponseDto,

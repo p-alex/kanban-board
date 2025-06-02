@@ -16,7 +16,7 @@ class CheckIfEmailIsUnique {
       transactionQuery,
     });
     if (user) {
-      throw new AppException(401, "A user with that email already exists.");
+      throw new AppException(401, ["A user with that email already exists."]);
     }
   };
 }

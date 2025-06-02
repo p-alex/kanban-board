@@ -8,6 +8,15 @@ interface ITime {
   year: number;
 }
 
+type TimeType =
+  | "milisecond"
+  | "second"
+  | "minute"
+  | "hour"
+  | "day"
+  | "month"
+  | "year";
+
 class TimeConverter {
   private readonly _inMs: ITime;
 
@@ -23,11 +32,11 @@ class TimeConverter {
     };
   }
 
-  toMs(number: number, type: keyof typeof this._inMs) {
+  toMs(number: number, type: TimeType) {
     return number * this._inMs[type];
   }
 
-  toSeconds(number: number, type: keyof typeof this._inMs) {
+  toSeconds(number: number, type: TimeType) {
     return Math.floor(number * (this._inMs[type] / this._inMs["second"]));
   }
 }

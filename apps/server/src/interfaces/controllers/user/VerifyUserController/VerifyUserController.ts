@@ -1,10 +1,8 @@
 import { VerifyUserRequestDto } from "@kanban/dtos/UserDtoTypes";
-import {
-  IHttpRequest,
-  IHttpResponse,
-} from "../../../adapter/ExpressAdapter.js";
+import {} from "../../../adapter/ExpressAdapter/ExpressAdapter.js";
 import VerifiyUserService from "../../../../application/services/user/VerifiyUserService/VerifiyUserService.js";
 import { IController } from "../../index.js";
+import { IHttpRequest, IHttpResponse } from "../../../adapter/index.js";
 
 class VerifyUserController implements IController {
   constructor(private readonly _verifyUserService: VerifiyUserService) {}

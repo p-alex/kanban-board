@@ -1,24 +1,45 @@
-import ExpressAdapter from "../adapter/ExpressAdapter.js";
-import validateResource from "../../middleware/validateResource.js";
-import { createUserRequestDtoSchema } from "@kanban/dtos/UserDtos";
 import { Router } from "express";
-import { verifyUserRequestDto } from "@kanban/dtos/UserDtos";
+import {
+  createUserRequestDtoSchema,
+  verifyUserRequestDto,
+} from "@kanban/dtos/UserDtos";
 import createUserController from "../controllers/user/CreateUserController/index.js";
 import verifyUserController from "../controllers/user/VerifyUserController/index.js";
+import rateLimiter from "../../middleware/RateLimiter/index.js";
+import { TimeConverter } from "@kanban/utils";
+import expressAdapter from "../adapter/ExpressAdapter/index.js";
+import ExpressMiddlewareAdapter from "../adapter/ExpressMiddlewareAdapter/ExpressMiddlewareAdapter.js";
+import resourceValidator from "../../middleware/ResourceValidator/index.js";
 
-const expressAdapter = new ExpressAdapter();
+const expressMiddlewareAdapter = new ExpressMiddlewareAdapter();
 
 const userRouter = Router();
 
 userRouter.post(
   "/",
-  validateResource(createUserRequestDtoSchema),
+  expressMiddlewareAdapter.adapt(
+    rateLimiter.limit({
+      maxRequests: 5,
+      windowMs: new TimeConverter().toMs(15, "minute"),
+    })
+  ),
+  expressMiddlewareAdapter.adapt(
+    resourceValidator.validate(createUserRequestDtoSchema)
+  ),
   expressAdapter.adapt(createUserController.handle)
 );
 
 userRouter.post(
   "/verify",
-  validateResource(verifyUserRequestDto),
+  expressMiddlewareAdapter.adapt(
+    rateLimiter.limit({
+      maxRequests: 5,
+      windowMs: new TimeConverter().toMs(15, "minute"),
+    })
+  ),
+  expressMiddlewareAdapter.adapt(
+    resourceValidator.validate(verifyUserRequestDto)
+  ),
   expressAdapter.adapt(verifyUserController.handle)
 );
 

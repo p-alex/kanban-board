@@ -6,8 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "dev": "tsx watch --include \"./src/**/*\" -r dotenv/config ./src/index.ts",
-    "test": "vitest",
-    "test:coverage": "vitest --coverage",
+    "test": "vitest --coverage",
     "build": "tsc",
     "start": "node dist/index.js"
   },
@@ -21,9 +20,11 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "helmet": "^8.1.0",
+    "ip-range-check": "^0.2.0",
     "nodemailer": "^7.0.3",
     "pg": "^8.16.0",
-    "redis": "^5.1.0"
+    "redis": "^5.1.0",
+    "zod": "^3.25.47"
   },
   "devDependencies": {
     "@types/cors": "^2.8.18",

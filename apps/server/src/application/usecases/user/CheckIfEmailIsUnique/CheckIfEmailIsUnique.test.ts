@@ -59,7 +59,7 @@ describe("CheckIfEmailIsUnique.ts", () => {
       if (error instanceof AppException) {
         expect(error).toBeInstanceOf(AppException);
         expect(error.code).toBe(401);
-        expect(error.message).toBe("A user with that email already exists.");
+        expect(error.errors[0]).toBe("A user with that email already exists.");
       }
     }
   });

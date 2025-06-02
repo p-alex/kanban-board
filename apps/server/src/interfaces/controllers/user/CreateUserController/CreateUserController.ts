@@ -3,11 +3,9 @@ import {
   CreateUserResponseDto,
 } from "@kanban/dtos/UserDtoTypes";
 import CreateUserService from "../../../../application/services/user/CreateUserService/CreateUserService.js";
-import {
-  IHttpRequest,
-  IHttpResponse,
-} from "../../../adapter/ExpressAdapter.js";
+import {} from "../../../adapter/ExpressAdapter/ExpressAdapter.js";
 import { IController } from "../../index.js";
+import { IHttpRequest, IHttpResponse } from "../../../adapter/index.js";
 
 class CreateUserController implements IController {
   constructor(private readonly _createUserService: CreateUserService) {}

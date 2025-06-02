@@ -28,7 +28,7 @@ describe("MarkUserAsVerified.ts", () => {
       if (error instanceof AppException) {
         expect(error).toBeInstanceOf(AppException);
         expect(error.code).toBe(404);
-        expect(error.message).toBe(
+        expect(error.errors[0]).toBe(
           "Couldn't mark user as verified because it does not exist"
         );
       }
@@ -47,7 +47,7 @@ describe("MarkUserAsVerified.ts", () => {
       if (error instanceof AppException) {
         expect(error).toBeInstanceOf(AppException);
         expect(error.code).toBe(401);
-        expect(error.message).toBe("User is already verified");
+        expect(error.errors[0]).toBe("User is already verified");
       }
     }
   });

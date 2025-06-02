@@ -4,7 +4,7 @@ import VerifiyUserService from "../../../../application/services/user/VerifiyUse
 import {
   IHttpRequest,
   IHttpResponse,
-} from "../../../adapter/ExpressAdapter.js";
+} from "../../../adapter/ExpressAdapter/ExpressAdapter.js";
 import { VerifyUserRequestDto } from "@kanban/dtos/UserDtoTypes";
 
 describe("VerifyUserController.ts", () => {

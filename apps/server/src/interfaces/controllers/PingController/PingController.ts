@@ -1,4 +1,4 @@
-import { IHttpRequest, IHttpResponse } from "../../adapter/ExpressAdapter.js";
+import { IHttpRequest, IHttpResponse } from "../../adapter/index.js";
 
 class PingController {
   async ping(_: IHttpRequest): Promise<IHttpResponse<"pong">> {
