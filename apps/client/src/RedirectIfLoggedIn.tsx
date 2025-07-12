@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import useAuthContext from "./hooks/useAuthContext/useAuthContext.js";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface Props {
   children: React.ReactNode;
@@ -9,10 +9,11 @@ interface Props {
 function RedirectIfLoggedIn(props: Props) {
   const auth = useAuthContext();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (auth.isLoggedIn) {
-      navigate("/");
+      navigate(location.state.prevLocation || "/");
     }
   }, [auth]);
 
