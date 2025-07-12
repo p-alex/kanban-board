@@ -5,15 +5,14 @@ import FocusTrap from "../FocusTrap/FocusTrap";
 import { useRef } from "react";
 import { CryptoUtil } from "@kanban/utils";
 
-interface ChildrenProps {
+export interface ModalContentProps {
   firstFocusableElementClass: string;
   lastFocusableElementClass: string;
 }
 
 interface Props {
-  title: string;
   toggleOff: () => void;
-  content: (childrenProps: ChildrenProps) => React.ReactNode;
+  content: (contentProps: ModalContentProps) => React.ReactNode;
 }
 
 function Modal(props: Props) {
@@ -36,10 +35,10 @@ function Modal(props: Props) {
             exit={{ opacity: 0 }}
             transition={{ duration: config.animationDuration }}
             style={{ transform: "none" }}
-            className="fixed left-0 top-0 w-screen h-screen transform-none z-[20] flex items-center justify-center p-4"
+            className="fixed left-0 top-0 w-screen h-screen transform-none z-[20] flex items-center justify-center"
           >
             <div
-              className="absolute w-full h-full left-0 top-0 bg-black opacity-50"
+              className="absolute w-full h-full left-0 top-0 bg-black opacity-75"
               data-testid="modalBackdrop"
               onClick={props.toggleOff}
             ></div>
@@ -47,9 +46,6 @@ function Modal(props: Props) {
               style={{ maxHeight: "calc(100vh - 32px)" }}
               className="no-scrollbar relative w-full max-w-[480px] overflow-y-scroll text-black p-8 rounded-(--uiRadius) flex flex-col gap-6 bg-(--uiBgLightTheme) dark:bg-(--uiBgDarkTheme)"
             >
-              <h2 className="text-lg font-bold text-(--textLightTheme) dark:text-(--textDarkTheme)">
-                {props.title}
-              </h2>
               <div className="flex flex-col gap-6">
                 {props.content({
                   firstFocusableElementClass,

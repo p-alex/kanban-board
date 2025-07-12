@@ -4,7 +4,9 @@
   "description": "",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "vitest --coverage"
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "countLines": "scc ./src"
   },
   "exports": {
     ".": {
@@ -22,6 +24,7 @@
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
-    "crypto-js": "^4.2.0"
+    "crypto-js": "^4.2.0",
+    "jose": "^6.0.11"
   }
 }

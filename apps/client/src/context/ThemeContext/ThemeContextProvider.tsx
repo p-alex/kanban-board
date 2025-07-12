@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { LocalStorage } from "../../hooks/useLocalStorage/useLocalStorage.js";
-import ThemeContext from "./ThemeContext.js";
+import ThemeContext from "./Theme.context.js";
 
 interface Props {
   localStorage: LocalStorage;

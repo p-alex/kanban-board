@@ -1,8 +1,7 @@
+import useLogin from "../api/usecases/auth/LoginUsecase/useLogin";
 import CenterLayout from "../components/CenterLayout/CenterLayout";
 import Container from "../components/Container/Container";
 import LoginForm from "../components/Forms/LoginForm";
-import useLogin from "../hooks/api/auth/useLogin";
-import notificationCenter from "../utils/NotificationCenter";
 
 function LoginPage() {
   const login = useLogin();
@@ -10,10 +9,7 @@ function LoginPage() {
   return (
     <CenterLayout>
       <Container>
-        <LoginForm
-          displayNotification={notificationCenter.display}
-          submitFunc={login.mutateAsync}
-        />
+        <LoginForm submitFunc={login} />
       </Container>
     </CenterLayout>
   );

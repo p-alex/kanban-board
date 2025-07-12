@@ -1,8 +1,22 @@
-export interface IMiddlewareResponse {
-  success: boolean;
-  headers: Record<string, string>;
-  errorCode: number;
-  errors: string[];
+import { Request } from "express";
+import { IAuthenticatedUser } from "../../middleware/AuthShield/index.js";
+
+export type CustomRequest = Request & { user?: IAuthenticatedUser };
+
+export function httpRequestFactory(): IHttpRequest {
+  return {
+    body: {},
+    params: {},
+    query: {},
+    client_ip: "ip",
+    method: "get",
+    url: "/url",
+    cookies: {},
+    accessToken: "",
+    user: {
+      id: "id",
+    },
+  };
 }
 
 export interface IHttpRequest<TBody = any, TParams = any, TQuery = any> {
@@ -12,6 +26,27 @@ export interface IHttpRequest<TBody = any, TParams = any, TQuery = any> {
   client_ip: string;
   method: string;
   url: string;
+  cookies: { [key: string]: string };
+  accessToken: string;
+  user?: IAuthenticatedUser;
+}
+
+export interface ICookie {
+  name: string;
+  value: string;
+  httpOnly: boolean;
+  secure: boolean;
+  path?: string;
+  domain?: string;
+  sameSite: "strict" | "none" | "lax";
+  maxAgeInMs: number;
+}
+
+export interface IHandlerResponse<TResponseResult> {
+  response: IHttpResponse<TResponseResult>;
+  headers?: Record<string, string>;
+  cookies?: ICookie[];
+  authenticatedUser?: IAuthenticatedUser;
 }
 
 export interface IHttpResponse<TResult> {
@@ -20,3 +55,15 @@ export interface IHttpResponse<TResult> {
   result: TResult;
   errors: string[];
 }
+
+export function cookieParser(cookie?: string) {
+  if (!cookie) return {};
+
+  return cookie.split("; ").reduce((acc, curr) => {
+    const [key, value] = curr.split("=");
+    acc[key] = value;
+    return acc;
+  }, {} as { [key: string]: string });
+}
+
+export type CookieParser = typeof cookieParser;

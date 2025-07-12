@@ -56,4 +56,11 @@ describe("DateUtil.ts", () => {
     expect(dateUtil.isDateInThePast(pastDate)).toBe(true);
     expect(dateUtil.isDateInThePast(futureDate)).toBe(false);
   });
+
+  it("dateStringToMs should return correct timestamp", () => {
+    const dateStr = "2025-07-12T15:30:00.000Z";
+    const expectedTimestamp = new Date(dateStr).getTime();
+
+    expect(dateUtil.dateStringToMs(dateStr)).toBe(expectedTimestamp);
+  });
 });

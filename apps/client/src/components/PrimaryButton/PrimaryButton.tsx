@@ -18,7 +18,7 @@ function PrimaryButton({
       type="button"
       {...buttonProps}
       className={twMerge([
-        "p-2 block w-full text-center bg-(--primaryColor) text-white font-bold cursor-pointer text-sm transition-opacity hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed rounded-(--buttonRadius)",
+        "p-2 block w-full text-center bg-(--primary_color) text-white cursor-pointer text-sm transition-opacity hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed rounded-(--ui_radius)",
         className,
       ])}
       ref={ref}

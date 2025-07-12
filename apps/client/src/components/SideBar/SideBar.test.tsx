@@ -1,40 +1,29 @@
 import { render, screen } from "@testing-library/react";
 import SideBar from "./SideBar";
 import userEvent from "@testing-library/user-event";
-import { TestComponentWrapper } from "../../testComponentWrapper";
 
 describe("SideBar.tsx", () => {
-  it("click hide side bar button should call toggleSideBar", async () => {
-    const toggleSideBarMock = vi.fn();
+  it("should toggle side bar correclty", async () => {
+    const toggleMock = vi.fn();
 
-    render(
-      <TestComponentWrapper>
-        <SideBar toggleSideBar={toggleSideBarMock} />
-      </TestComponentWrapper>
-    );
+    render(<SideBar toggleSideBar={toggleMock} />);
 
-    const hideSideBarButton = screen.getByTestId("hideSideBarButton");
+    const toggle = screen.getByTestId("sidebar_toggle");
 
-    await userEvent.click(hideSideBarButton);
+    await userEvent.click(toggle);
 
-    expect(toggleSideBarMock).toHaveBeenCalled();
+    expect(toggleMock).toHaveBeenCalled();
   });
 
-  it("should display a modal when clicking on create new board button", async () => {
-    render(
-      <TestComponentWrapper>
-        <SideBar toggleSideBar={() => {}} />
-      </TestComponentWrapper>
-    );
+  it("should toggle create new board modal correctly", async () => {
+    render(<SideBar toggleSideBar={() => {}} />);
 
-    const createBoardButton = screen.getByRole("button", {
-      name: "+ Create new board",
-    });
+    const toggle = screen.getByTestId("createBoardModalToggle");
 
-    await userEvent.click(createBoardButton);
+    await userEvent.click(toggle);
 
-    const dialog = screen.getByRole("dialog");
+    const modal = screen.getByTestId("createBoardModal");
 
-    expect(dialog).toBeInTheDocument();
+    expect(modal).toBeInTheDocument();
   });
 });

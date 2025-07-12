@@ -1,16 +1,22 @@
 interface Props {
   name?: string;
+  actionBtns?: React.ReactNode;
   children: React.ReactNode;
 }
 
 function SideBarGroup(props: Props) {
   return (
     <div>
-      {props.name && (
-        <p className="text-(--textMutedLightTheme) dark-(--textMutedDarkTheme) text-xs font-bold tracking-[2.4px] px-8 mb-5 uppercase">
-          {props.name}
-        </p>
-      )}
+      <div className="flex justify-between items-center mb-2 px-4">
+        {props.name && (
+          <p className="text-(--text_muted_lt) dark:text-(--text_muted_dt) font-semibold capitalize">
+            {props.name}
+          </p>
+        )}
+        <div className="flex gap-2 items-center">
+          {props.actionBtns && props.actionBtns}
+        </div>
+      </div>
       {props.children}
     </div>
   );

@@ -21,7 +21,7 @@ function Item(props: Props) {
         {props.textField}
         <button
           type="button"
-          className="text-(--textMutedLightTheme) dark:text-(--textMutedDarkTheme)"
+          className="text-(--text_muted_lt) dark:text-(--text_muted_dt)"
           onClick={() => props.removeFunc(props.index)}
           aria-label={`delete column number ${props.index + 1}`}
         >

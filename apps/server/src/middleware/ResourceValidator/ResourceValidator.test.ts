@@ -1,82 +1,111 @@
-import { beforeEach, describe, expect, it, Mock, Mocked, vi } from "vitest";
-import { SafeParseReturnType, ZodSchema } from "zod";
-import {
-  IHttpRequest,
-  IMiddlewareResponse,
-} from "../../interfaces/adapter/index.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { z, ZodSchema } from "zod";
 import ResourceValidator from "./ResourceValidator.js";
+import HttpResponseFactory from "../../HttpResponseFactory/HttpResponseFactory.js";
+import {
+  httpRequestFactory,
+  IHttpRequest,
+} from "../../interfaces/adapter/index.js";
 
 describe("ResourceValidator.ts", () => {
-  let zodSchemaMock: ZodSchema;
-
-  let httpReqMock: IHttpRequest = {
-    body: { body: "body" },
-    params: { params: "params" },
-    query: { query: "query" },
-    client_ip: "ip",
-    method: "POST",
-    url: "/url",
-  };
-
+  let mockHttpReq: IHttpRequest;
+  let httpResponseFactory: HttpResponseFactory;
   let resourceValidator: ResourceValidator;
 
-  let safeParseResultMock: Mocked<SafeParseReturnType<any, any>>;
-
   beforeEach(() => {
-    safeParseResultMock = {
-      success: true,
-      error: {
-        flatten: vi.fn().mockReturnValue({
-          fieldErrors: { error1: ["error1"], error2: ["error2"] },
-        }),
-      },
-    } as unknown as Mocked<SafeParseReturnType<any, any>>;
+    mockHttpReq = httpRequestFactory();
+    mockHttpReq.body = { email: "test@example.com" };
+    mockHttpReq.params = { id: "123" };
+    mockHttpReq.query = { page: "1" };
 
-    zodSchemaMock = {
-      safeParse: vi.fn().mockReturnValue(safeParseResultMock),
-    } as unknown as Mocked<ZodSchema>;
+    httpResponseFactory = {
+      success: vi.fn().mockReturnValue({
+        code: 200,
+        errors: [],
+        result: null,
+        success: true,
+      }),
+      error: vi.fn().mockImplementation((code, errors) => ({
+        code,
+        errors,
+        result: null,
+        success: false,
+      })),
+    } as unknown as HttpResponseFactory;
 
-    resourceValidator = new ResourceValidator();
+    resourceValidator = new ResourceValidator(httpResponseFactory);
   });
 
-  it("should handle correct resource", async () => {
-    safeParseResultMock.success = true;
+  it("should call schema.safeParse with merged body, params, and query", async () => {
+    const schema = z.object({
+      email: z.string().email(),
+      id: z.string(),
+      page: z.string(),
+    });
 
-    const middleware = resourceValidator.validate(zodSchemaMock);
+    const safeParseSpy = vi.spyOn(schema, "safeParse");
 
-    const result = await middleware(httpReqMock);
+    const validateFn = resourceValidator.validate(schema);
+    await validateFn(mockHttpReq);
 
-    const successResponse: IMiddlewareResponse = {
-      success: true,
-      errorCode: 0,
-      headers: {},
+    expect(safeParseSpy).toHaveBeenCalledWith({
+      email: "test@example.com",
+      id: "123",
+      page: "1",
+    });
+  });
+
+  it("should set validated data on httpReq.body if validation succeeds", async () => {
+    const schema = z.object({
+      email: z.string().email(),
+      id: z.string(),
+      page: z.string(),
+    });
+
+    const validateFn = resourceValidator.validate(schema);
+    await validateFn(mockHttpReq);
+
+    expect(mockHttpReq.body).toEqual({
+      email: "test@example.com",
+      id: "123",
+      page: "1",
+    });
+  });
+
+  it("should return success response if validation succeeds", async () => {
+    const schema = z.object({
+      email: z.string().email(),
+      id: z.string(),
+      page: z.string(),
+    });
+
+    const validateFn = resourceValidator.validate(schema);
+    const result = await validateFn(mockHttpReq);
+
+    expect(result.response).toEqual({
+      code: 200,
       errors: [],
-    };
-
-    const data = {
-      body: "body",
-      params: "params",
-      query: "query",
-    };
-
-    expect(zodSchemaMock.safeParse).toHaveBeenCalledWith(data);
-    expect(result).toEqual(successResponse);
+      result: null,
+      success: true,
+    });
   });
 
-  it("should handle incorrect resource", async () => {
-    safeParseResultMock.success = false;
+  it("should return error response with validation errors if validation fails", async () => {
+    const schema = z.object({
+      email: z.string().email(),
+      id: z.number(), // Intentionally expect number
+    });
 
-    const middleware = resourceValidator.validate(zodSchemaMock);
+    const validateFn = resourceValidator.validate(schema);
+    const result = await validateFn(mockHttpReq);
 
-    const result = await middleware(httpReqMock);
-
-    const failedResponse: IMiddlewareResponse = {
+    expect(result.response).toEqual({
+      code: 400,
+      errors: expect.arrayContaining([
+        expect.stringContaining("Expected number"), // Zod error
+      ]),
+      result: null,
       success: false,
-      errorCode: 400,
-      headers: {},
-      errors: ["error1", "error2"],
-    };
-
-    expect(result).toEqual(failedResponse);
+    });
   });
 });

@@ -18,20 +18,12 @@ describe("SideBarButton.tsx", () => {
     expect(icon).toBeInTheDocument();
   });
 
-  it("should use default styles when button is not selected", () => {
-    render(<NavBarButton text="text" isSelected={false} />);
-
-    const button = screen.getByRole("button");
-
-    expect(button.classList).toContain("text-(--textMutedLightTheme)");
-  });
-
   it("should use default styles when button is selected", () => {
     render(<NavBarButton text="text" isSelected={true} />);
 
     const button = screen.getByRole("button");
 
     expect(button.classList).toContain("text-white");
-    expect(button.classList).toContain("bg-(--primaryColor)");
+    expect(button.classList).toContain("bg-(--primary_color)");
   });
 });

@@ -1,8 +1,9 @@
 import { DateUtil } from "@kanban/utils";
 import {
   IHttpRequest,
-  IMiddlewareResponse,
+  IHandlerResponse,
 } from "../../interfaces/adapter/index.js";
+import HttpResponseFactory from "../../HttpResponseFactory/HttpResponseFactory.js";
 
 interface RateLimitParams {
   windowMs: number;
@@ -21,13 +22,16 @@ class RateLimiter {
   private _limitedIps: Map<string, LimitedIp>;
   private _maxKeys: number;
 
-  constructor(private readonly _date: DateUtil) {
+  constructor(
+    private readonly _date: DateUtil,
+    private readonly _httpResponseFactory: HttpResponseFactory
+  ) {
     this._limitedIps = new Map<string, LimitedIp>();
     this._maxKeys = 100;
   }
 
   limit = (params: RateLimitParams) => {
-    return async (httpReq: IHttpRequest): Promise<IMiddlewareResponse> => {
+    return async (httpReq: IHttpRequest): Promise<IHandlerResponse<null>> => {
       const key = this._getKey(httpReq);
 
       const now = this._date.now();
@@ -57,10 +61,10 @@ class RateLimiter {
         now < limitedIp.expireTime
       ) {
         return Promise.resolve({
-          success: false,
+          response: this._httpResponseFactory.error(429, [
+            this._getTooManyRequestsErrorMessage(limitedIp),
+          ]),
           headers: this._getHeaders(limitedIp),
-          errorCode: 429,
-          errors: [this._getTooManyRequestsErrorMessage(limitedIp)],
         });
       }
 
@@ -72,10 +76,8 @@ class RateLimiter {
       this._limitedIps.set(key, limitedIp);
 
       return Promise.resolve({
-        success: true,
+        response: this._httpResponseFactory.success(200, null),
         headers: this._getHeaders(limitedIp),
-        errors: [],
-        errorCode: 0,
       });
     };
   };

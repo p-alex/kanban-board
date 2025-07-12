@@ -1,24 +1,24 @@
 import { VerifyUserRequestDto } from "@kanban/dtos/UserDtoTypes";
-import {} from "../../../adapter/ExpressAdapter/ExpressAdapter.js";
 import VerifiyUserService from "../../../../application/services/user/VerifiyUserService/VerifiyUserService.js";
-import { IController } from "../../index.js";
-import { IHttpRequest, IHttpResponse } from "../../../adapter/index.js";
+import { IHandler } from "../../index.js";
+import { IHandlerResponse, IHttpRequest } from "../../../adapter/index.js";
+import HttpResponseFactory from "../../../../HttpResponseFactory/HttpResponseFactory.js";
 
-class VerifyUserController implements IController {
-  constructor(private readonly _verifyUserService: VerifiyUserService) {}
+class VerifyUserController implements IHandler {
+  constructor(
+    private readonly _verifyUserService: VerifiyUserService,
+    private readonly _httpResponseFactory: HttpResponseFactory
+  ) {}
 
   handle = async (
     httpReq: IHttpRequest<VerifyUserRequestDto>
-  ): Promise<IHttpResponse<null>> => {
+  ): Promise<IHandlerResponse<null>> => {
     const verificationCode = httpReq.body.verification_code;
 
     await this._verifyUserService.execute(verificationCode);
 
     return {
-      code: 200,
-      result: null,
-      errors: [],
-      success: true,
+      response: this._httpResponseFactory.success(200, null),
     };
   };
 }

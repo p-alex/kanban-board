@@ -6,9 +6,11 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "dev": "tsx watch --include \"./src/**/*\" -r dotenv/config ./src/index.ts",
-    "test": "vitest --coverage",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "countLines": "scc ./src"
   },
   "keywords": [],
   "author": "",

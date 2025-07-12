@@ -1,12 +1,14 @@
 import { ZodSchema } from "zod";
 import {
+  IHandlerResponse,
   IHttpRequest,
-  IMiddlewareResponse,
 } from "../../interfaces/adapter/index.js";
+import HttpResponseFactory from "../../HttpResponseFactory/HttpResponseFactory.js";
 
 class ResourceValidator {
+  constructor(private readonly _httpResponseFactory: HttpResponseFactory) {}
   validate = (schema: ZodSchema) => {
-    return (httpReq: IHttpRequest): Promise<IMiddlewareResponse> => {
+    return (httpReq: IHttpRequest): Promise<IHandlerResponse<null>> => {
       const data = {
         ...httpReq.body,
         ...httpReq.params,
@@ -18,10 +20,7 @@ class ResourceValidator {
       if (validationResult.success) {
         httpReq.body = validationResult.data;
         return Promise.resolve({
-          success: true,
-          errorCode: 0,
-          headers: {},
-          errors: [],
+          response: this._httpResponseFactory.success(200, null),
         });
       }
 
@@ -36,10 +35,7 @@ class ResourceValidator {
       }
 
       return Promise.resolve({
-        success: false,
-        errorCode: 400,
-        headers: {},
-        errors: errors,
+        response: this._httpResponseFactory.error(400, errors),
       });
     };
   };

@@ -15,21 +15,24 @@ function TextFieldGroup({ label, input, error }: Props) {
       {label && (
         <label
           htmlFor={id.current}
-          className="font-bold text-xs capitalize text-(--textMutedLightTheme) dark:text-(--textDarkTheme)"
+          className="text-xs capitalize text-(--text_muted_lt) dark:text-(--text_muted_dt)"
         >
           {label}
         </label>
       )}
       <div
-        className={`py-2 px-4 rounded-(--uiRadius) border ${
+        className={`p-2 rounded-(--ui_radius) border text-sm ${
           error
             ? "border-red-500"
-            : "border-(--borderColorLightTheme) dark:border-(--borderColorDarkTheme)"
-        } text-(--textLightTheme) dark:text-(--textDarkTheme) w-full  flex items-center justify-between`}
+            : "border-(--ui_border_color_lt) dark:border-(--ui_border_color_dt)"
+        } text-(--text_lt) dark:text-(--text_dt) w-full  flex items-center justify-between bg-(--ui_bg_dt)/5 dark:bg-(--ui_bg_lt)/5`}
       >
         {cloneElement(input, { id: id.current })}
         {error && (
-          <p className="text-red-500 font-medium text-sm capitalize shrink-0">
+          <p
+            className="text-red-500 font-medium text-sm capitalize shrink-0"
+            data-testid={`textFieldError-${label}`}
+          >
             {error}
           </p>
         )}

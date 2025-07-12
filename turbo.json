@@ -5,11 +5,12 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "test": {},
+    "test:coverage": {},
     "dev": {
       "cache": false,
       "persistent": true
     },
-    "start": {}
+    "start": {},
+    "countLines": {}
   }
 }

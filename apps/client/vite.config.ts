@@ -11,8 +11,20 @@ export default defineConfig({
   test: {
     coverage: {
       provider: "v8", // Ensure V8 is used
-      include: ["src/components", "src/utils", "src/hooks", "src/context"],
-      exclude: ["**/index.ts", "**/*Container.tsx", "src/hooks/api"],
+      include: [
+        "src/components",
+        "src/utils",
+        "src/hooks",
+        "src/context",
+        "src/api",
+      ],
+      exclude: [
+        "**/index.ts",
+        "**/*Container.tsx",
+        "**/*.schema.ts",
+        "**/*.context.ts",
+        "src/api/domain",
+      ],
     },
 
     globals: true,

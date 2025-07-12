@@ -4,6 +4,11 @@ import useLocalStorage from "./hooks/useLocalStorage";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Route, Routes } from "react-router-dom";
 import { lazy } from "react";
+import AuthContextProvider from "./context/AuthContext/AuthContextProvider";
+import RedirectTo from "./RedirectToRoute";
+import RedirectIfLoggedIn from "./RedirectIfLoggedIn";
+import ProtectedRoute from "./ProtectedRoute";
+import RefreshSessionRouteWrapper from "./RefreshSessionRouteWrapper";
 
 const HomePage = lazy(() => import("./pages/Homepage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -16,14 +21,41 @@ function App() {
 
   return (
     <QueryClientProvider client={client}>
-      <ThemeContextProvider localStorage={localStorage}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-        </Routes>
-      </ThemeContextProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      <AuthContextProvider>
+        <ThemeContextProvider localStorage={localStorage}>
+          <RefreshSessionRouteWrapper>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <HomePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/login"
+                element={
+                  <RedirectIfLoggedIn>
+                    <LoginPage />
+                  </RedirectIfLoggedIn>
+                }
+              />
+              <Route
+                path="/register"
+                element={
+                  <RedirectIfLoggedIn>
+                    <RegisterPage />
+                  </RedirectIfLoggedIn>
+                }
+              />
+
+              <Route path="*" element={<RedirectTo to="/" />} />
+            </Routes>
+          </RefreshSessionRouteWrapper>
+        </ThemeContextProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </AuthContextProvider>
     </QueryClientProvider>
   );
 }

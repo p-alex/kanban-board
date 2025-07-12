@@ -18,3 +18,12 @@ create table
 		created_at timestamptz default CURRENT_TIMESTAMP,
 		expires_at timestamptz not null
 	);
+
+create table sessions (
+	id varchar(255) primary key,
+	user_id varchar(255) REFERENCES users (id) ON DELETE CASCADE,
+	token varchar(255) unique,
+	created_at timestamptz default CURRENT_TIMESTAMP,
+	last_accessed_at timestamptz not null,
+	expires_at timestamptz not null
+	)

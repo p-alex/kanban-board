@@ -1,23 +1,22 @@
 import { Router } from "express";
-import PingController from "../controllers/PingController/index.js";
 import expressAdapter from "../adapter/ExpressAdapter/index.js";
-import expressMiddlewareAdapter from "../adapter/ExpressMiddlewareAdapter/index.js";
 import rateLimiter from "../../middleware/RateLimiter/index.js";
 import { TimeConverter } from "@kanban/utils";
+import pingController from "../controllers/ping/PingController/index.js";
 
 const pingRouter = Router();
 
-const pingController = new PingController();
+const timeConverter = new TimeConverter();
 
 pingRouter.get(
-  "/",
-  expressMiddlewareAdapter.adapt(
+  "",
+  expressAdapter.adapt(
     rateLimiter.limit({
       maxRequests: 5,
-      windowMs: new TimeConverter().toMs(30, "second"),
+      windowMs: timeConverter.toMs(30, "second"),
     })
   ),
-  expressAdapter.adapt(pingController.ping)
+  expressAdapter.adapt(pingController.handle, true)
 );
 
 export default pingRouter;

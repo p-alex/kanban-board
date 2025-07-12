@@ -81,7 +81,7 @@ describe("UserRepository.ts", () => {
     const result = await userRepository.update(userFixture);
 
     expect(queryDBMock).toHaveBeenCalledWith(
-      "UPDATE users SET username = $1, encrypted_email = $2, hashed_email = $3, password = $4, is_verified=$5 WHERE users.id = $6 RETURNING *",
+      "UPDATE users SET username = $1, encrypted_email = $2, hashed_email = $3, password = $4, is_verified = $5 WHERE users.id = $6 RETURNING *",
       [
         userFixture.username,
         userFixture.encrypted_email,

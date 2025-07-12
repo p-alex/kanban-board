@@ -9,8 +9,8 @@ interface Props {
 function ItemList(props: Props) {
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-xs font-bold text-(--textMutedLightTheme) dark:text-(--textDarkTheme)">
-        Columns
+      <p className="text-xs text-(--text_muted_lt) dark:text-(--text_muted_dt)">
+        {props.title}
       </p>
       <div className="flex flex-col gap-4">
         <ul className="flex flex-col gap-2">

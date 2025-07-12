@@ -1,4 +1,3 @@
-import BigLogoContainer from "../../BigLogo/BigLogoContainer";
 import TextFieldGroup from "../../TextFieldGroup";
 import PrimaryButton from "../../PrimaryButton";
 import { useForm } from "react-hook-form";
@@ -6,46 +5,29 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   AccountVerificationFormData,
   accountVerificationFormData,
-} from "./EmailVerificationFormValidation";
-import NotificationCenter from "../../../utils/NotificationCenter/NotificationCenter";
+} from "./EmailVerificationForm.schema";
 import Form from "../../Form/Form";
-import { HttpError } from "../../../utils/HttpClient";
-import { VerifyAccount } from "../../../api/application/usecases/user/verifyAccount";
+import BigLogo from "../../BigLogo/BigLogo";
+import useVerifyUser from "../../../api/usecases/user/VerifyUserUsecase/useVerifyUser";
 
-interface Props {
-  displayNotification: NotificationCenter["display"];
-  submitFunc: VerifyAccount;
-  callback: () => void;
-}
+function EmailVerificationForm() {
+  const verifyUser = useVerifyUser();
 
-function EmailVerificationForm(props: Props) {
-  const { register, formState, reset, handleSubmit } = useForm({
+  const { register, formState, handleSubmit } = useForm({
     defaultValues: { verificationCode: "" },
     resolver: zodResolver(accountVerificationFormData),
   });
 
   const submit = async (data: AccountVerificationFormData) => {
-    try {
-      const result = await props.submitFunc(data);
-      if (result.success) {
-        props.displayNotification("Account verified! You can now login.");
-        reset();
-        props.callback();
-      }
-    } catch (error) {
-      console.log(error);
-      if (error instanceof HttpError) {
-        props.displayNotification(error.message);
-      }
-    }
+    await verifyUser(data.verificationCode);
   };
 
   return (
     <Form onSubmit={handleSubmit(submit)}>
       <div className="w-full text-center flex items-center flex-col gap-6 mb-6">
-        <BigLogoContainer />
+        <BigLogo />
       </div>
-      <p className="text-(--textLightTheme) dark:text-(--textDarkTheme)">
+      <p className="text-(--text_lt) dark:text-(--text_dt)">
         An email containing an account verification code has been sent. The code
         is valid for 15 minutes. Please check your inbox.
       </p>

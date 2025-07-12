@@ -8,7 +8,7 @@ interface Props {
 
 function SideBarThemeToggle(props: Props) {
   return (
-    <div className="p-3 flex items-center justify-center gap-6 bg-(--uiMutedBgLightTheme) dark:bg-(--uiMutedBgDarkTheme) rounded-md w-full text-(--textMutedLightTheme) dark:text-(--textMutedDarkTheme)">
+    <div className="p-3 flex items-center justify-center gap-6 bg-(--ui_muted_bg_lt) dark:bg-(--ui_muted_bg_dt) rounded-(--ui_radius) w-full text-(--text_muted_lt) dark:text-(--text_muted_dt)">
       <SunIcon />
       <Switch
         value={props.isDarkMode}

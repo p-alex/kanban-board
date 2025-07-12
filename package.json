@@ -14,7 +14,8 @@
     "cleanTurbo": "npx rimraf --glob apps/**/.turbo packages/**/.turbo",
     "cleanBuildInfo": "npx rimraf --glob apps/**/tsconfig.tsbuildinfo packages/**/tsconfig.tsbuildinfo",
     "cleanNodeModules": "npx rimarf --glob apps/**/node_modules && npx rimraf --glob packages/**/node_modules",
-    "clean": "npm run cleanDist && npm run cleanTurbo && npm run cleanBuildInfo"
+    "clean": "npm run cleanDist && npm run cleanTurbo && npm run cleanBuildInfo",
+    "countLines": "scc apps/client/src apps/server/src packages/dtos/src packages/utils/src packages/schemaValidations/src"
   },
   "packageManager": "npm@11.4.0",
   "keywords": [],

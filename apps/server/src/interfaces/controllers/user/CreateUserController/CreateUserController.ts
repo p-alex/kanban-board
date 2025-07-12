@@ -3,25 +3,25 @@ import {
   CreateUserResponseDto,
 } from "@kanban/dtos/UserDtoTypes";
 import CreateUserService from "../../../../application/services/user/CreateUserService/CreateUserService.js";
-import {} from "../../../adapter/ExpressAdapter/ExpressAdapter.js";
-import { IController } from "../../index.js";
-import { IHttpRequest, IHttpResponse } from "../../../adapter/index.js";
+import { IHandler } from "../../index.js";
+import { IHandlerResponse, IHttpRequest } from "../../../adapter/index.js";
+import HttpResponseFactory from "../../../../HttpResponseFactory/HttpResponseFactory.js";
 
-class CreateUserController implements IController {
-  constructor(private readonly _createUserService: CreateUserService) {}
+class CreateUserController implements IHandler {
+  constructor(
+    private readonly _createUserService: CreateUserService,
+    private readonly _httpResponseFactory: HttpResponseFactory
+  ) {}
 
   handle = async (
     httpReq: IHttpRequest<CreateUserRequestDto>
-  ): Promise<IHttpResponse<CreateUserResponseDto>> => {
+  ): Promise<IHandlerResponse<CreateUserResponseDto>> => {
     const userData = httpReq.body;
 
     const result = await this._createUserService.execute(userData);
 
     return {
-      code: 201,
-      success: true,
-      errors: [],
-      result,
+      response: this._httpResponseFactory.success(201, result),
     };
   };
 }

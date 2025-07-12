@@ -26,6 +26,10 @@ class DateUtil {
   isDateInThePast(date: string | number) {
     return Date.now() > new Date(date).getTime();
   }
+
+  dateStringToMs(date: string) {
+    return new Date(date).getTime();
+  }
 }
 
 export default DateUtil;

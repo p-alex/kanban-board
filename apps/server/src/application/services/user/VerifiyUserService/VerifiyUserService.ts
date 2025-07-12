@@ -12,17 +12,17 @@ class VerifiyUserService {
   ) {}
 
   execute = async (verificationCode: string) => {
-    return await this._transactionManager.run(async (query) => {
+    return await this._transactionManager.run(async (transactionQuery) => {
       const code = await this._checkVerificationCode.execute(
         verificationCode,
         "user_verification",
-        query
+        transactionQuery
       );
 
-      await this._markUserAsVerified.execute(code.user_id, query);
+      await this._markUserAsVerified.execute(code.user_id, transactionQuery);
 
       await this._verificationCodeRepository.deleteById(code.id, {
-        transactionQuery: query,
+        transactionQuery,
       });
     });
   };

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import ThemeContextProvider from "./ThemeContextProvider";
-import ThemeContext from "./ThemeContext";
+import ThemeContext from "./Theme.context";
 import userEvent from "@testing-library/user-event";
 import { LocalStorage } from "../../hooks/useLocalStorage/useLocalStorage";
 

@@ -68,7 +68,7 @@ class UserRepository {
     const queryFunc = this.getQueryFunction(options);
 
     const result = await queryFunc<IUser>(
-      "UPDATE users SET username = $1, encrypted_email = $2, hashed_email = $3, password = $4, is_verified=$5 WHERE users.id = $6 RETURNING *",
+      "UPDATE users SET username = $1, encrypted_email = $2, hashed_email = $3, password = $4, is_verified = $5 WHERE users.id = $6 RETURNING *",
       [
         user.username,
         user.encrypted_email,

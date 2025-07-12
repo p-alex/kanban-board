@@ -27,9 +27,7 @@ class CheckVerificationCodeUsecase {
       { transactionQuery }
     );
 
-    if (!verificationCode) {
-      throw new AppException(401, ["Invalid code"]);
-    }
+    if (!verificationCode) throw new AppException(401, ["Invalid code"]);
 
     if (verificationCode.type !== type)
       throw new AppException(401, ["Invalid code"]);

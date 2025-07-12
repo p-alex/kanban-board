@@ -1,57 +1,80 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import CreateUserService from "../../../../application/services/user/CreateUserService/CreateUserService.js";
+import HttpResponseFactory from "../../../../HttpResponseFactory/HttpResponseFactory.js";
 import CreateUserController from "./CreateUserController.js";
 import {
+  httpRequestFactory,
+  IHandlerResponse,
   IHttpRequest,
   IHttpResponse,
-} from "../../../adapter/ExpressAdapter/ExpressAdapter.js";
+} from "../../../adapter/index.js";
 import {
   CreateUserRequestDto,
   CreateUserResponseDto,
 } from "@kanban/dtos/UserDtoTypes";
-import { userFixture } from "../../../../__fixtures__/user/index.js";
 
 describe("CreateUserController.ts", () => {
-  let createUserServiceMock: Mocked<CreateUserService>;
-
+  let mockHttpReq: IHttpRequest<CreateUserRequestDto>;
+  let createUserService: CreateUserService;
+  let httpResponseFactory: HttpResponseFactory;
   let createUserController: CreateUserController;
 
-  const userData = {
-    username: "username",
-    email: "email",
-    password: "password",
-  };
-
-  const mockHttpReq: IHttpRequest<CreateUserRequestDto> = {
-    body: userData,
-    params: {},
-    query: {},
-  };
-
-  const mockHttpRes: IHttpResponse<CreateUserResponseDto> = {
-    code: 201,
-    success: true,
-    errors: [],
-    result: {
-      userDto: { id: "id", username: "username" },
+  const createUserServiceResponse: CreateUserResponseDto = {
+    userDto: {
+      id: "user-id",
+      username: "newuser",
     },
   };
 
   beforeEach(() => {
-    createUserServiceMock = {
-      execute: vi.fn().mockResolvedValue({
-        userDto: { id: "id", username: "username" },
-      }),
-    } as unknown as Mocked<CreateUserService>;
+    mockHttpReq = httpRequestFactory();
+    mockHttpReq.body = {
+      username: "newuser",
+      email: "newuser@example.com",
+      password: "strongpassword",
+    };
 
-    createUserController = new CreateUserController(createUserServiceMock);
+    createUserService = {
+      execute: vi.fn().mockResolvedValue(createUserServiceResponse),
+    } as unknown as CreateUserService;
+
+    const mockHttpResponse: IHttpResponse<CreateUserResponseDto> = {
+      code: 201,
+      errors: [],
+      result: createUserServiceResponse,
+      success: true,
+    };
+
+    httpResponseFactory = {
+      success: vi.fn().mockReturnValue(mockHttpResponse),
+    } as unknown as HttpResponseFactory;
+
+    createUserController = new CreateUserController(
+      createUserService,
+      httpResponseFactory
+    );
   });
 
-  it("should handle user creation", async () => {
+  it("should call createUserService with correct arguments", async () => {
+    await createUserController.handle(mockHttpReq);
+
+    expect(createUserService.execute).toHaveBeenCalledWith(mockHttpReq.body);
+  });
+
+  it("should return the correct response", async () => {
     const result = await createUserController.handle(mockHttpReq);
 
-    expect(createUserServiceMock.execute).toHaveBeenCalledWith(userData);
+    const handlerResponse: IHandlerResponse<CreateUserResponseDto> = {
+      response: {
+        code: 201,
+        errors: [],
+        result: {
+          userDto: { id: "user-id", username: "newuser" },
+        },
+        success: true,
+      },
+    };
 
-    expect(result).toEqual(mockHttpRes);
+    expect(result).toEqual(handlerResponse);
   });
 });

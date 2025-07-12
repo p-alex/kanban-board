@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "countLines": "scc ./src"
   },
   "exports": {
     "./ServerResponseDto": {
@@ -28,6 +29,14 @@
     "./VerificationCodeDtoTypes": {
       "import": "./dist/verificationCode/types/index.js",
       "types": "./dist/verificationCode/types/index.d.ts"
+    },
+    "./AuthDtos": {
+      "import": "./dist/auth/schemas/index.js",
+      "types": "./dist/auth/schemas/index.d.ts"
+    },
+    "./AuthDtoTypes": {
+      "import": "./dist/auth/types/index.js",
+      "types": "./dist/auth/types/index.d.ts"
     }
   },
   "keywords": [],

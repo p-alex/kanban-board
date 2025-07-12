@@ -1,15 +1,12 @@
-interface Props {
-  showDarkThemeVersion: boolean;
-}
-
-function BigLogo(props: Props) {
+function BigLogo() {
   return (
     <>
-      {props.showDarkThemeVersion ? (
-        <img src="./logos/logo-light.svg" width={153} height={26} alt="" />
-      ) : (
-        <img src="./logos/logo-dark.svg" width={153} height={26} alt="" />
-      )}
+      <p
+        className="text-2xl font-bold text-black dark:text-white"
+        data-testid="logo"
+      >
+        Boardly
+      </p>
     </>
   );
 }

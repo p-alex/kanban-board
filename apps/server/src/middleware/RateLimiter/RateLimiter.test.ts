@@ -1,28 +1,15 @@
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  Mocked,
-  vi,
-} from "vitest";
-import {
+  IHandlerResponse,
   IHttpRequest,
-  IMiddlewareResponse,
+  IHttpResponse,
 } from "../../interfaces/adapter/index.js";
 import RateLimiter from "./RateLimiter.js";
 import { DateUtil } from "@kanban/utils";
+import httpResponseFactory from "../../HttpResponseFactory/index.js";
 
 describe("RateLimiter.ts", () => {
-  let httpReqMock: IHttpRequest = {
-    body: {},
-    client_ip: "ip",
-    method: "POST",
-    params: {},
-    query: {},
-    url: "/url",
-  };
+  let httpReqMock: IHttpRequest;
 
   let dateUtilMock: Mocked<DateUtil>;
 
@@ -38,13 +25,16 @@ describe("RateLimiter.ts", () => {
       params: {},
       query: {},
       url: "/url",
+      accessToken: "",
+      cookies: {},
+      user: undefined,
     };
 
     dateUtilMock = {
       now: vi.fn().mockReturnValue(now),
     } as unknown as Mocked<DateUtil>;
 
-    rateLimiter = new RateLimiter(dateUtilMock);
+    rateLimiter = new RateLimiter(dateUtilMock, httpResponseFactory);
   });
 
   it("should handle a set number of keys max", async () => {
@@ -75,15 +65,19 @@ describe("RateLimiter.ts", () => {
 
     const result = await middleware(httpReqMock);
 
-    const responseMock: IMiddlewareResponse = {
-      success: false,
+    const responseMock: IHandlerResponse<null> = {
+      response: {
+        code: 429,
+        errors: ["Too many requests. Try again in 33 seconds."],
+        result: null,
+        success: false,
+      },
+
       headers: {
         "X-RateLimit-Limit": "2",
         "X-RateLimit-Remaining": "0",
         "X-RateLimit-Reset": "33",
       },
-      errorCode: 429,
-      errors: ["Too many requests. Try again in 33 seconds."],
     };
 
     expect(result).toEqual(responseMock);
@@ -94,30 +88,36 @@ describe("RateLimiter.ts", () => {
 
     await middleware(httpReqMock);
 
-    const notAllowedResponseMock: IMiddlewareResponse = {
-      success: false,
+    const notAllowedResponseMock: IHandlerResponse<null> = {
+      response: {
+        result: null,
+        success: false,
+        code: 429,
+        errors: ["Too many requests. Try again in 3 seconds."],
+      },
       headers: {
         "X-RateLimit-Limit": "1",
         "X-RateLimit-Remaining": "0",
         "X-RateLimit-Reset": "3",
       },
-      errorCode: 429,
-      errors: ["Too many requests. Try again in 3 seconds."],
     };
 
     const notAllowedRes = await middleware(httpReqMock);
 
     expect(notAllowedRes).toEqual(notAllowedResponseMock);
 
-    const allowedResponseMock: IMiddlewareResponse = {
-      success: true,
+    const allowedResponseMock: IHandlerResponse<null> = {
+      response: {
+        code: 200,
+        success: true,
+        errors: [],
+        result: null,
+      },
       headers: {
         "X-RateLimit-Limit": "1",
         "X-RateLimit-Remaining": "0",
         "X-RateLimit-Reset": "3",
       },
-      errorCode: 0,
-      errors: [],
     };
 
     dateUtilMock.now.mockReturnValue(now + 4000);

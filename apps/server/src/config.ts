@@ -4,6 +4,7 @@ dotenv.config();
 const envConfig = {
   NODE_ENV: process.env.NODE_ENV,
   PORT: process.env.PORT || 5000,
+  SERVER_DOMAIN: process.env.SERVER_DOMAIN!,
   CLIENT_BASE_URL: process.env.CLIENT_BASE_URL!,
   DATABASE_CONFIG: {
     USER: process.env.DATABASE_CONFIG_USER!,
@@ -24,6 +25,11 @@ const envConfig = {
   HASH_SECRET: {
     VERIFICATION_CODE: process.env.HASH_SECRET_VERIFICATION_CODE!,
     EMAIL: process.env.HASH_SECRET_EMAIL!,
+    SESSION: process.env.HASH_SECRET_SESSION!,
+  },
+  JWT_SECRET: {
+    REFRESH_TOKEN: process.env.JWT_SECRET_REFRESH_TOKEN!,
+    ACCESS_TOKEN: process.env.JWT_SECRET_ACCESS_TOKEN!,
   },
   SALT_ROUNDS: {
     PASSWORD: parseInt(process.env.PASSWORD_SALT_ROUNDS!),

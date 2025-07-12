@@ -1,66 +1,57 @@
 import { render, screen } from "@testing-library/react";
 import LoggedInLayout from "./LoggedInLayout";
+import useLocalStorage from "../../hooks/useLocalStorage/useLocalStorage.js";
+import { Mock } from "vitest";
 import userEvent from "@testing-library/user-event";
-import { LocalStorage } from "../../hooks/useLocalStorage/useLocalStorage";
-import { TestComponentWrapper } from "../../testComponentWrapper";
+
+vi.mock("../../hooks/useLocalStorage/useLocalStorage.js");
 
 describe("LoggedInLayout.tsx", () => {
-  let localStorageMock: LocalStorage;
+  let getMock: Mock;
+  let setMock: Mock;
 
   beforeEach(() => {
-    localStorageMock = {
-      get: vi.fn().mockReturnValue(false),
-      set: vi.fn(),
-    } as unknown as LocalStorage;
+    getMock = vi.fn();
+    setMock = vi.fn();
+
+    (useLocalStorage as Mock).mockReturnValue({
+      get: getMock,
+      set: setMock,
+    });
   });
 
   it("should display children", () => {
-    render(
-      <TestComponentWrapper>
-        <LoggedInLayout localStorage={localStorageMock}>hello</LoggedInLayout>
-      </TestComponentWrapper>
-    );
-
-    const text = screen.getByText("hello");
-
-    expect(text).toBeInTheDocument();
+    render(<LoggedInLayout>hello</LoggedInLayout>);
+    expect(screen.getByText("hello")).toBeInTheDocument();
   });
 
-  it("should show sidebar by default if no isSideBarOpen key in localstorage", () => {
-    localStorageMock.get = vi.fn().mockReturnValue(null);
-
-    render(
-      <TestComponentWrapper>
-        <LoggedInLayout localStorage={localStorageMock}>hello</LoggedInLayout>
-      </TestComponentWrapper>
-    );
-
-    expect(screen.getByRole("navigation")).toBeInTheDocument();
+  it("should not display side bar if isSideBarVisible is set to false in localStorage", () => {
+    getMock.mockReturnValue(false);
+    render(<LoggedInLayout></LoggedInLayout>);
+    expect(screen.queryByTestId("sidebar")).not.toBeInTheDocument();
   });
 
-  it("should show sidebar or not according to the isSideBarOpen key in localstorage if set", () => {
-    window.localStorage.setItem("isSideBarOpen", "false");
-
-    render(
-      <TestComponentWrapper>
-        <LoggedInLayout localStorage={localStorageMock}>hello</LoggedInLayout>
-      </TestComponentWrapper>
-    );
-
-    expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
+  it("should display side bar if isSideBarVisible is set to true in localStorage", () => {
+    getMock.mockReturnValue(true);
+    render(<LoggedInLayout></LoggedInLayout>);
+    expect(screen.queryByTestId("sidebar")).toBeInTheDocument();
   });
 
-  it("toggling side bar should call toggleSideBar function", async () => {
-    window.localStorage.setItem("isSideBarOpen", "false");
+  it("should toggle side bar", async () => {
+    getMock.mockReturnValue(false);
+    render(<LoggedInLayout></LoggedInLayout>);
+    expect(screen.queryByTestId("sidebar")).not.toBeInTheDocument();
+    const sidebarToggle = screen.getByTestId("sideBarToggle");
+    await userEvent.click(sidebarToggle);
+    expect(screen.queryByTestId("sidebar")).toBeInTheDocument();
+  });
 
-    render(
-      <TestComponentWrapper>
-        <LoggedInLayout localStorage={localStorageMock}>hello</LoggedInLayout>
-      </TestComponentWrapper>
-    );
-
-    const showSideBarToggle = screen.getByTestId("showSideBarButton");
-
-    await userEvent.click(showSideBarToggle);
+  it("should set isSideBarOpen value in localstorage every time the side bar is toggled", async () => {
+    getMock.mockReturnValue(false);
+    render(<LoggedInLayout></LoggedInLayout>);
+    const sidebarToggle = screen.getByTestId("sideBarToggle");
+    await userEvent.click(sidebarToggle);
+    expect(setMock).toHaveBeenCalledWith("isSideBarOpen", true);
+    await userEvent.click(sidebarToggle);
   });
 });

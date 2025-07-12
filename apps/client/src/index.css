@@ -18,10 +18,14 @@ html {
 
 body {
   min-height: 100vh;
-  font-family: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont,
+  font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
     sans-serif;
-  @apply bg-(--siteBgLightTheme) dark:bg-(--siteBgDarkTheme) text-(--textLightTheme) dark:text-(--textDarkTheme);
+  /* background-image: url("./images/lastofus.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat; */
+  @apply bg-(--site_bg_lt) dark:bg-(--site_bg_dt) text-(--text_lt) dark:text-(--text_dt);
 }
 
 button {
@@ -35,46 +39,45 @@ input {
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* Light Theme */
-  --siteBgLightTheme: #f4f7fd;
+  --primary_color: #3478f6;
+  /* site */
+  --site_bg_lt: #f1f1f1;
+  --site_bg_dt: #111111;
 
-  --textLightTheme: #000;
-  --textMutedLightTheme: #828fa3;
+  /* text colors */
+  --text_lt: #111;
+  --text_dt: #f1f1f1;
+  --text_muted_lt: #444;
+  --text_muted_dt: #ccc;
 
-  --uiBgLightTheme: #fff;
-  --uiMutedBgLightTheme: #f4f7fd;
+  /* ui */
+  --ui_bg_lt: #ffffff;
+  --ui_bg_dt: #1d2125;
+  --ui_muted_bg_lt: #f1f1f1;
+  --ui_muted_bg_dt: #292f34;
+  --ui_border_color_lt: #11111120;
+  --ui_border_color_dt: #ffffff10;
+  --ui_radius: 4px;
 
-  --borderColorLightTheme: #e4ebfa;
+  /* buttons */
+  --button_normal_bg_lt: #11111115;
+  --button_normal_bg_dt: #ffffff10;
 
-  --sideBarButtonHoverBgLightTheme: #635fc720;
+  --button_normal_hover_bg_lt: #11111125;
+  --button_normal_hover_bg_dt: #ffffff20;
 
-  --buttonBgLightTheme: var(--veryFadedPrimaryColor);
-  --buttonHoverBgLightTheme: var(--fadedPrimaryColor);
-  --buttonTextLightTheme: var(--primaryColor);
+  --button_normal_text_lt: #111111;
+  --button_normal_text_dt: #ffffff;
 
-  /* Dark Theme */
-  --siteBgDarkTheme: #20212c;
+  --button_normal_selected_bg_lt: #11111130;
+  --button_normal_selected_bg_dt: #ffffff30;
 
-  --textDarkTheme: #fff;
-  --textMutedDarkTheme: #828fa3;
+  /* logged in navigation bar */
+  --nav_height: 56px;
 
-  --uiBgDarkTheme: #2b2c37;
-  --uiMutedBgDarkTheme: #20212c;
-
-  --borderColorDarkTheme: #3e3f4e;
-
-  --sideBarButtonHoverBgDarkTheme: #ffffff;
-
-  --buttonBgDarkTheme: #fff;
-  --buttonHoverBgDarkTheme: #fff;
-  --buttonTextDarkTheme: var(--primaryColor);
-
-  /* Colors */
-  --primaryColor: #635fc7;
-  --fadedPrimaryColor: #635fc725;
-  --veryFadedPrimaryColor: #635fc710;
-
-  /* Border Radius */
-  --uiRadius: 4px;
-  --buttonRadius: 4px;
+  /* side bar */
+  --sideBar_button_hover_bg_lt: #ffffff10;
+  --sideBar_button_hover_bg_dt: #ffffff20;
+  --sideBar_height: calc(100dvh - 56px);
+  --sideBar_width: 300px;
 }

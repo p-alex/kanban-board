@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "start": "vite preview",
-    "test": "vitest --coverage"
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "countLines": "scc ./src"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
@@ -17,7 +19,7 @@
     "@kanban/utils": "*",
     "@tanstack/react-query": "^5.75.7",
     "@tanstack/react-query-devtools": "^5.75.7",
-    "framer-motion": "^12.5.0",
+    "framer-motion": "^12.23.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.1",
