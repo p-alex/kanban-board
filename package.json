@@ -13,9 +13,10 @@
     "cleanDist": "npx rimraf --glob apps/**/dist packages/**/dist",
     "cleanTurbo": "npx rimraf --glob apps/**/.turbo packages/**/.turbo",
     "cleanBuildInfo": "npx rimraf --glob apps/**/tsconfig.tsbuildinfo packages/**/tsconfig.tsbuildinfo",
-    "cleanNodeModules": "npx rimarf --glob apps/**/node_modules && npx rimraf --glob packages/**/node_modules",
+    "cleanNodeModules": "npx rimraf --glob apps/**/node_modules && npx rimraf --glob packages/**/node_modules",
     "clean": "npm run cleanDist && npm run cleanTurbo && npm run cleanBuildInfo",
-    "countLines": "scc apps/client/src apps/server/src packages/dtos/src packages/utils/src packages/schemaValidations/src"
+    "countLinesTotal": "scc apps/client/src apps/server/src packages/dtos/src packages/utils/src packages/schemaValidations/src",
+    "countLinesExcludeTests": "scc apps/client/src apps/server/src packages/dtos/src packages/utils/src packages/schemaValidations/src --not-match test.tsx --not-match test.ts"
   },
   "packageManager": "npm@11.4.0",
   "keywords": [],
