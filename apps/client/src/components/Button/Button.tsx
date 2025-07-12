@@ -12,7 +12,7 @@ function Button({ icon, children, className, ref, ...buttonProps }: Props) {
       type="button"
       {...buttonProps}
       className={twMerge([
-        "p-2 block w-full text-center bg-(--button_normal_bg_lt) dark:bg-(--button_normal_bg_dt) hover:bg-(--button_normal_hover_bg_lt) hover:dark:bg-(--button_normal_hover_bg_dt) text-(--button_normal_text_lt) dark:text-(--button_normal_text_dt) font-regular cursor-pointer text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-(--ui_radius)",
+        "p-2 block w-full text-center bg-(--button_normal_bg_lt) dark:bg-(--button_normal_bg_dt) hover:bg-(--button_normal_hover_bg_lt) hover:dark:bg-(--button_normal_hover_bg_dt) text-(--button_normal_text_lt) dark:text-(--button_normal_text_dt) font-regular cursor-pointer text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-(--ui_radius) font-semibold",
         className,
       ])}
       ref={ref}
