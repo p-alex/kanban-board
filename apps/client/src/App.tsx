@@ -5,10 +5,10 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Route, Routes } from "react-router-dom";
 import { lazy } from "react";
 import AuthContextProvider from "./context/AuthContext/AuthContextProvider";
-import RedirectTo from "./RedirectToRoute";
-import RedirectIfLoggedIn from "./RedirectIfLoggedIn";
-import ProtectedRoute from "./ProtectedRoute";
-import RefreshSessionRouteWrapper from "./RefreshSessionRouteWrapper";
+import RefreshSessionRouteWrapper from "./routerComponents/RefreshSessionRouteWrapper";
+import ProtectedRoute from "./routerComponents/ProtectedRoute";
+import RedirectIfLoggedIn from "./routerComponents/RedirectIfLoggedIn";
+import RedirectTo from "./routerComponents/RedirectToRoute";
 
 const HomePage = lazy(() => import("./pages/Homepage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));

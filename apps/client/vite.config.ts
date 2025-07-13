@@ -17,6 +17,7 @@ export default defineConfig({
         "src/hooks",
         "src/context",
         "src/api",
+        "src/routerComponents",
       ],
       exclude: [
         "**/index.ts",

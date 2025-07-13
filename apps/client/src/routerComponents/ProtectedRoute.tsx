@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useAuthContext from "./hooks/useAuthContext/useAuthContext";
+import useAuthContext from "../hooks/useAuthContext/useAuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface Props {
