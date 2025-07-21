@@ -59,7 +59,7 @@ class BestHttpInstance {
 
     const modifiedResult = await this._responseInterceptorManager.runAll<TData>(
       result,
-      readyConfig
+      modifiedConfig
     );
 
     if (!modifiedResult.success) {
