@@ -1,98 +1,89 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, act } from "@testing-library/react";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import useAuthContext from "../../../../hooks/useAuthContext/useAuthContext.js";
 import usePrivateHttp from "../../../../hooks/usePrivateHttp/usePrivateHttp.js";
-import notificationCenter from "../../../../utils/NotificationCenter/index.js";
-import { Mock } from "vitest";
-import logoutUsecase from "./index.js";
-import useLogout from "./useLogout.js";
+import { renderHook } from "@testing-library/react";
+import useLogout, {
+  LOGOUT_ERROR_MESSAGE,
+  LOGOUT_SUCCESS_MESSAGE,
+} from "./useLogout.js";
+import { useMutation } from "@tanstack/react-query";
 
+vi.mock("@tanstack/react-query");
 vi.mock("../../../../hooks/useAuthContext/useAuthContext.js");
 vi.mock("../../../../hooks/usePrivateHttp/usePrivateHttp.js");
-vi.mock("../../../../utils/NotificationCenter/index.js");
-vi.mock(".", async () => ({
-  default: {
-    execute: vi.fn(),
-  },
-}));
 
-const ERROR_MESSAGE = "Logout failed. Please try again later.";
+describe("useLogout.ts", () => {
+  let notify: Mock;
+  let handleResetAuth: Mock;
 
-describe("useLogout", () => {
-  const mockHandleResetAuth = vi.fn();
-  const mockNotify = vi.fn();
-  const mockSend = vi.fn();
+  const authUserId = "userid";
+  const mutationKey = "logout-" + authUserId;
+
+  let sendFn: Mock;
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    notify = vi.fn();
+    sendFn = vi.fn();
+
+    handleResetAuth = vi.fn();
+
+    (useMutation as Mock).mockImplementation(({ mutationFn }) => ({
+      mutateAsync: vi.fn().mockImplementation(() => mutationFn()),
+    }));
+
+    (usePrivateHttp as Mock).mockReturnValue({
+      send: sendFn,
+    });
 
     (useAuthContext as Mock).mockReturnValue({
-      handleResetAuth: mockHandleResetAuth,
+      user: { id: authUserId },
+      handleResetAuth,
     });
-    (usePrivateHttp as Mock).mockReturnValue({
-      send: mockSend,
-    });
-    (notificationCenter.display as Mock).mockImplementation(mockNotify);
   });
 
-  it("should call handleResetAuth and notify success on successful logout", async () => {
-    (logoutUsecase.execute as Mock).mockResolvedValue({ success: true });
-
+  it("should call useMutation with the arguments", async () => {
     const { result } = renderHook(() => useLogout());
-
-    await act(async () => {
-      await result.current();
-    });
-
-    expect(logoutUsecase.execute).toHaveBeenCalledWith(mockSend);
-    expect(mockHandleResetAuth).toHaveBeenCalled();
-    expect(mockNotify).toHaveBeenCalledWith("Logged out successfully!");
+    await result.current();
+    expect(useMutation).toHaveBeenCalled();
+    const calledOptions = (useMutation as Mock).mock.calls[0][0];
+    expect(calledOptions.mutationKey).toEqual([mutationKey]);
+    expect(typeof calledOptions.mutationFn).toBe("function");
   });
 
-  it("should notify error message if logoutReq returns success: false", async () => {
-    (logoutUsecase.execute as Mock).mockResolvedValue({ success: false });
-
+  it("should call sendFn with the correct arguments", async () => {
     const { result } = renderHook(() => useLogout());
-
-    await act(async () => {
-      await result.current();
-    });
-
-    expect(mockHandleResetAuth).not.toHaveBeenCalled();
-    expect(mockNotify).toHaveBeenCalledWith(ERROR_MESSAGE);
+    await result.current();
+    expect(sendFn).toHaveBeenCalledWith("/auth/logout", { method: "post" });
   });
 
-  it("should notify error message if logoutReq throws an error", async () => {
-    (logoutUsecase.execute as Mock).mockRejectedValue(
-      new Error("Network Error")
-    );
-
-    const { result } = renderHook(() => useLogout());
-
-    await act(async () => {
-      await result.current();
-    });
-
-    expect(mockHandleResetAuth).not.toHaveBeenCalled();
-    expect(mockNotify).toHaveBeenCalledWith(ERROR_MESSAGE);
+  it("should reset auth and notify user if request is successfull", async () => {
+    sendFn.mockResolvedValue({ success: true });
+    const { result } = renderHook(() => useLogout({ notify }));
+    await result.current();
+    expect(handleResetAuth).toHaveBeenCalled();
+    expect(notify).toHaveBeenCalledWith(LOGOUT_SUCCESS_MESSAGE);
   });
 
-  it("should use custom logoutReq and notify if provided", async () => {
-    const customLogoutReq = vi.fn().mockResolvedValue({ success: true });
-    const customNotify = vi.fn();
+  it("should not reset auth and notify user if request is unsuccessfull", async () => {
+    sendFn.mockResolvedValue({ success: false });
+    const { result } = renderHook(() => useLogout({ notify }));
+    await result.current();
+    expect(handleResetAuth).not.toHaveBeenCalled();
+    expect(notify).not.toHaveBeenCalled();
+  });
 
-    const { result } = renderHook(() =>
-      useLogout({
-        logoutReq: customLogoutReq,
-        notify: customNotify,
-      })
-    );
-
-    await act(async () => {
-      await result.current();
+  it("should notify the user with the correct message if the request threw an error", async () => {
+    sendFn.mockImplementation(() => {
+      throw new Error("error");
     });
 
-    expect(customLogoutReq).toHaveBeenCalledWith(mockSend);
-    expect(customNotify).toHaveBeenCalledWith("Logged out successfully!");
+    const { result } = renderHook(() => useLogout({ notify }));
+
+    try {
+      await result.current();
+    } catch (error) {
+      expect(handleResetAuth).not.toHaveBeenCalled();
+      expect(notify).toHaveBeenCalledWith(LOGOUT_ERROR_MESSAGE);
+    }
   });
 });
