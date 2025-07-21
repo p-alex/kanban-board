@@ -34,6 +34,14 @@ function App() {
                 }
               />
               <Route
+                path="/boards/:id/:title"
+                element={
+                  <ProtectedRoute>
+                    <p>boards</p>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/login"
                 element={
                   <RedirectIfLoggedIn>

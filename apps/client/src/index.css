@@ -57,7 +57,7 @@ input {
   --ui_muted_bg_dt: #292f34;
   --ui_border_color_lt: #11111120;
   --ui_border_color_dt: #ffffff10;
-  --ui_radius: 4px;
+  --ui_radius: 2px;
 
   /* buttons */
   --button_normal_bg_lt: #11111115;

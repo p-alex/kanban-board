@@ -37,6 +37,14 @@
     "./AuthDtoTypes": {
       "import": "./dist/auth/types/index.js",
       "types": "./dist/auth/types/index.d.ts"
+    },
+    "./BoardDtos": {
+      "import": "./dist/board/schemas/index.js",
+      "types": "./dist/board/schemas/index.d.ts"
+    },
+    "./BoardDtoTypes": {
+      "import": "./dist/board/types/index.js",
+      "types": "./dist/board/types/index.d.ts"
     }
   },
   "keywords": [],

@@ -15,13 +15,14 @@ function usePrivateHttp({
 
   const refreshSession = useRefreshSession();
 
-  useEffect(() => {
+  const applyInterceptors = () => {
     const requestInterceptor = http.addRequestInterceptor(
       "accessToken interceptor",
       (config) => {
         if (!config.headers.Authorization) {
           config.headers.Authorization = "Bearer " + auth.accessToken;
         }
+        config.withCredentials = true;
         return config;
       }
     );
@@ -43,11 +44,16 @@ function usePrivateHttp({
       }
     );
 
+    return { requestInterceptor, responseInterceptor };
+  };
+
+  useEffect(() => {
+    const { requestInterceptor, responseInterceptor } = applyInterceptors();
     return () => {
       requestInterceptor.eject();
       responseInterceptor.eject();
     };
-  }, [auth]);
+  }, [auth, applyInterceptors]);
 
   return http;
 }

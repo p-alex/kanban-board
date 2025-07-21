@@ -9,6 +9,22 @@
     "countLines": "scc ./src"
   },
   "exports": {
+    "./CryptoUtil": {
+      "import": "./dist/CryptoUtil.js",
+      "types": "./dist/CryptoUtil.d.ts"
+    },
+    "./DateUtil": {
+      "import": "./dist/DateUtil.js",
+      "types": "./dist/DateUtil.d.ts"
+    },
+    "./JwtUtil": {
+      "import": "./dist/JwtUtil.js",
+      "types": "./dist/JwtUtil.d.ts"
+    },
+    "./TimeConverter": {
+      "import": "./dist/TimeConverter.js",
+      "types": "./dist/TimeConverter.d.ts"
+    },
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
