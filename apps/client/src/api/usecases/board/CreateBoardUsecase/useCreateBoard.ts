@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import useAuthContext from "../../../../hooks/useAuthContext/useAuthContext";
 import NotificationCenter from "../../../../utils/NotificationCenter/NotificationCenter";
 import usePrivateHttp from "../../../../hooks/usePrivateHttp/usePrivateHttp";

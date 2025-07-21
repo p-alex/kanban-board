@@ -12,7 +12,6 @@ describe("BoardColumnFactory.ts", () => {
     title: "title",
     board_id: "board_id",
     index: 9,
-    user_id: "user_id",
   };
 
   beforeEach(() => {
@@ -43,7 +42,6 @@ describe("BoardColumnFactory.ts", () => {
       id: "uuid",
       board_id: boardColumnData.board_id,
       title: boardColumnData.title,
-      user_id: boardColumnData.user_id,
       index: boardColumnData.index,
       created_at: "currentUTC",
     };
