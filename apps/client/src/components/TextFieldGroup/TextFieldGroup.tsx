@@ -21,7 +21,7 @@ function TextFieldGroup({ label, input, error }: Props) {
         </label>
       )}
       <div
-        className={`p-2 rounded-(--ui_radius) border text-sm ${
+        className={`has-focus-within:outline-(--primary_color) has-focus-within:outline-2 p-2 rounded-(--ui_radius) border text-sm ${
           error
             ? "border-red-500"
             : "border-(--ui_border_color_lt) dark:border-(--ui_border_color_dt)"
