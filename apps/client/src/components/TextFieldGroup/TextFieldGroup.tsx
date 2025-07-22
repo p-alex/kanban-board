@@ -28,15 +28,15 @@ function TextFieldGroup({ label, input, error }: Props) {
         } text-(--text_lt) dark:text-(--text_dt) w-full  flex items-center justify-between bg-(--ui_bg_dt)/5 dark:bg-(--ui_bg_lt)/5`}
       >
         {cloneElement(input, { id: id.current })}
-        {error && (
-          <p
-            className="text-red-500 font-medium text-sm capitalize shrink-0"
-            data-testid={`textFieldError-${label}`}
-          >
-            {error}
-          </p>
-        )}
       </div>
+      {error && (
+        <p
+          className="text-red-500 font-medium text-sm capitalize shrink-0"
+          data-testid={`textFieldError-${label}`}
+        >
+          {error}
+        </p>
+      )}
     </div>
   );
 }
