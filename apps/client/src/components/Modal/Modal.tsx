@@ -44,7 +44,7 @@ function Modal(props: Props) {
             ></div>
             <div
               style={{ maxHeight: "calc(100vh - 32px)" }}
-              className="no-scrollbar relative w-full max-w-[480px] overflow-y-scroll text-black p-8 rounded-(--uiRadius) flex flex-col gap-6 bg-(--uiBgLightTheme) dark:bg-(--uiBgDarkTheme)"
+              className="no-scrollbar relative w-full max-w-[480px] overflow-y-scroll p-4 text-black rounded-(--uiRadius) flex flex-col gap-6 bg-(--uiBgLightTheme) dark:bg-(--uiBgDarkTheme)"
             >
               <div className="flex flex-col gap-6">
                 {props.content({
