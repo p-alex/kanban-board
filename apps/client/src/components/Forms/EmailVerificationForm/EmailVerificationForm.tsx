@@ -34,7 +34,13 @@ function EmailVerificationForm() {
       <div className="flex flex-col gap-4">
         <TextFieldGroup
           label="Verification code"
-          input={<input type="text" {...register("verificationCode")} />}
+          input={
+            <input
+              type="text"
+              {...register("verificationCode")}
+              autoComplete="one-time-code"
+            />
+          }
           error={
             formState.errors?.verificationCode &&
             formState.errors.verificationCode.message

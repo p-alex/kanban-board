@@ -50,22 +50,37 @@ function RegisterForm(props: Props) {
           error={
             formState.errors?.username && formState.errors.username.message
           }
+          autoComplete="username"
         />
         <TextFieldGroup
           label="Email"
-          input={<input type="text" {...register("email")} />}
+          input={
+            <input type="text" {...register("email")} autoComplete="email" />
+          }
           error={formState.errors?.email && formState.errors.email.message}
         />
         <TextFieldGroup
           label="Password"
-          input={<input type="password" {...register("password")} />}
+          input={
+            <input
+              type="password"
+              {...register("password")}
+              autoComplete="new-password"
+            />
+          }
           error={
             formState.errors?.password && formState.errors.password.message
           }
         />
         <TextFieldGroup
           label="Confirm Password"
-          input={<input type="password" {...register("confirmPassword")} />}
+          input={
+            <input
+              type="password"
+              {...register("confirmPassword")}
+              autoComplete="new-password"
+            />
+          }
           error={
             formState.errors?.confirmPassword &&
             formState.errors.confirmPassword.message

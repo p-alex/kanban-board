@@ -36,12 +36,20 @@ function LoginForm(props: Props) {
       <div className="flex flex-col gap-4">
         <TextFieldGroup
           label="Email"
-          input={<input type="text" {...register("email")} />}
+          input={
+            <input type="text" {...register("email")} autoComplete="email" />
+          }
           error={errors?.email && errors.email.message}
         />
         <TextFieldGroup
           label="Password"
-          input={<input type="password" {...register("password")} />}
+          input={
+            <input
+              type="password"
+              {...register("password")}
+              autoComplete="current-password"
+            />
+          }
           error={errors?.password && errors.password.message}
         />
         <div className="flex justify-end">
