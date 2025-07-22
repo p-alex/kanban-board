@@ -1,7 +1,8 @@
 import { IUser } from "../../api/domain/IUser";
 import BigLogo from "../BigLogo/BigLogo";
 import Button from "../Button/Button";
-import CreateBoardModal from "../Modals/CreateBoardModal/CreateBoardModal";
+import CreateBoardForm from "../Forms/CreateBoardForm/CreateBoardForm";
+import Modal from "../Modal/Modal";
 import PrimaryButton from "../PrimaryButton";
 import VisibilityProvider from "../VisibilityProvider";
 
@@ -24,7 +25,12 @@ function Navbar(props: Props) {
             </PrimaryButton>
           )}
           content={(visibilityContentProps) => (
-            <CreateBoardModal visibilityContentProps={visibilityContentProps} />
+            <Modal
+              content={(modalProps) => (
+                <CreateBoardForm modalProps={modalProps} />
+              )}
+              toggleOff={visibilityContentProps.toggleVisibility}
+            />
           )}
           options={{ shouldTrapFocus: true }}
         />
