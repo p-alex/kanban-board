@@ -13,25 +13,16 @@ function TextFieldGroup({ label, input, error }: Props) {
   return (
     <div className="flex flex-col gap-2 w-full">
       {label && (
-        <label
-          htmlFor={id.current}
-          className="text-xs capitalize text-(--text_muted_lt) dark:text-(--text_muted_dt)"
-        >
+        <label htmlFor={id.current} className="label">
           {label}
         </label>
       )}
-      <div
-        className={`has-focus-within:outline-(--primary_color) has-focus-within:outline-2 p-2 rounded-(--ui_radius) border text-sm ${
-          error
-            ? "border-red-500"
-            : "border-(--ui_border_color_lt) dark:border-(--ui_border_color_dt)"
-        } text-(--text_lt) dark:text-(--text_dt) w-full  flex items-center justify-between bg-(--ui_bg_dt)/5 dark:bg-(--ui_bg_lt)/5`}
-      >
+      <div className={`field ${error ? "fieldError" : ""} `}>
         {cloneElement(input, { id: id.current })}
       </div>
       {error && (
         <p
-          className="text-red-500 font-medium text-sm capitalize shrink-0"
+          className="fieldErrorMessage"
           data-testid={`textFieldError-${label}`}
         >
           {error}

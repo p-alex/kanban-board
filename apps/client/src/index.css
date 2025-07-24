@@ -35,6 +35,22 @@ input {
   @apply outline-0 w-full;
 }
 
+.field {
+  @apply text-(--text_lt) dark:text-(--text_dt) w-full  flex items-center justify-between bg-(--ui_bg_dt)/5 dark:bg-(--ui_bg_lt)/5 border-(--ui_border_color_lt) dark:border-(--ui_border_color_dt) has-focus-within:outline-(--primary_color) has-focus-within:outline-2 p-2 rounded-(--ui_radius) border text-sm;
+}
+
+.fieldError {
+  @apply border-red-500;
+}
+
+.label {
+  @apply text-xs capitalize text-(--text_muted_lt) dark:text-(--text_muted_dt);
+}
+
+.fieldErrorMessage {
+  @apply text-red-500 font-medium text-sm capitalize shrink-0;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {

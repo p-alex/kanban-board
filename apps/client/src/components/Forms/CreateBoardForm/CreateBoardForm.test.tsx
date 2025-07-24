@@ -26,16 +26,12 @@ describe("CreateBoardForm.tsx", () => {
 
     const submitBtn = screen.getByRole("button", { name: "Create board" });
 
-    const statusInput = screen.getByLabelText("status");
-
-    await userEvent.type(statusInput, "sad");
-
     await userEvent.click(submitBtn);
 
     expect(createBoard).not.toHaveBeenCalled();
   });
 
-  it("should  call create board function if form is submitted with valid data", async () => {
+  it("should call create board function if form is submitted with valid data", async () => {
     render(<CreateBoardForm modalProps={{} as any} />);
 
     const titleInput = await screen.findByLabelText("title");

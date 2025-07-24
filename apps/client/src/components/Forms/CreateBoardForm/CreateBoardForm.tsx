@@ -9,6 +9,7 @@ import useCreateBoard from "../../../api/usecases/board/CreateBoardUsecase/useCr
 import { ModalContentProps } from "../../Modal/Modal";
 import Form from "../../Form/Form";
 import Container from "../../Container/Container";
+import SelectField from "../../SelectField/SelectField";
 
 interface Props {
   modalProps: ModalContentProps;
@@ -28,10 +29,16 @@ function CreateBoardForm(props: Props) {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setValue,
   } = useForm({
     defaultValues,
     resolver: zodResolver(boardDtos.createBoardRequestDto),
   });
+
+  const selectFieldValues: boardDtoTypes.CreateBoardRequestDto["status"][] = [
+    "private",
+    "public",
+  ];
 
   return (
     <Container>
@@ -42,10 +49,10 @@ function CreateBoardForm(props: Props) {
           input={<input {...register("title")} />}
           error={errors.title?.message}
         />
-        <TextFieldGroup
+        <SelectField
           label="status"
-          input={<input {...register("status")} />}
-          error={errors.status?.message}
+          values={selectFieldValues}
+          onChange={(value) => setValue("status", value)}
         />
         <PrimaryButton
           type="submit"
