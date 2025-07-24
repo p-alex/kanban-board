@@ -35,16 +35,16 @@ function Modal(props: Props) {
             exit={{ opacity: 0 }}
             transition={{ duration: config.animationDuration }}
             style={{ transform: "none" }}
-            className="fixed left-0 top-0 w-screen h-screen transform-none z-[20] flex items-center justify-center"
+            className="no-scrollbar fixed left-0 top-0 w-screen h-screen transform-none overflow-y-scroll z-[20] flex items-center justify-center"
           >
             <div
-              className="absolute w-full h-full left-0 top-0 bg-black opacity-75"
+              className="fixed w-full h-full left-0 top-0 bg-black opacity-75"
               data-testid="modalBackdrop"
               onClick={props.toggleOff}
             ></div>
             <div
               style={{ maxHeight: "calc(100vh - 32px)" }}
-              className="no-scrollbar relative w-full max-w-[480px] overflow-y-scroll p-4 text-black rounded-(--uiRadius) flex flex-col gap-6 bg-(--uiBgLightTheme) dark:bg-(--uiBgDarkTheme)"
+              className="relative w-full max-w-[480px] p-4 text-black rounded-(--uiRadius) flex flex-col gap-6 bg-(--uiBgLightTheme) dark:bg-(--uiBgDarkTheme)"
             >
               <div className="flex flex-col gap-6">
                 {props.content({
