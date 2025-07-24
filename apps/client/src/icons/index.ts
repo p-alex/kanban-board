@@ -9,6 +9,8 @@ import CrossIcon from "./CrossIcon";
 import PlusIcon from "./PlusIcon";
 import ChevronLeft from "./ChevronLeft";
 import ChevronRight from "./ChevronRight";
+import ChevronUp from "./ChevronUp";
+import ChevronDown from "./ChevronDown";
 
 export {
   BoardIcon,
@@ -20,4 +22,6 @@ export {
   PlusIcon,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
 };
