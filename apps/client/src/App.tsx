@@ -10,7 +10,7 @@ import ProtectedRoute from "./routerComponents/ProtectedRoute";
 import RedirectIfLoggedIn from "./routerComponents/RedirectIfLoggedIn";
 import RedirectTo from "./routerComponents/RedirectToRoute";
 
-const HomePage = lazy(() => import("./pages/Homepage"));
+const BoardsPage = lazy(() => import("./pages/BoardsPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 
@@ -26,10 +26,10 @@ function App() {
           <RefreshSessionRouteWrapper>
             <Routes>
               <Route
-                path="/"
+                path="/boards"
                 element={
                   <ProtectedRoute>
-                    <HomePage />
+                    <BoardsPage />
                   </ProtectedRoute>
                 }
               />
@@ -58,7 +58,7 @@ function App() {
                 }
               />
 
-              <Route path="*" element={<RedirectTo to="/" />} />
+              <Route path="*" element={<RedirectTo to="/boards" />} />
             </Routes>
           </RefreshSessionRouteWrapper>
         </ThemeContextProvider>

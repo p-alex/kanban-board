@@ -3,20 +3,29 @@ import Navbar from "./Navbar";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Mock } from "vitest";
+
+const client = new QueryClient();
+
+function Component({ logout }: { logout: Mock }) {
+  return (
+    <QueryClientProvider client={client}>
+      <MemoryRouter>
+        <Navbar user={{ id: "id", username: "username" }} logout={logout} />
+      </MemoryRouter>
+    </QueryClientProvider>
+  );
+}
 
 describe("Navbar.tsx", () => {
   it("should display the logo", () => {
-    render(
-      <Navbar user={{ id: "id", username: "username" }} logout={() => {}} />
-    );
+    render(<Component logout={vi.fn()} />);
 
     expect(screen.getByTestId("logo")).toBeInTheDocument();
   });
 
   it("should display correct welcome message", () => {
-    render(
-      <Navbar user={{ id: "id", username: "username" }} logout={() => {}} />
-    );
+    render(<Component logout={vi.fn()} />);
 
     expect(screen.getByText("Welcome, username!")).toBeInTheDocument();
   });
@@ -24,9 +33,7 @@ describe("Navbar.tsx", () => {
   it("should call logout function if logout button is pressed", async () => {
     const logoutFn = vi.fn();
 
-    render(
-      <Navbar user={{ id: "id", username: "username" }} logout={logoutFn} />
-    );
+    render(<Component logout={logoutFn} />);
 
     const logoutButton = screen.getByRole("button", { name: /logout/i });
 
@@ -36,13 +43,7 @@ describe("Navbar.tsx", () => {
   });
 
   it("pressing create board button should toggle a modal", async () => {
-    render(
-      <QueryClientProvider client={new QueryClient()}>
-        <MemoryRouter>
-          <Navbar user={{ id: "id", username: "username" }} logout={() => {}} />
-        </MemoryRouter>
-      </QueryClientProvider>
-    );
+    render(<Component logout={vi.fn()} />);
 
     const createButton = screen.getByRole("button", { name: /create board/i });
 

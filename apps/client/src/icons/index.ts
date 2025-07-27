@@ -11,6 +11,7 @@ import ChevronLeft from "./ChevronLeft";
 import ChevronRight from "./ChevronRight";
 import ChevronUp from "./ChevronUp";
 import ChevronDown from "./ChevronDown";
+import LockIcon from "./LockIcon";
 
 export {
   BoardIcon,
@@ -24,4 +25,5 @@ export {
   ChevronRight,
   ChevronUp,
   ChevronDown,
+  LockIcon,
 };
