@@ -1,14 +1,13 @@
-import { Link } from "react-router-dom";
 import IBoard from "../../api/domain/IBoard.js";
 import BoardCard from "../BoardCard/BoardCard.js";
-import generateSlug from "../../utils/generateSlug.js";
 import BoardCardSkeleton from "../BoardCard/BoardCardSkeleton.js";
 
 interface Props {
   boards: IBoard[];
-  isLoading: boolean;
-  noItemsMessage: string;
+  isLoading?: boolean;
 }
+
+export const SKELETON_CARD_TEST_ID = "skeleton_card_item";
 
 function BoardCardGrid(props: Props) {
   return (
@@ -16,22 +15,21 @@ function BoardCardGrid(props: Props) {
       {!props.isLoading &&
         props.boards.map((board) => (
           <li key={board.id}>
-            <Link
-              to={"/boards/" + board.title + "/" + generateSlug(board.title)}
-            >
-              <BoardCard board={board} />
-            </Link>
+            <BoardCard board={board} />
           </li>
         ))}
 
       {!props.isLoading && props.boards.length === 0 && (
-        <p>{props.noItemsMessage}</p>
+        <p>You have no boards.</p>
       )}
 
       {props.isLoading &&
         new Array(12).fill(0).map((_, index) => {
           return (
-            <li data-testid={"skeleton_item"} key={"skeleton_item" + index}>
+            <li
+              data-testid={SKELETON_CARD_TEST_ID}
+              key={"skeleton_item" + index}
+            >
               <BoardCardSkeleton key={index + "-board-card-skeleton"} />
             </li>
           );

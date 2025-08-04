@@ -9,9 +9,11 @@ describe("dtoToBoard.ts", () => {
 
     const expectedResult: IBoard = {
       id: boardDtoMock.id,
+      user_id: boardDtoMock.user_id,
       title: boardDtoMock.title,
       status: boardDtoMock.status,
       isFavorite: boardDtoMock.is_favorite,
+      createdAt: boardDtoMock.created_at,
       lastAccessedAt: boardDtoMock.last_accessed_at,
     };
 

@@ -13,8 +13,10 @@ export const boardDtoMock: BoardDto = {
 
 export const boardMock: IBoard = {
   id: "id",
+  user_id: "user_id",
   title: "title",
   status: "public",
   isFavorite: false,
-  lastAccessedAt: "lastAccessedAt",
+  createdAt: "created_at",
+  lastAccessedAt: "last_accessed_at",
 };

@@ -39,8 +39,14 @@ class BoardRepository {
     const queryFunc = this.getQueryFunction(options);
 
     const result = await queryFunc<IBoard>(
-      "UPDATE boards SET title = $1, status = $2, is_favorite = $3 WHERE id = $4 RETURNING *",
-      [updatedBoard.id]
+      "UPDATE boards SET title = $1, status = $2, is_favorite = $3 WHERE id = $4 AND user_id = $5 RETURNING *",
+      [
+        updatedBoard.title,
+        updatedBoard.status,
+        `${updatedBoard.is_favorite}`,
+        updatedBoard.id,
+        updatedBoard.user_id,
+      ]
     );
 
     return result[0];

@@ -7,6 +7,7 @@ import expressAdapter from "../adapter/ExpressAdapter/index.js";
 import createBoardController from "../controllers/board/CreateBoardController/index.js";
 import authShield from "../../middleware/AuthShield/index.js";
 import getBoardsController from "../controllers/board/GetBoardsController/index.js";
+import updateBoardController from "../controllers/board/UpdateBoardController/index.js";
 
 const boardRouter = Router();
 
@@ -36,6 +37,20 @@ boardRouter.post(
     resourceValidator.validate(boardDtos.createBoardRequestDto)
   ),
   expressAdapter.adapt(createBoardController.handle, true)
+);
+
+boardRouter.put(
+  "/",
+  expressAdapter.adapt(
+    rateLimiter.limit({
+      maxRequests: 5,
+      windowMs: timeConverter.toMs(1, "second"),
+    })
+  ),
+  expressAdapter.adapt(
+    resourceValidator.validate(boardDtos.updateBoardRequestDto)
+  ),
+  expressAdapter.adapt(updateBoardController.handle, true)
 );
 
 export default boardRouter;

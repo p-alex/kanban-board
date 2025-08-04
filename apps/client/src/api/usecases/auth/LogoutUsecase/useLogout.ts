@@ -3,24 +3,25 @@ import useAuthContext from "../../../../hooks/useAuthContext/useAuthContext";
 import usePrivateHttp from "../../../../hooks/usePrivateHttp/usePrivateHttp";
 import notificationCenter from "../../../../utils/NotificationCenter";
 import NotificationCenter from "../../../../utils/NotificationCenter/NotificationCenter";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface UseLogoutProps {
   notify: NotificationCenter["display"];
 }
 
-export const LOGOUT_SUCCESS_MESSAGE = "Logged out successfully!";
+export const LOGOUT_MUTATION_KEY = "logout";
 
 export const LOGOUT_ERROR_MESSAGE = "Logout failed. Please try again later.";
 
 function useLogout({
   notify = notificationCenter.display,
 }: Partial<UseLogoutProps> = {}) {
+  const queryClient = useQueryClient();
   const auth = useAuthContext();
   const http = usePrivateHttp();
 
   const mutation = useMutation({
-    mutationKey: ["logout-" + auth.user.id],
+    mutationKey: [LOGOUT_MUTATION_KEY],
     mutationFn: () =>
       http.send<ServerResponseDto<null>, undefined>("/auth/logout", {
         method: "post",
@@ -33,7 +34,7 @@ function useLogout({
 
       if (success) {
         auth.handleResetAuth();
-        notify(LOGOUT_SUCCESS_MESSAGE);
+        queryClient.removeQueries();
       }
     } catch (error) {
       notify(LOGOUT_ERROR_MESSAGE);

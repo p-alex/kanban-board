@@ -7,6 +7,8 @@ function dtoToBoard(boardDto: BoardDto): IBoard {
     title: boardDto.title,
     status: boardDto.status,
     isFavorite: boardDto.is_favorite,
+    user_id: boardDto.user_id,
+    createdAt: boardDto.created_at,
     lastAccessedAt: boardDto.last_accessed_at,
   };
 }

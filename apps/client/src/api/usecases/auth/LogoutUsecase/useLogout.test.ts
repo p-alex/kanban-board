@@ -4,7 +4,7 @@ import usePrivateHttp from "../../../../hooks/usePrivateHttp/usePrivateHttp.js";
 import { renderHook } from "@testing-library/react";
 import useLogout, {
   LOGOUT_ERROR_MESSAGE,
-  LOGOUT_SUCCESS_MESSAGE,
+  LOGOUT_MUTATION_KEY,
 } from "./useLogout.js";
 import { useMutation } from "@tanstack/react-query";
 
@@ -17,7 +17,6 @@ describe("useLogout.ts", () => {
   let handleResetAuth: Mock;
 
   const authUserId = "userid";
-  const mutationKey = "logout-" + authUserId;
 
   let sendFn: Mock;
 
@@ -46,7 +45,7 @@ describe("useLogout.ts", () => {
     await result.current();
     expect(useMutation).toHaveBeenCalled();
     const calledOptions = (useMutation as Mock).mock.calls[0][0];
-    expect(calledOptions.mutationKey).toEqual([mutationKey]);
+    expect(calledOptions.mutationKey).toEqual([LOGOUT_MUTATION_KEY]);
     expect(typeof calledOptions.mutationFn).toBe("function");
   });
 
@@ -56,12 +55,11 @@ describe("useLogout.ts", () => {
     expect(sendFn).toHaveBeenCalledWith("/auth/logout", { method: "post" });
   });
 
-  it("should reset auth and notify user if request is successfull", async () => {
+  it("should reset auth if request is successfull", async () => {
     sendFn.mockResolvedValue({ success: true });
     const { result } = renderHook(() => useLogout({ notify }));
     await result.current();
     expect(handleResetAuth).toHaveBeenCalled();
-    expect(notify).toHaveBeenCalledWith(LOGOUT_SUCCESS_MESSAGE);
   });
 
   it("should not reset auth and notify user if request is unsuccessfull", async () => {

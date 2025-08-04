@@ -62,8 +62,14 @@ describe("BoardRepository.ts", () => {
       await boardRepository.update(mockBoard, { transactionQuery: undefined });
 
       expect(queryDb).toHaveBeenCalledWith(
-        "UPDATE boards SET title = $1, status = $2, is_favorite = $3 WHERE id = $4 RETURNING *",
-        [mockBoard.id]
+        "UPDATE boards SET title = $1, status = $2, is_favorite = $3 WHERE id = $4 AND user_id = $5 RETURNING *",
+        [
+          mockBoard.title,
+          mockBoard.status,
+          `${mockBoard.is_favorite}`,
+          mockBoard.id,
+          mockBoard.user_id,
+        ]
       );
     });
 

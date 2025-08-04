@@ -31,7 +31,7 @@ describe("useLogin", () => {
 
   const userData = { email: "test@example.com", password: "password123" };
 
-  it("should call handleSetAuth and notify success when login is successful", async () => {
+  it("should call handleSetAuth when login is successful", async () => {
     const authData = {
       user: { id: 1, name: "Test User" },
       accessToken: "token123",
@@ -51,7 +51,6 @@ describe("useLogin", () => {
       authData.user,
       authData.accessToken
     );
-    expect(mockNotify).toHaveBeenCalledWith("Logged in successfully!");
   });
 
   it("should notify error message from result.error when login fails", async () => {
@@ -103,6 +102,5 @@ describe("useLogin", () => {
     });
 
     expect(customLogin.execute).toHaveBeenCalledWith(userData);
-    expect(customNotify).toHaveBeenCalledWith("Logged in successfully!");
   });
 });

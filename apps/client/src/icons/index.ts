@@ -12,6 +12,8 @@ import ChevronRight from "./ChevronRight";
 import ChevronUp from "./ChevronUp";
 import ChevronDown from "./ChevronDown";
 import LockIcon from "./LockIcon";
+import StarIconOutline from "./StarIconOutline";
+import StarIconFill from "./StarIconFill";
 
 export {
   BoardIcon,
@@ -26,4 +28,6 @@ export {
   ChevronUp,
   ChevronDown,
   LockIcon,
+  StarIconOutline,
+  StarIconFill,
 };

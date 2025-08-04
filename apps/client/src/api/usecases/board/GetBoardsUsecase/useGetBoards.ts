@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import useAuthContext from "../../../../hooks/useAuthContext/useAuthContext";
 import usePrivateHttp from "../../../../hooks/usePrivateHttp/usePrivateHttp";
 import { ServerResponseDto } from "@kanban/dtos/ServerResponseDto";
 import { GetBoardsResponseDto } from "@kanban/dtos/BoardDtoTypes";
@@ -8,6 +7,7 @@ import dtoToBoard, { DtoToBoard } from "../../../dtoTransformers/dtoToBoard";
 import NotificationCenter from "../../../../utils/NotificationCenter/NotificationCenter";
 import notificationCenter from "../../../../utils/NotificationCenter";
 import { DateUtil } from "@kanban/utils";
+import { useState } from "react";
 
 interface Props {
   notify: NotificationCenter["display"];
@@ -15,54 +15,64 @@ interface Props {
   toBoard: DtoToBoard;
 }
 
+export const GET_BOARDS_QUERY_KEY = "get_boards";
+
 function useGetBoards({
   notify = notificationCenter.display,
-  date = new DateUtil(),
   toBoard = dtoToBoard,
 }: Partial<Props> = {}) {
-  const auth = useAuthContext();
+  const [boards, setBoards] = useState<IBoard[]>([]);
+  const [favoriteBoards, setFavoriteBoards] = useState<IBoard[]>([]);
+
   const http = usePrivateHttp();
 
-  const query = useQuery({
-    queryKey: ["get_boards_" + auth.user.id],
-    queryFn: async () =>
-      http.send<ServerResponseDto<GetBoardsResponseDto>, undefined>("/boards", {
-        method: "get",
-      }),
-    enabled: false,
-    retry: false,
-  });
-
-  const sortBoards = (boards: IBoard[]) => {
-    return boards.sort(
-      (a, b) =>
-        date.dateStringToMs(b.lastAccessedAt) -
-        date.dateStringToMs(a.lastAccessedAt)
-    );
-  };
-
   const getBoards = async (): Promise<IBoard[]> => {
+    let allBoards: IBoard[] = [];
+
     try {
-      const { data } = await query.refetch();
+      const result = await http.send<
+        ServerResponseDto<GetBoardsResponseDto>,
+        undefined
+      >("/boards", {
+        method: "get",
+      });
 
-      if (!data) throw new Error();
-
-      if (data.success && data.data) {
-        const boards = data.data.result.boardDtos.map((boardDto) =>
+      if (result.success && result.data) {
+        const boards = result.data.result.boardDtos.map((boardDto) =>
           toBoard(boardDto)
         );
 
-        return sortBoards(boards);
+        setBoards(boards);
+
+        const favoriteBoards = boards.filter(
+          (board) => board.isFavorite !== false
+        );
+
+        setFavoriteBoards(favoriteBoards);
+
+        allBoards = [...boards];
       }
 
-      return [];
+      return allBoards;
     } catch (error) {
+      console.log(error);
       notify("Failed to fetch boards.");
-      return [];
+      return allBoards;
     }
   };
 
-  return { getBoards, isLoading: query.isLoading };
+  const { isLoading, isRefetching } = useQuery({
+    queryKey: [GET_BOARDS_QUERY_KEY],
+    queryFn: () => getBoards(),
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    boards,
+    favoriteBoards,
+    initialIsLoading: isLoading && !isRefetching,
+  };
 }
 
 export default useGetBoards;

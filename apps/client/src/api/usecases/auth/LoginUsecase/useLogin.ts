@@ -22,7 +22,6 @@ function useLogin({
 
     if (result.authData) {
       auth.handleSetAuth(result.authData.user, result.authData.accessToken);
-      notify("Logged in successfully!");
       return { success: true };
     }
 
