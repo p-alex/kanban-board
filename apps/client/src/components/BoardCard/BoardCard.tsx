@@ -21,6 +21,11 @@ function BoardCard({ board }: Props) {
   return (
     <div className="relative border border-(--ui_border_color_lt) dark:border-(--ui_border_color_dt) flex flex-col rounded-(--ui_radius)">
       <div className="absolute top-0 right-0 flex items-center p-1 z-10">
+        {board.status === "private" && (
+          <div className="w-8 h-8 flex items-center justify-center">
+            <LockIcon data-testid="lock-icon" />
+          </div>
+        )}
         <button
           className="relative hover:text-yellow-400 w-8 h-8 flex items-center justify-center transition-colors z-[1] disabled:animation-fade disabled:cursor-not-allowed"
           aria-label={`${board.isFavorite ? "Unmark" : "Mark"} '${
@@ -38,11 +43,6 @@ function BoardCard({ board }: Props) {
             <StarIconOutline data-testid="emptyStar" className="size-6" />
           )}
         </button>
-        {board.status === "private" && (
-          <div className="w-8 h-8 flex items-center justify-center">
-            <LockIcon data-testid="lock-icon" />
-          </div>
-        )}
       </div>
 
       <Link to={`/boards/${board.id}/${generateSlug(board.title)}`}>
