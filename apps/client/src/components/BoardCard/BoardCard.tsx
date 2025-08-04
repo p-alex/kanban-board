@@ -19,7 +19,7 @@ function BoardCard({ board }: Props) {
   };
 
   return (
-    <div className="relative border border-(--ui_border_color_lt) dark:border-(--ui_border_color_dt) flex flex-col rounded-(--ui_radius)">
+    <div className="relative border border-(--ui_border_color_lt) dark:border-(--ui_border_color_dt) flex flex-col rounded-(--ui_radius) overflow-hidden">
       <div className="absolute top-0 right-0 flex items-center p-1 z-10">
         {board.status === "private" && (
           <div className="w-8 h-8 flex items-center justify-center">
@@ -46,10 +46,10 @@ function BoardCard({ board }: Props) {
       </div>
 
       <Link to={`/boards/${board.id}/${generateSlug(board.title)}`}>
-        <div className="relative w-full h-[160px] bg-(--ui_bg_lt) dark:bg-(--ui_bg_dt) rounded-[inherit]"></div>
+        <div className="relative w-full h-[160px] bg-(--ui_bg_lt) dark:bg-(--ui_bg_dt)"></div>
       </Link>
 
-      <div className="p-2 bg-(--ui_muted_bg_lt) dark:bg-(--ui_muted_bg_dt)">
+      <div className="py-2 px-4  bg-(--ui_muted_bg_lt) dark:bg-(--ui_muted_bg_dt)">
         <p>{board.title}</p>
       </div>
     </div>
