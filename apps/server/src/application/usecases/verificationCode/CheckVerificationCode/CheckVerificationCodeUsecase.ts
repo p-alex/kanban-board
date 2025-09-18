@@ -27,18 +27,31 @@ class CheckVerificationCodeUsecase {
       { transactionQuery }
     );
 
-    if (!verificationCode) throw new AppException(401, ["Invalid code"]);
+    if (!verificationCode)
+      throw new AppException(
+        401,
+        ["Invalid code"],
+        "CheckVerificationCodeUsecase"
+      );
 
     if (verificationCode.type !== type)
-      throw new AppException(401, ["Invalid code"]);
+      throw new AppException(
+        401,
+        ["Invalid code"],
+        "CheckVerificationCodeUsecase"
+      );
 
     if (this._date.isDateInThePast(verificationCode.expires_at)) {
       await this._verificationCodeRepository.deleteByCode(hashedCode, {
         transactionQuery,
       });
-      throw new AppException(401, [
-        "Code expired. Log in again to trigger another account verification process.",
-      ]);
+      throw new AppException(
+        401,
+        [
+          "Code expired. Log in again to trigger another account verification process.",
+        ],
+        "CheckVerificationCodeUsecase"
+      );
     }
 
     return verificationCode;

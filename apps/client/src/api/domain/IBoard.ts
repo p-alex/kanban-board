@@ -1,9 +1,10 @@
+import IBoardMember from "./IBoardMember";
+
 interface IBoard {
   id: string;
-  user_id: string;
   title: string;
-  lastAccessedAt: string;
   isFavorite: boolean;
+  boardRole: IBoardMember["role"];
   createdAt: string;
   status: "public" | "private";
 }

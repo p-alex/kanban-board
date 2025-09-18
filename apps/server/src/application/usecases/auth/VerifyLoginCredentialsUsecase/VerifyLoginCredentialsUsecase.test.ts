@@ -65,7 +65,11 @@ describe("VerifyLoginCredentialsUsecase", () => {
     mockUserRepository.findByEmail = vi.fn().mockResolvedValue(null);
 
     await expect(usecase.execute(email, password)).rejects.toMatchObject(
-      new AppException(401, ["Invalid email or password"])
+      new AppException(
+        401,
+        ["Invalid email or password"],
+        "VerifyLoginCredentialsUsecase"
+      )
     );
 
     expect(mockCrypto.verifySlowHash).not.toHaveBeenCalled();
@@ -77,7 +81,11 @@ describe("VerifyLoginCredentialsUsecase", () => {
     mockUserRepository.findByEmail = vi.fn().mockResolvedValue(unverifiedUser);
 
     await expect(usecase.execute(email, password)).rejects.toMatchObject(
-      new AppException(401, ["Account not verified."])
+      new AppException(
+        401,
+        ["Account not verified."],
+        "VerifyLoginCredentialsUsecase"
+      )
     );
 
     expect(mockCrypto.verifySlowHash).not.toHaveBeenCalled();
@@ -89,7 +97,11 @@ describe("VerifyLoginCredentialsUsecase", () => {
     mockCrypto.verifySlowHash = vi.fn().mockResolvedValue(false);
 
     await expect(usecase.execute(email, password)).rejects.toMatchObject(
-      new AppException(401, ["Invalid email or password"])
+      new AppException(
+        401,
+        ["Invalid email or password"],
+        "VerifyLoginCredentialsUsecase"
+      )
     );
   });
 });

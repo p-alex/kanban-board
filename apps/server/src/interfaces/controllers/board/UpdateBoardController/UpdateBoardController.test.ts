@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
+import { beforeEach, describe, expect, it, Mock, Mocked, vi } from "vitest";
 import UpdateBoardController from "./UpdateBoardController.js";
 import { IHandlerResponse, IHttpRequest } from "../../../adapter/index.js";
 import {
@@ -10,8 +10,11 @@ import {
   mockBoardDto,
 } from "../../../../__fixtures__/board/index.js";
 import httpResponseFactory from "../../../../HttpResponseFactory/index.js";
+import { mockBoardMember } from "../../../../__fixtures__/boardMember/index.js";
+import BoardMemberRepository from "../../../../infrastructure/repositories/boardMember/BoardMemberRepository.js";
 
 describe("UpdateBoardController.ts", () => {
+  let boardMemberRepository: Mocked<BoardMemberRepository>;
   let updateBoard: Mock;
   let dtoToBoard: Mock;
   let boardToDto: Mock;
@@ -21,6 +24,9 @@ describe("UpdateBoardController.ts", () => {
   let httpReq: IHttpRequest<UpdateBoardRequestDto>;
 
   beforeEach(() => {
+    boardMemberRepository = {
+      findOne: vi.fn().mockResolvedValue(mockBoardMember),
+    } as unknown as Mocked<BoardMemberRepository>;
     updateBoard = vi.fn().mockResolvedValue(mockBoard);
     dtoToBoard = vi.fn().mockReturnValue(mockBoard);
     boardToDto = vi.fn().mockReturnValue(mockBoardDto);
@@ -29,9 +35,13 @@ describe("UpdateBoardController.ts", () => {
       body: {
         toUpdateBoardDto: mockBoardDto,
       },
+      user: {
+        id: "id",
+      },
     } as unknown as IHttpRequest;
 
     updateBoardController = new UpdateBoardController(
+      boardMemberRepository,
       updateBoard,
       dtoToBoard,
       boardToDto,

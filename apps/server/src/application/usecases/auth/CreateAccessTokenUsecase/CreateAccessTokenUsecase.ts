@@ -10,8 +10,7 @@ class CreateAccessTokenUsecase {
 
   execute = async (id: string) => {
     const issuedAt = this._time.toSeconds(this._date.now(), "milisecond");
-    const expireAt = issuedAt + this._time.toSeconds(15, "minute");
-
+    const expireAt = issuedAt + this._time.toSeconds(1, "second");
     return await this._jwt.sign({ id }, this._accessTokenSecret, expireAt);
   };
 }

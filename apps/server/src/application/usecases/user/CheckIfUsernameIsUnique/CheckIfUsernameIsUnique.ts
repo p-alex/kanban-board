@@ -10,9 +10,11 @@ class CheckIfUsernameIsUnique {
       transactionQuery,
     });
     if (user) {
-      throw new AppException(401, [
-        "A user with that username already exists.",
-      ]);
+      throw new AppException(
+        401,
+        ["A user with that username already exists."],
+        "CheckIfUsernameIsUnique"
+      );
     }
   };
 }

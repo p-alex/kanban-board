@@ -10,14 +10,16 @@ import { ModalContentProps } from "../../Modal/Modal";
 import Form from "../../Form/Form";
 import Container from "../../Container/Container";
 import SelectField from "../../SelectField/SelectField";
+import { useEffect } from "react";
 
 interface Props {
   modalProps: ModalContentProps;
+  callback: Function;
 }
 
 function CreateBoardForm(props: Props) {
   const auth = useAuthContext();
-  const createBoard = useCreateBoard();
+  const { createBoard, isSuccess } = useCreateBoard();
 
   const defaultValues: boardDtoTypes.CreateBoardRequestDto = {
     user_id: auth.user.id,
@@ -39,6 +41,10 @@ function CreateBoardForm(props: Props) {
     "private",
     "public",
   ];
+
+  useEffect(() => {
+    if (isSuccess) props.callback();
+  }, [isSuccess]);
 
   return (
     <Container>

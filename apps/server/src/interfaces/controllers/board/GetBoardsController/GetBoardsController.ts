@@ -1,5 +1,4 @@
 import { BoardDto, GetBoardsResponseDto } from "@kanban/dtos/BoardDtoTypes";
-import IBoard from "../../../../domain/board/IBoard.js";
 import BoardRepository from "../../../../infrastructure/repositories/board/BoardRepository.js";
 import { IHandlerResponse, IHttpRequest } from "../../../adapter/index.js";
 import AppException from "../../../../exceptions/AppException.js";
@@ -18,9 +17,10 @@ class GetBoardsController {
   ): Promise<IHandlerResponse<GetBoardsResponseDto>> => {
     const user = httpReq.user;
 
-    if (!user) throw new AppException(401, ["Must be logged in"]);
+    if (!user)
+      throw new AppException(401, ["Must be logged in"], "GetBoardsController");
 
-    const boards = await this._boardRepository.findAllByUserId(user.id, {});
+    const boards = await this._boardRepository.findAllWhereMember(user.id, {});
 
     const boardDtos: BoardDto[] = boards.map((board) =>
       this._boardToDto(board)

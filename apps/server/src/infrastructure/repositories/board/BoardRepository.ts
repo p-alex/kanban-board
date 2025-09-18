@@ -1,35 +1,81 @@
 import { QueryDb } from "../../../db/index.js";
 import IBoard from "../../../domain/board/IBoard.js";
+import IBoardMember from "../../../domain/boardMember/IBoardMember.js";
 import { RepositoryOptions } from "../index.js";
+
+export interface iClientBoard extends IBoard {
+  is_favorite: boolean;
+  board_role: IBoardMember["role"];
+}
 
 class BoardRepository {
   constructor(private readonly _queryDB: QueryDb) {}
 
-  findAllByUserId = async (user_id: string, options: RepositoryOptions) => {
+  findAllWhereMember = async (user_id: string, options: RepositoryOptions) => {
     const queryFunc = this.getQueryFunction(options);
 
-    const result = await queryFunc<IBoard>(
-      "SELECT * FROM boards WHERE user_id = $1",
+    const result = await queryFunc<iClientBoard>(
+      `
+      select b.*, 
+	exists(
+		select 1 
+		from favorite_boards fb 
+		where fb.user_id = $1 
+		and fb.board_id = bm.board_id
+	) as is_favorite,
+	(bm.user_id is not null) as is_member,
+	(bm.role) as board_role
+from board_members bm
+left join boards b on b.id = bm.board_id
+where bm.user_id = $1
+`,
       [user_id]
     );
 
     return result;
   };
 
+  findByIdWhereMember = async (
+    user_id: string,
+    board_id: string,
+    options: RepositoryOptions
+  ) => {
+    const queryFunc = this.getQueryFunction(options);
+
+    const result = await queryFunc<iClientBoard | undefined>(
+      `
+        select b.*, (fb.user_id is not null) as is_favorite, coalesce(bm.role, 'viewer'::board_member_role) as board_role from boards b 
+inner join board_members bm on bm.user_id = $1 and bm.board_id = b.id 
+left join favorite_boards fb on fb.user_id = $1 and fb.board_id = bm.board_id
+where b.id = $2
+      `,
+      [user_id, board_id]
+    );
+
+    return result[0];
+  };
+
+  findById = async (board_id: IBoard["id"], options: RepositoryOptions) => {
+    const queryFunc = this.getQueryFunction(options);
+
+    const result = await queryFunc<iClientBoard>(
+      `
+      select boards.*, false as is_favorite, 'viewer'::board_member_role as board_role
+from boards
+where boards.id = $1;
+      `,
+      [board_id]
+    );
+
+    return result[0];
+  };
+
   create = async (board: IBoard, options: RepositoryOptions) => {
     const queryFunc = this.getQueryFunction(options);
 
-    const result = await queryFunc<IBoard>(
-      "INSERT INTO boards (id, user_id, title, is_favorite, status, created_at, last_accessed_at) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-      [
-        board.id,
-        board.user_id,
-        board.title,
-        `${board.is_favorite}`,
-        board.status,
-        board.created_at,
-        board.last_accessed_at,
-      ]
+    const result = await queryFunc<iClientBoard>(
+      "INSERT INTO boards (id, title, status, created_at) VALUES ($1, $2, $3, $4) RETURNING boards.*, (false) as is_favorite, ('admin') as board_role",
+      [board.id, board.title, board.status, board.created_at]
     );
 
     return result[0];
@@ -39,14 +85,8 @@ class BoardRepository {
     const queryFunc = this.getQueryFunction(options);
 
     const result = await queryFunc<IBoard>(
-      "UPDATE boards SET title = $1, status = $2, is_favorite = $3 WHERE id = $4 AND user_id = $5 RETURNING *",
-      [
-        updatedBoard.title,
-        updatedBoard.status,
-        `${updatedBoard.is_favorite}`,
-        updatedBoard.id,
-        updatedBoard.user_id,
-      ]
+      "UPDATE boards SET title = $1, status = $2 WHERE id = $3 RETURNING *",
+      [updatedBoard.title, updatedBoard.status, updatedBoard.id]
     );
 
     return result[0];

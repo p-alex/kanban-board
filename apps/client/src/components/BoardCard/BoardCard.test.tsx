@@ -3,11 +3,17 @@ import BoardCard from "./BoardCard";
 import { boardMock } from "../../__fixtures__/board";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import useUpdateBoard from "../../api/usecases/board/UpdateBoardUsecase/useUpdateBoard";
 import { Mock } from "vitest";
 import userEvent from "@testing-library/user-event";
+import useMarkBoardAsFavorite from "../../api/usecases/board/MarkBoardAsFavoriteUsecase/useMarkBoardAsFavorite";
+import useUnmarkBoardAsFavorite from "../../api/usecases/board/UnmarkBoardAsFavoriteUsecase/useUnmarkBoardAsFavorite";
 
-vi.mock("../../api/usecases/board/UpdateBoardUsecase/useUpdateBoard");
+vi.mock(
+  "../../api/usecases/board/MarkBoardAsFavoriteUsecase/useMarkBoardAsFavorite"
+);
+vi.mock(
+  "../../api/usecases/board/UnmarkBoardAsFavoriteUsecase/useUnmarkBoardAsFavorite"
+);
 const client = new QueryClient();
 
 function Wrapper(props: { children: React.ReactNode }) {
@@ -19,15 +25,22 @@ function Wrapper(props: { children: React.ReactNode }) {
 }
 
 describe("BoardCard.tsx", () => {
-  let updateBoard: Mock;
+  let markBoardAsFavoriteMock: Mock;
+  let unmarkBoardAsFavoriteMock: Mock;
 
   beforeEach(() => {
-    updateBoard = vi.fn();
+    markBoardAsFavoriteMock = vi.fn();
+    unmarkBoardAsFavoriteMock = vi.fn();
 
-    (useUpdateBoard as Mock).mockReturnValue({
-      update: updateBoard,
-      isLoading: false,
-    });
+    (useMarkBoardAsFavorite as Mock).mockReturnValue({
+      markBoardAsFavorite: markBoardAsFavoriteMock,
+      isMarkBoardAsFavoriteLoading: false,
+    } as ReturnType<typeof useMarkBoardAsFavorite>);
+
+    (useUnmarkBoardAsFavorite as Mock).mockReturnValue({
+      unmarkBoardAsFavorite: unmarkBoardAsFavoriteMock,
+      isUnmarkBoardAsFavoriteLoading: false,
+    } as ReturnType<typeof useUnmarkBoardAsFavorite>);
   });
   it("should display the card's title", () => {
     render(
@@ -80,7 +93,7 @@ describe("BoardCard.tsx", () => {
       </Wrapper>
     );
 
-    const starToggle = screen.getByLabelText(
+    const starToggle = screen.getByTitle(
       `Mark '${boardMock.title}' board as favorite`
     );
 
@@ -94,14 +107,14 @@ describe("BoardCard.tsx", () => {
       </Wrapper>
     );
 
-    const starToggle = screen.getByLabelText(
+    const starToggle = screen.getByTitle(
       `Unmark '${boardMock.title}' board as favorite`
     );
 
     expect(starToggle).toBeInTheDocument();
   });
 
-  it("should toggle favorite correctly", async () => {
+  it("should call unmarkBoardAsFavorite if isFavorite is set to true when clicking the star button", async () => {
     render(
       <Wrapper>
         <BoardCard board={{ ...boardMock, isFavorite: true }} />
@@ -114,9 +127,22 @@ describe("BoardCard.tsx", () => {
 
     await userEvent.click(starToggle);
 
-    expect(updateBoard).toHaveBeenCalledWith({
-      ...boardMock,
-      isFavorite: false,
+    expect(unmarkBoardAsFavoriteMock).toHaveBeenCalled();
+  });
+
+  it("should call markBoardAsFavorite if isFavorite is set to false when clicking the star button", async () => {
+    render(
+      <Wrapper>
+        <BoardCard board={{ ...boardMock, isFavorite: false }} />
+      </Wrapper>
+    );
+
+    const starToggle = screen.getByRole("button", {
+      name: "Mark '" + boardMock.title + "' board as favorite",
     });
+
+    await userEvent.click(starToggle);
+
+    expect(markBoardAsFavoriteMock).toHaveBeenCalled();
   });
 });

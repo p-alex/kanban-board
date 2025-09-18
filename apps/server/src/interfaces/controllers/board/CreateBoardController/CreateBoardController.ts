@@ -3,13 +3,14 @@ import {
   CreateBoardResponseDto,
 } from "@kanban/dtos/BoardDtoTypes";
 import { IHandlerResponse, IHttpRequest } from "../../../adapter/index.js";
-import CreateBoardUsecase from "../../../../application/usecases/board/CreateBoardUsecase/CreateBoardUsecase.js";
-import { BoardToDto } from "../../../../domain/board/boardToDto.js";
 import HttpResponseFactory from "../../../../HttpResponseFactory/HttpResponseFactory.js";
+import CreateBoardService from "../../../../application/services/board/CreateBoardService.js";
+import AppException from "../../../../exceptions/AppException.js";
+import { BoardToDto } from "../../../../domain/board/clientBoardToDto.js";
 
 class CreateBoardController {
   constructor(
-    private readonly _createBoardUsecase: CreateBoardUsecase,
+    private readonly _createBoardService: CreateBoardService,
     private readonly _boardToDto: BoardToDto,
     private readonly _httpResponseFactory: HttpResponseFactory
   ) {}
@@ -18,8 +19,9 @@ class CreateBoardController {
     httpReq: IHttpRequest<CreateBoardRequestDto>
   ): Promise<IHandlerResponse<CreateBoardResponseDto>> => {
     const boardData = httpReq.body;
+    const user_id = httpReq.user.id;
 
-    const board = await this._createBoardUsecase.execute(boardData);
+    const board = await this._createBoardService.execute(boardData, user_id);
 
     const boardDto = this._boardToDto(board);
 

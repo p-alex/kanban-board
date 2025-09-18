@@ -1,22 +1,37 @@
 import { BoardDto } from "@kanban/dtos/BoardDtoTypes";
 import IBoard from "../../domain/board/IBoard.js";
+import { iClientBoard } from "../../infrastructure/repositories/board/BoardRepository.js";
 
 export const mockBoard: IBoard = {
   id: "id",
-  user_id: "user_id",
   title: "title",
   status: "public",
-  is_favorite: false,
   created_at: "created_at",
-  last_accessed_at: "last_accessed_at",
+};
+
+export const mockClientBoard: iClientBoard = {
+  id: "id",
+  title: "title",
+  status: "public",
+  created_at: "created_at",
+  board_role: "admin",
+  is_favorite: false,
 };
 
 export const mockBoardDto: BoardDto = {
   id: "id",
-  user_id: "user_id",
   title: "title",
   status: "public",
-  is_favorite: false,
   created_at: "created_at",
-  last_accessed_at: "last_accessed_at",
+  board_role: "admin",
+  is_favorite: true,
+};
+
+export const mockClientBoardDto: BoardDto = {
+  id: "id",
+  title: "title",
+  status: "public",
+  created_at: "created_at",
+  board_role: "admin",
+  is_favorite: false,
 };

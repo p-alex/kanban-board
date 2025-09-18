@@ -24,7 +24,7 @@ function AuthContextProvider(props: Props) {
   const [auth, setAuth] = useState<IAuth>(defaultAuth);
 
   const handleSetAuth = (user: IUser, accessToken: string) => {
-    setAuth((prev) => ({ ...prev, user, accessToken, isLoggedIn: true }));
+    setAuth({ user, accessToken, isLoggedIn: true, isLoading: false });
   };
 
   const handleSetIsLoadingTo = (value: boolean) => {

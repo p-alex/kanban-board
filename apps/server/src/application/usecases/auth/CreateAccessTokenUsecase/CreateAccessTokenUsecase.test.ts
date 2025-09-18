@@ -25,8 +25,8 @@ describe("CreateAccessTokenUsecase", () => {
   const userId = "user-123";
   const fakeIssuedAtMs = 1620000000000;
   const issuedAtSeconds = 1620000000;
-  const fifteenMinutesInSeconds = 900;
-  const expireAtSeconds = issuedAtSeconds + fifteenMinutesInSeconds;
+  const expiryTimeInSec = 1;
+  const expireAtSeconds = issuedAtSeconds + expiryTimeInSec;
   const signedToken = "signed.jwt.token";
 
   it("should sign a JWT with correct payload, secret, and 15-minute expiration", async () => {
@@ -38,9 +38,9 @@ describe("CreateAccessTokenUsecase", () => {
         return issuedAtSeconds;
       })
       .mockImplementationOnce((val, unit) => {
-        expect(val).toBe(15);
-        expect(unit).toBe("minute");
-        return fifteenMinutesInSeconds;
+        expect(val).toBe(1);
+        expect(unit).toBe("second");
+        return expiryTimeInSec;
       });
 
     mockJwt.sign.mockResolvedValue(signedToken);
@@ -52,7 +52,7 @@ describe("CreateAccessTokenUsecase", () => {
       fakeIssuedAtMs,
       "milisecond"
     );
-    expect(mockTimeConverter.toSeconds).toHaveBeenCalledWith(15, "minute");
+    expect(mockTimeConverter.toSeconds).toHaveBeenCalledWith(1, "second");
 
     expect(mockJwt.sign).toHaveBeenCalledWith(
       { id: userId },
@@ -67,7 +67,7 @@ describe("CreateAccessTokenUsecase", () => {
     mockDateUtil.now.mockReturnValue(fakeIssuedAtMs);
     mockTimeConverter.toSeconds
       .mockReturnValueOnce(issuedAtSeconds)
-      .mockReturnValueOnce(fifteenMinutesInSeconds);
+      .mockReturnValueOnce(expiryTimeInSec);
 
     const signError = new Error("JWT signing failed");
     mockJwt.sign.mockRejectedValue(signError);

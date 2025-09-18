@@ -20,7 +20,11 @@ class RefreshSessionController {
     const refreshToken = httpReq.cookies[SESSION_COOKIE_NAME];
 
     if (!refreshToken)
-      throw new AppException(401, ["No refresh token provided"]);
+      throw new AppException(
+        401,
+        ["No refresh token provided"],
+        "VerifyLoginCredentialsUsecase"
+      );
 
     const { userDto, newAccessToken, newRefreshToken } =
       await this._refreshSessionService.execute(refreshToken);

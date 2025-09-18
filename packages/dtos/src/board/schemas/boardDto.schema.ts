@@ -1,19 +1,13 @@
 import z from "zod";
-import { userDtoSchema } from "../../user/schemas/userDto.schema.js";
+import { boardMemberRoles, idSchema } from "../../commons/index.js";
 
 export const boardDtoSchema = z.object({
-  id: z.string({ required_error: "Board id is required" }).uuid(),
-  user_id: userDtoSchema.shape.id,
-  title: z
-    .string({ required_error: "Board title is required" })
-    .min(1)
-    .max(256),
-  is_favorite: z.boolean(),
+  id: idSchema,
+  title: z.string({ required_error: "Board title is required" }).min(1).max(24),
   status: z.enum(["public", "private"], {
     required_error: "Board status is required",
   }),
+  is_favorite: z.boolean(),
+  board_role: z.enum(boardMemberRoles),
   created_at: z.string({ required_error: "Board created_at is required" }),
-  last_accessed_at: z.string({
-    required_error: "Board last_accessed_at is required",
-  }),
 });

@@ -1,47 +1,36 @@
 import { ServerResponseDto } from "@kanban/dtos/ServerResponseDto";
-import useAuthContext from "../../../../hooks/useAuthContext/useAuthContext";
 import usePrivateHttp from "../../../../hooks/usePrivateHttp/usePrivateHttp";
-import notificationCenter from "../../../../utils/NotificationCenter";
-import NotificationCenter from "../../../../utils/NotificationCenter/NotificationCenter";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-interface UseLogoutProps {
-  notify: NotificationCenter["display"];
-}
+import { useMutation } from "@tanstack/react-query";
+import { IUsecaseResponse, UsecaseResponseFactory } from "../..";
+import extractApiErrorMessage from "../../../extractApiErrorMessage";
 
 export const LOGOUT_MUTATION_KEY = "logout";
 
 export const LOGOUT_ERROR_MESSAGE = "Logout failed. Please try again later.";
 
-function useLogout({
-  notify = notificationCenter.display,
-}: Partial<UseLogoutProps> = {}) {
-  const queryClient = useQueryClient();
-  const auth = useAuthContext();
+function useLogout() {
   const http = usePrivateHttp();
 
-  const mutation = useMutation({
-    mutationKey: [LOGOUT_MUTATION_KEY],
-    mutationFn: () =>
-      http.send<ServerResponseDto<null>, undefined>("/auth/logout", {
-        method: "post",
-      }),
-  });
-
-  const logout = async () => {
+  const logoutRequest = async (): Promise<IUsecaseResponse<null>> => {
     try {
-      const { success } = await mutation.mutateAsync();
+      await http.post<ServerResponseDto<null>, undefined>("/auth/logout");
 
-      if (success) {
-        auth.handleResetAuth();
-        queryClient.removeQueries();
-      }
+      return UsecaseResponseFactory.success(null);
     } catch (error) {
-      notify(LOGOUT_ERROR_MESSAGE);
+      const errorMessage = extractApiErrorMessage({
+        error,
+        defaultErrorMessage: "Failed to logout... Try again later.",
+      });
+      return UsecaseResponseFactory.error(errorMessage);
     }
   };
 
-  return logout;
+  const mutation = useMutation({
+    mutationKey: [LOGOUT_MUTATION_KEY],
+    mutationFn: () => logoutRequest(),
+  });
+
+  return () => mutation.mutateAsync();
 }
 
 export default useLogout;

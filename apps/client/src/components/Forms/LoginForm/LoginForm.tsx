@@ -5,14 +5,14 @@ import TextFieldGroup from "../../TextFieldGroup/index.js";
 import { LoginFormData, loginFormSchema } from "./LoginForm.schema.js";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
-import { Login } from "../../../api/usecases/auth/LoginUsecase/useLogin.js";
+import useLogin from "../../../api/usecases/auth/LoginUsecase/useLogin.js";
 import BigLogo from "../../BigLogo/BigLogo.js";
+import { http } from "../../../utils/BestHttp/index.js";
+import useAuthContext from "../../../hooks/useAuthContext/useAuthContext.js";
+import notificationCenter from "../../../utils/NotificationCenter/index.js";
 
-interface Props {
-  submitFunc: Login;
-}
-
-function LoginForm(props: Props) {
+function LoginForm() {
+  const auth = useAuthContext();
   const {
     register,
     handleSubmit,
@@ -23,9 +23,18 @@ function LoginForm(props: Props) {
     resolver: zodResolver(loginFormSchema),
   });
 
-  const submit = async (data: LoginFormData) => {
-    const { success } = await props.submitFunc(data);
-    if (success) reset();
+  const login = useLogin({ httpClient: http });
+
+  const submit = async (credentials: LoginFormData) => {
+    const { success, data, error } = await login(credentials);
+
+    if (success && data) {
+      auth.handleSetAuth(data.user, data.accessToken);
+      reset();
+      return;
+    }
+
+    notificationCenter.display(error);
   };
 
   return (

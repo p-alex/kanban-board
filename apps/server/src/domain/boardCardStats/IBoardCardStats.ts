@@ -1,4 +1,4 @@
-import IBoardColumn from "../boardColumn/IBoardColumn.js";
+import IBoardColumn from "../boardList/IBoardList.js";
 
 interface IBoardCardStats {
   board_card_id: IBoardColumn["id"];

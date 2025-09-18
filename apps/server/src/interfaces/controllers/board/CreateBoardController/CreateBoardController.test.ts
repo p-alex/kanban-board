@@ -12,9 +12,10 @@ import {
   mockBoard,
   mockBoardDto,
 } from "../../../../__fixtures__/board/index.js";
+import CreateBoardService from "../../../../application/services/board/CreateBoardService.js";
 
 describe("CreateBoardController.ts", () => {
-  let createBoardUsecase: Mocked<CreateBoardUsecase>;
+  let createBoardService: Mocked<CreateBoardService>;
 
   let boardToDto: Mock;
 
@@ -38,11 +39,14 @@ describe("CreateBoardController.ts", () => {
         status: "public",
         user_id: "user_id",
       },
+      user: {
+        id: "id",
+      },
     } as unknown as IHttpRequest;
 
-    createBoardUsecase = {
+    createBoardService = {
       execute: vi.fn().mockResolvedValue(mockBoard),
-    } as unknown as Mocked<CreateBoardUsecase>;
+    } as unknown as Mocked<CreateBoardService>;
 
     boardToDto = vi.fn().mockReturnValue(mockBoardDto);
 
@@ -51,7 +55,7 @@ describe("CreateBoardController.ts", () => {
     } as unknown as Mocked<HttpResponseFactory>;
 
     createBoardController = new CreateBoardController(
-      createBoardUsecase,
+      createBoardService,
       boardToDto,
       httpResponseFactory
     );
@@ -60,7 +64,10 @@ describe("CreateBoardController.ts", () => {
   it("should call create board usecase with correct arguments", async () => {
     await createBoardController.handle(mockHttpReq);
 
-    expect(createBoardUsecase.execute).toHaveBeenCalledWith(mockHttpReq.body);
+    expect(createBoardService.execute).toHaveBeenCalledWith(
+      mockHttpReq.body,
+      mockHttpReq.user.id
+    );
   });
 
   it("should convert the created board into a board dto", async () => {

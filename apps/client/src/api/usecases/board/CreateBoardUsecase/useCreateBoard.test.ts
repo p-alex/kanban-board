@@ -38,7 +38,7 @@ describe("useCreateBoard.ts", () => {
       user: { id: userId },
     });
 
-    (usePrivateHttp as Mock).mockReturnValue({ send: sendFn });
+    (usePrivateHttp as Mock).mockReturnValue({ post: sendFn });
 
     (useMutation as Mock).mockImplementation(({ mutationFn }) => ({
       mutateAsync: vi.fn().mockImplementation(() => mutationFn(data)),
@@ -47,7 +47,7 @@ describe("useCreateBoard.ts", () => {
 
   it("should call useMutation with correct arguments", async () => {
     const { result } = renderHook(() => useCreateBoard());
-    await result.current(data);
+    await result.current.createBoard(data);
     const calledOptions = (useMutation as Mock).mock.calls[0][0];
     expect(calledOptions.mutationKey).toEqual(["create-board-" + userId]);
     expect(typeof calledOptions.mutationFn).toBe("function");
@@ -55,57 +55,38 @@ describe("useCreateBoard.ts", () => {
 
   it("should call request send function with correct arguments", async () => {
     const { result } = renderHook(() => useCreateBoard());
-    await result.current(data);
-    expect(sendFn).toHaveBeenCalledWith("/boards", {
-      method: "post",
-      body: data,
-    });
+    await result.current.createBoard(data);
+    expect(sendFn).toHaveBeenCalledWith("/boards", data);
   });
 
   describe("on success", () => {
     it("should notify the user", async () => {
       sendFn.mockResolvedValue({
-        success: true,
-        data: { result: { boardDto: { id: "id" } } },
+        data: { success: true, result: { boardDto: { id: "id" } } },
       });
       const { result } = renderHook(() => useCreateBoard({ notify }));
-      await result.current(data);
-      expect(notify).toHaveBeenCalled();
+      await result.current.createBoard(data);
+      expect(notify).toHaveBeenCalledWith("Board created!");
     });
 
     it("should navigate to /boards/:id", async () => {
       sendFn.mockResolvedValue({
-        success: true,
-        data: { result: { boardDto: { id: "id", title: "title" } } },
+        data: {
+          success: true,
+          result: { boardDto: { id: "id", title: "title" } },
+        },
       });
       const { result } = renderHook(() => useCreateBoard({ notify }));
-      await result.current(data);
-      expect(navigate).toHaveBeenCalledWith("/boards/id/title");
+      await result.current.createBoard(data);
+      expect(navigate).toHaveBeenCalledWith("/boards/id");
     });
   });
 
   describe("on error", () => {
-    it("if error is instance of BestHttpResponseException, the user should be notified with the correct message", async () => {
-      const response: ServerResponseDto<null> = {
-        errors: ["error message"],
-        result: null,
-      };
-      sendFn.mockRejectedValue(
-        new BestHttpResponseException(200, ["error"], response)
-      );
-      const { result } = renderHook(() => useCreateBoard({ notify }));
-      await result.current(data);
-      expect(notify).toHaveBeenCalledWith("error message");
-    });
-
-    it("if the error is of any instance other than BestHttpResponseException, the user should be notified with the correct message", async () => {
-      const response: ServerResponseDto<null> = {
-        errors: ["error message"],
-        result: null,
-      };
+    it("should notify the user with the default error message", async () => {
       sendFn.mockRejectedValue(new Error("error"));
       const { result } = renderHook(() => useCreateBoard({ notify }));
-      await result.current(data);
+      await result.current.createBoard(data);
       expect(notify).toHaveBeenCalledWith(
         "Failed to create the board. Please try again later."
       );

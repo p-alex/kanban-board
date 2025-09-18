@@ -15,12 +15,14 @@ class LogoutService {
       const session = await this._findSession.execute(refresh_token, query);
 
       if (!session)
-        throw new AppException(401, [
-          "Cannot logout because there is no session",
-        ]);
+        throw new AppException(
+          401,
+          ["Cannot logout because there is no session"],
+          "LogoutService"
+        );
 
       if (session.user_id !== user_id)
-        throw new AppException(401, ["Not allowed"]);
+        throw new AppException(401, ["Not allowed"], "LogoutService");
 
       await this._sessionRepository.deleteByToken(session.token, {
         transactionQuery: query,

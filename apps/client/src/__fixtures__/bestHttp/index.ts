@@ -13,3 +13,20 @@ export function makeMockBestHttpSendResponse<T>({
     data,
   };
 }
+
+export function makeSuccessBestHttpSendResponseMock<T>(
+  data: T
+): IBestHttpResponse<T> {
+  return {
+    data,
+    errors: [],
+    status: 200,
+    success: true,
+  };
+}
+
+export function makeErrorBestHttpSendResponseMock<T>(
+  data: T
+): IBestHttpResponse<T> {
+  return { data, errors: ["request error"], status: 400, success: false };
+}

@@ -1,7 +1,7 @@
 import IBoard from "./IBoard.js";
 import { CryptoUtil, DateUtil } from "@kanban/utils";
 
-export type BoardFactoryData = Pick<IBoard, "title" | "user_id" | "status">;
+export type BoardFactoryData = Pick<IBoard, "title" | "status">;
 
 class BoardFactory {
   constructor(
@@ -12,12 +12,9 @@ class BoardFactory {
   create = (data: BoardFactoryData): IBoard => {
     return {
       id: this._randomUUID(),
-      user_id: data.user_id,
       title: data.title,
-      is_favorite: false,
       status: data.status,
       created_at: this._getUtcOfNow(),
-      last_accessed_at: this._getUtcOfNow(),
     };
   };
 }

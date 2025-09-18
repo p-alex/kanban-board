@@ -32,10 +32,9 @@ describe("BoardFactory.ts", () => {
       boardFactoryData
     );
 
-    expect(getUtcOfNow).toHaveBeenCalledTimes(2);
+    expect(getUtcOfNow).toHaveBeenCalledTimes(1);
 
     expect(board.created_at).toBe("currentUTC");
-    expect(board.last_accessed_at).toBe("currentUTC");
   });
 
   it("should create a board", () => {
@@ -45,12 +44,9 @@ describe("BoardFactory.ts", () => {
 
     const resultBoard: IBoard = {
       id: "uuid",
-      user_id: "user_id",
       title: "title",
-      is_favorite: false,
       status: "public",
       created_at: "currentUTC",
-      last_accessed_at: "currentUTC",
     };
 
     expect(board).toEqual(resultBoard);

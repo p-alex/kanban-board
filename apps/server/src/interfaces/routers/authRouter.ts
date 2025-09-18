@@ -17,7 +17,7 @@ authRouter.post(
   "/login",
   expressAdapter.adapt(
     rateLimiter.limit({
-      maxRequests: 5,
+      maxRequests: 812132131,
       windowMs: timeConverter.toMs(15, "minute"),
     })
   ),

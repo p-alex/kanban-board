@@ -45,6 +45,14 @@
     "./BoardDtoTypes": {
       "import": "./dist/board/types/index.js",
       "types": "./dist/board/types/index.d.ts"
+    },
+    "./BoardMemberDtos": {
+      "import": "./dist/boardMember/schemas/index.js",
+      "types": "./dist/boardMember/schemas/index.d.ts"
+    },
+    "./BoardMemberDtoTypes": {
+      "import": "./dist/boardMember/types/index.js",
+      "types": "./dist/boardMember/types/index.d.ts"
     }
   },
   "keywords": [],

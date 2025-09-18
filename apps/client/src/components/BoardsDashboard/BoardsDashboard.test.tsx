@@ -31,8 +31,8 @@ describe("BoardsDashboard.tsx", () => {
         { ...boardMock, id: "2", isFavorite: true },
         { ...boardMock, id: "3", isFavorite: true },
       ],
-      isLoading: false,
-      isRefetching: false,
+      isGetBoardsLoading: false,
+      isGetBoardsRefeching: false,
     });
   });
 
@@ -62,7 +62,7 @@ describe("BoardsDashboard.tsx", () => {
     );
 
     await waitFor(() => {
-      const sectionTitle = screen.getByText("Starred Boards (2)");
+      const sectionTitle = screen.getByText("Favorite Boards (2)");
 
       const list = screen.getAllByRole("list")[1];
 
@@ -81,8 +81,8 @@ describe("BoardsDashboard.tsx", () => {
         { ...boardMock, id: "4", isFavorite: false },
       ],
       favoriteBoards: [],
-      isLoading: false,
-      isRefetching: false,
+      isGetBoardsLoading: false,
+      isGetBoardsRefeching: false,
     });
 
     render(

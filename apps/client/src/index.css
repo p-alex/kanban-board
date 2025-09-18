@@ -32,7 +32,7 @@ button {
 }
 
 input {
-  @apply outline-0 w-full;
+  @apply outline-0;
 }
 
 .field {
@@ -87,12 +87,18 @@ input {
   --button_normal_selected_bg_lt: #11111130;
   --button_normal_selected_bg_dt: #ffffff30;
 
-  /* logged in navigation bar */
-  --nav_height: 56px;
-
   /* side bar */
   --sideBar_button_hover_bg_lt: #ffffff10;
   --sideBar_button_hover_bg_dt: #ffffff20;
   --sideBar_height: calc(100dvh - 56px);
   --sideBar_width: 300px;
+
+  /* nav bar */
+  --navbar_height: 56px;
+
+  /* board */
+  --board_topBar_height: 52px;
+  --board_content_height: calc(
+    100vh - var(--navbar_height) - var(--board_topBar_height)
+  );
 }

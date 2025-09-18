@@ -28,7 +28,7 @@ export interface IHttpRequest<TBody = any, TParams = any, TQuery = any> {
   url: string;
   cookies: { [key: string]: string };
   accessToken: string;
-  user?: IAuthenticatedUser;
+  user: IAuthenticatedUser;
 }
 
 export interface ICookie {

@@ -27,7 +27,7 @@ describe("GetBoardsController.ts", () => {
     httpReqMock = { user: { id: "id" } } as IHttpRequest;
 
     boardRepository = {
-      findAllByUserId: vi.fn().mockResolvedValue([mockBoard, mockBoard]),
+      findAllWhereMember: vi.fn().mockResolvedValue([mockBoard, mockBoard]),
     } as unknown as Mocked<BoardRepository>;
 
     boardToDto = vi.fn().mockReturnValue(mockBoardDto);
@@ -44,7 +44,7 @@ describe("GetBoardsController.ts", () => {
   });
 
   it("should throw AppException with correct arguments if user is undefined in http request", async () => {
-    httpReqMock.user = undefined;
+    httpReqMock.user = { id: "" };
     try {
       await getBoardsController.handle(httpReqMock);
     } catch (error) {
@@ -59,7 +59,7 @@ describe("GetBoardsController.ts", () => {
   it("should call boardRepository with correct arguments", async () => {
     await getBoardsController.handle(httpReqMock);
 
-    expect(boardRepository.findAllByUserId).toHaveBeenCalledWith("id", {});
+    expect(boardRepository.findAllWhereMember).toHaveBeenCalledWith("id", {});
   });
 
   it("should transform each board to boardDto", async () => {

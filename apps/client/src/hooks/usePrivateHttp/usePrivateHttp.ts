@@ -1,11 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import useAuthContext from "../useAuthContext/useAuthContext";
 import useRefreshSession from "../../api/usecases/auth/RefreshSessionUsecase/useRefreshSession";
-import BestHttpInstance from "../../utils/BestHttp/BestHttpInstance";
-import { privateHttp } from "../../utils/BestHttp";
+import { privateHttp } from "../../api";
+import { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 
 interface UsePrivateHttpProps {
-  http: BestHttpInstance;
+  http: AxiosInstance;
+}
+
+interface CustomInternalAxiosRequestConfig extends InternalAxiosRequestConfig {
+  wasSent: boolean;
 }
 
 function usePrivateHttp({
@@ -15,45 +19,44 @@ function usePrivateHttp({
 
   const refreshSession = useRefreshSession();
 
-  const applyInterceptors = () => {
-    const requestInterceptor = http.addRequestInterceptor(
-      "accessToken interceptor",
+  const tokenRef = useRef(auth.accessToken);
+  useEffect(() => {
+    tokenRef.current = auth.accessToken;
+  }, [auth.accessToken]);
+
+  useEffect(() => {
+    const requestInterceptor = privateHttp.interceptors.request.use(
       (config) => {
         if (!config.headers.Authorization) {
           config.headers.Authorization = "Bearer " + auth.accessToken;
         }
-        config.withCredentials = true;
         return config;
-      }
-    );
-
-    const responseInterceptor = http.addResponseInterceptor(
-      "retry if access token expired interceptor",
-      (result) => {
-        return result;
       },
-      async (result, config) => {
-        if (result.status === 401 && config?.wasSent === undefined) {
-          config.wasSent = true;
-          const result = await refreshSession();
-          if (!result?.accessToken) return Promise.reject("error");
-          config.headers.Authorization = "Bearer " + result.accessToken;
-          return http.send<any, any>(config.url, config);
+      null
+    );
+
+    const responseInterceptor = privateHttp.interceptors.response.use(
+      (result) => result,
+      async (error: AxiosError) => {
+        const prevRequest = error?.config as CustomInternalAxiosRequestConfig;
+        if (error.response?.status === 401 && !prevRequest?.wasSent) {
+          prevRequest.wasSent = true;
+          const { data, isSuccess } = await refreshSession();
+          if (!isSuccess) Promise.reject(error);
+          prevRequest!.headers[
+            "Authorization"
+          ] = `Bearer ${data?.data?.newAccessToken}`;
+          return privateHttp(prevRequest!);
         }
-        return Promise.reject(result.errors[0]);
+        return Promise.reject(error);
       }
     );
 
-    return { requestInterceptor, responseInterceptor };
-  };
-
-  useEffect(() => {
-    const { requestInterceptor, responseInterceptor } = applyInterceptors();
     return () => {
-      requestInterceptor.eject();
-      responseInterceptor.eject();
+      privateHttp.interceptors.request.eject(requestInterceptor);
+      privateHttp.interceptors.response.eject(responseInterceptor);
     };
-  }, [auth, applyInterceptors]);
+  }, []);
 
   return http;
 }

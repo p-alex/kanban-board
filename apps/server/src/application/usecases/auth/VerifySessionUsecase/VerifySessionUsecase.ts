@@ -18,7 +18,11 @@ class VerifySessionUsecase {
 
   execute = async (refreshToken: string) => {
     if (!refreshToken)
-      throw new AppException(401, ["No refresh token provided"]);
+      throw new AppException(
+        401,
+        ["No refresh token provided"],
+        "VerifySessionUsecase"
+      );
 
     const payload = await this._jwt.verify<RefreshTokenPayload>(
       refreshToken,
@@ -27,20 +31,31 @@ class VerifySessionUsecase {
 
     const session = await this._findSession.execute(refreshToken);
 
-    if (!session) throw new AppException(401, ["Invalid refresh token"]);
+    if (!session)
+      throw new AppException(
+        401,
+        ["Invalid refresh token"],
+        "VerifySessionUsecase"
+      );
 
     if (this._date.dateStringToMs(session.expires_at) < this._date.now()) {
       await this._sessionRepository.deleteByToken(session.token, {});
-      throw new AppException(401, ["Invalid refresh token"]);
+      throw new AppException(
+        401,
+        ["Invalid refresh token"],
+        "VerifySessionUsecase"
+      );
     }
 
     const user = await this._userRepository.findById(payload.id);
 
     if (!user) {
       await this._sessionRepository.deleteByToken(session.token, {});
-      throw new AppException(401, [
-        "Refresh token is associated with a user that does not exist",
-      ]);
+      throw new AppException(
+        401,
+        ["Refresh token is associated with a user that does not exist"],
+        "VerifySessionUsecase"
+      );
     }
 
     return { user, session };

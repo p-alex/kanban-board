@@ -1,4 +1,5 @@
 interface ServerResponseDto<TResult> {
+  success: boolean;
   errors: string[];
   result: TResult;
 }

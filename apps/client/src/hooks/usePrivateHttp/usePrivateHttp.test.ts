@@ -1,15 +1,29 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import usePrivateHttp from "./usePrivateHttp.js";
-import BestHttpInstance from "../../utils/BestHttp/BestHttpInstance.js";
 
-vi.mock("../useAuthContext/useAuthContext", () => ({
-  default: () => ({
-    accessToken: "mockAccessToken",
-  }),
+// --- hoisted mocks ---
+const {
+  mockRequestUse,
+  mockResponseUse,
+  mockEject,
+  mockPrivateHttp,
+  mockRefreshSession,
+  mockUseAuthContext,
+} = vi.hoisted(() => ({
+  mockRequestUse: vi.fn(),
+  mockResponseUse: vi.fn(),
+  mockEject: vi.fn(),
+  mockPrivateHttp: vi.fn(), // callable like Axios instance
+  mockRefreshSession: vi.fn(),
+  mockUseAuthContext: vi.fn(),
 }));
 
-const mockRefreshSession = vi.fn();
+// --- module mocks ---
+vi.mock("../useAuthContext/useAuthContext", () => ({
+  default: () => mockUseAuthContext(),
+}));
+
 vi.mock(
   "../../api/usecases/auth/RefreshSessionUsecase/useRefreshSession",
   () => ({
@@ -17,182 +31,109 @@ vi.mock(
   })
 );
 
-const mockSend = vi.fn();
-const mockAddRequestInterceptor = vi.fn();
-const mockAddResponseInterceptor = vi.fn();
-const mockEject = vi.fn();
-
-const fakeHttp = {
-  addRequestInterceptor: mockAddRequestInterceptor,
-  addResponseInterceptor: mockAddResponseInterceptor,
-  send: mockSend,
-};
-
-beforeEach(() => {
-  vi.clearAllMocks();
-
-  mockAddRequestInterceptor.mockReturnValue({ eject: mockEject });
-  mockAddResponseInterceptor.mockReturnValue({ eject: mockEject });
+vi.mock("../../api", () => {
+  mockPrivateHttp.interceptors = {
+    request: { use: mockRequestUse, eject: mockEject },
+    response: { use: mockResponseUse, eject: mockEject },
+  };
+  return { privateHttp: mockPrivateHttp };
 });
 
 describe("usePrivateHttp", () => {
-  it("registers request and response interceptors on mount", () => {
-    renderHook(() =>
-      usePrivateHttp({ http: fakeHttp as unknown as BestHttpInstance })
-    );
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUseAuthContext.mockReturnValue({ accessToken: "mockAccessToken" });
+  });
 
-    expect(mockAddRequestInterceptor).toHaveBeenCalledWith(
-      "accessToken interceptor",
-      expect.any(Function)
-    );
-    expect(mockAddResponseInterceptor).toHaveBeenCalledWith(
-      "retry if access token expired interceptor",
+  it("registers request and response interceptors on mount", () => {
+    renderHook(() => usePrivateHttp());
+    expect(mockRequestUse).toHaveBeenCalledWith(expect.any(Function), null);
+    expect(mockResponseUse).toHaveBeenCalledWith(
       expect.any(Function),
       expect.any(Function)
     );
   });
 
-  it("returns response unchanged in success interceptor", () => {
-    let successInterceptor: (result: any) => any = ({}) => {};
-
-    mockAddResponseInterceptor.mockImplementation((_name, success, error) => {
-      successInterceptor = success;
-      return { eject: mockEject };
-    });
-
-    renderHook(() =>
-      usePrivateHttp({ http: fakeHttp as unknown as BestHttpInstance })
-    );
-
-    const mockResponse = { status: 200, data: "ok" };
-    const result = successInterceptor(mockResponse);
-
-    expect(result).toBe(mockResponse);
-  });
-
-  it("ejects interceptors on unmount", () => {
-    const { unmount } = renderHook(() =>
-      usePrivateHttp({ http: fakeHttp as unknown as BestHttpInstance })
-    );
-
-    unmount();
-
-    expect(mockEject).toHaveBeenCalledTimes(2);
-  });
-
   it("adds Authorization header if missing", () => {
-    let requestInterceptorFn: (config: any) => any = ({}) => {};
-
-    mockAddRequestInterceptor.mockImplementation((_name, fn) => {
-      requestInterceptorFn = fn;
-      return { eject: mockEject };
+    let requestInterceptor: (config: any) => any = (c) => c;
+    mockRequestUse.mockImplementation((fn) => {
+      requestInterceptor = fn;
+      return 1;
     });
 
-    renderHook(() =>
-      usePrivateHttp({ http: fakeHttp as unknown as BestHttpInstance })
-    );
+    renderHook(() => usePrivateHttp());
 
-    const config = { headers: {} };
-    const result = requestInterceptorFn(config);
-
+    const config = { headers: {} as Record<string, string> };
+    const result = requestInterceptor(config);
     expect(result.headers.Authorization).toBe("Bearer mockAccessToken");
   });
 
+  it("returns response unchanged in success interceptor", () => {
+    let successInterceptor: (res: any) => any = (r) => r;
+    mockResponseUse.mockImplementation((success, _error) => {
+      successInterceptor = success;
+      return 2;
+    });
+
+    renderHook(() => usePrivateHttp());
+
+    const mockResponse = { status: 200, data: "ok" };
+    const result = successInterceptor(mockResponse);
+    expect(result).toBe(mockResponse);
+  });
+
   it("retries request if response is 401 and refreshSession succeeds", async () => {
-    let responseErrorInterceptorFn: (
-      result: any,
-      config: any
-    ) => Promise<any> = ({}, {}) => Promise.resolve();
-
-    mockAddResponseInterceptor.mockImplementation((_name, success, errorFn) => {
-      responseErrorInterceptorFn = errorFn;
-      return { eject: mockEject };
+    let errorInterceptor: (err: any) => Promise<any> = async (e) => e;
+    mockResponseUse.mockImplementation((_success, error) => {
+      errorInterceptor = error;
+      return 3;
     });
 
-    renderHook(() =>
-      usePrivateHttp({ http: fakeHttp as unknown as BestHttpInstance })
-    );
+    renderHook(() => usePrivateHttp());
 
-    const mockConfig = { url: "/test", headers: {}, wasSent: undefined };
-
-    mockRefreshSession.mockResolvedValue({
-      accessToken: "newAccessToken",
-    });
-
-    mockSend.mockResolvedValue({ data: "success" });
-
-    const errorResponse = {
-      status: 401,
-      errors: [{ message: "Unauthorized" }],
+    const mockConfig = {
+      url: "/test",
+      headers: {} as Record<string, string>,
+      wasSent: undefined,
     };
 
-    const result = await responseErrorInterceptorFn(errorResponse, mockConfig);
+    mockRefreshSession.mockResolvedValue({
+      isSuccess: true,
+      data: { data: { newAccessToken: "newAccessToken" } },
+    });
+
+    mockPrivateHttp.mockResolvedValue({ data: "success" });
+
+    const axiosError: any = { response: { status: 401 }, config: mockConfig };
+
+    const result = await errorInterceptor(axiosError);
 
     expect(mockRefreshSession).toHaveBeenCalled();
-    expect(mockSend).toHaveBeenCalledWith("/test", {
-      ...mockConfig,
-      headers: { Authorization: "Bearer newAccessToken" },
-    });
+    expect(mockConfig.headers.Authorization).toBe("Bearer newAccessToken");
+    expect(mockPrivateHttp).toHaveBeenCalledWith(mockConfig);
     expect(result).toEqual({ data: "success" });
   });
 
-  it("does not retry if refreshSession fails", async () => {
-    let responseErrorInterceptorFn: (
-      result: any,
-      config: any
-    ) => Promise<any> = ({}, {}) => Promise.resolve();
-
-    mockAddResponseInterceptor.mockImplementation((_name, success, errorFn) => {
-      responseErrorInterceptorFn = errorFn;
-      return { eject: mockEject };
+  it("returns rejected promise for non-401 errors", async () => {
+    let errorInterceptor: (err: any) => Promise<any> = async (e) => e;
+    mockResponseUse.mockImplementation((_success, error) => {
+      errorInterceptor = error;
+      return 5;
     });
 
-    renderHook(() =>
-      usePrivateHttp({ http: fakeHttp as unknown as BestHttpInstance })
-    );
+    renderHook(() => usePrivateHttp());
 
-    const mockConfig = { url: "/test", headers: {}, wasSent: undefined };
+    const axiosError: any = { response: { status: 500 }, config: {} };
 
-    mockRefreshSession.mockResolvedValue(null);
-
-    const errorResponse = {
-      status: 401,
-      errors: [{ message: "Unauthorized" }],
-    };
-
-    await expect(
-      responseErrorInterceptorFn(errorResponse, mockConfig)
-    ).rejects.toEqual("error");
-
-    expect(mockRefreshSession).toHaveBeenCalled();
-    expect(mockSend).not.toHaveBeenCalled();
+    const result = await errorInterceptor(axiosError).catch((e) => e);
+    expect(result).toBe(axiosError);
+    expect(mockRefreshSession).not.toHaveBeenCalled();
+    expect(mockPrivateHttp).not.toHaveBeenCalled();
   });
 
-  it("rejects with original error for other status codes", async () => {
-    let responseErrorInterceptorFn: (
-      result: any,
-      config: any
-    ) => Promise<any> = ({}, {}) => Promise.resolve();
-
-    mockAddResponseInterceptor.mockImplementation((_name, success, errorFn) => {
-      responseErrorInterceptorFn = errorFn;
-      return { eject: mockEject };
-    });
-
-    renderHook(() =>
-      usePrivateHttp({ http: fakeHttp as unknown as BestHttpInstance })
-    );
-
-    const errorResponse = {
-      status: 500,
-      errors: [{ message: "Server error" }],
-    };
-
-    await expect(responseErrorInterceptorFn(errorResponse, {})).rejects.toEqual(
-      { message: "Server error" }
-    );
-
-    expect(mockRefreshSession).not.toHaveBeenCalled();
-    expect(mockSend).not.toHaveBeenCalled();
+  it("ejects interceptors on unmount", () => {
+    const { unmount } = renderHook(() => usePrivateHttp());
+    unmount();
+    expect(mockEject).toHaveBeenCalledTimes(2); // request + response
   });
 });

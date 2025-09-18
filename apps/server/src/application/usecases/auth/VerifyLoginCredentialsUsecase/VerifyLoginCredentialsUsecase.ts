@@ -21,10 +21,19 @@ class VerifyLoginCredentialsUsecase {
       transactionQuery,
     });
 
-    if (!user) throw new AppException(401, ["Invalid email or password"]);
+    if (!user)
+      throw new AppException(
+        401,
+        ["Invalid email or password"],
+        "VerifyLoginCredentialsUsecase"
+      );
 
     if (!user.is_verified)
-      throw new AppException(401, ["Account not verified."]);
+      throw new AppException(
+        401,
+        ["Account not verified."],
+        "VerifyLoginCredentialsUsecase"
+      );
 
     const isValidPassword = await this._crypto.verifySlowHash(
       password,
@@ -32,7 +41,11 @@ class VerifyLoginCredentialsUsecase {
     );
 
     if (!isValidPassword)
-      throw new AppException(401, ["Invalid email or password"]);
+      throw new AppException(
+        401,
+        ["Invalid email or password"],
+        "VerifyLoginCredentialsUsecase"
+      );
 
     return user;
   };

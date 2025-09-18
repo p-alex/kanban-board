@@ -24,8 +24,11 @@ class ExpressAdapter {
         this._applyHeaders(res, handlerRes.headers);
         this._applyCookies(res, handlerRes.cookies);
 
-        if (handlerRes.authenticatedUser)
-          req.user = handlerRes.authenticatedUser;
+        if (handlerRes.authenticatedUser) {
+          req.user = {
+            id: handlerRes.authenticatedUser.id,
+          };
+        }
 
         if (!isController && handlerRes.response.success) {
           return next();
@@ -34,6 +37,7 @@ class ExpressAdapter {
         res.status(handlerRes.response.code);
         res.json(this._toServerResponseDto(handlerRes.response));
       } catch (error) {
+        console.error(error);
         this._handleError(res, error);
       }
     };
@@ -51,7 +55,7 @@ class ExpressAdapter {
       accessToken: req.headers["authorization"]
         ? req.headers["authorization"].split(" ")[1]
         : "",
-      user: req.user,
+      user: req?.user ? req.user : { id: "" },
     };
   };
 
@@ -112,6 +116,7 @@ class ExpressAdapter {
     response: IHttpResponse<any>
   ): ServerResponseDto<any> => {
     return {
+      success: response.success,
       errors: response.errors,
       result: response.result,
     };

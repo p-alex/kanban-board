@@ -13,7 +13,11 @@ class CreateBoardUsecase {
   execute = async (data: BoardFactoryData, transactionQuery?: QueryDb) => {
     const board = this._boardFactory.create(data);
 
-    return await this._boardRepository.create(board, { transactionQuery });
+    const createdBoard = await this._boardRepository.create(board, {
+      transactionQuery,
+    });
+
+    return createdBoard;
   };
 }
 

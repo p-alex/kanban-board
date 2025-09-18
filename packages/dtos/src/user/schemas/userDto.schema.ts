@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { userSchemas } from "@kanban/schemavalidations/schemas";
+import { idSchema } from "../../commons/index.js";
 
 export const userDtoSchema = z.object({
-  id: z.string({ required_error: "User id is required" }).uuid(),
+  id: idSchema,
   username: userSchemas.userUsernameSchema,
 });
 

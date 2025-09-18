@@ -18,7 +18,8 @@ class AuthShield {
     try {
       const accessToken = httpReq.accessToken;
 
-      if (!accessToken) throw new AppException(401, ["Must be logged in"]);
+      if (!accessToken)
+        throw new AppException(401, ["Must be logged in"], "AuthShield");
 
       const authenticatedUser = await this._jwt.verify<IAuthenticatedUser>(
         accessToken,
@@ -30,7 +31,12 @@ class AuthShield {
         authenticatedUser,
       };
     } catch (error) {
-      throw new AppException(401, ["Invalid or expired access token"]);
+      console.error(error);
+      throw new AppException(
+        401,
+        ["Invalid or expired access token"],
+        "AuthShield"
+      );
     }
   };
 }

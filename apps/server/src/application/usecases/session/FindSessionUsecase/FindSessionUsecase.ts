@@ -11,7 +11,6 @@ class FindSessionUsecase {
 
   execute = async (refreshToken: string, transactionQuery?: QueryDb) => {
     const token = this._hmacSHA256(refreshToken, this._sessionHashSecret);
-
     return await this._sessionRepository.findByToken(token, {
       transactionQuery,
     });

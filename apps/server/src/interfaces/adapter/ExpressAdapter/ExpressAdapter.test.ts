@@ -47,7 +47,7 @@ describe("ExpressAdapter.ts", () => {
       },
       cookie: "",
       headers: {},
-      user: undefined,
+      user: { id: "" },
     } as unknown as CustomRequest;
 
     mockRes = {
@@ -182,6 +182,7 @@ describe("ExpressAdapter.ts", () => {
     const serverResponseDto: ServerResponseDto<any> = {
       errors: testHandlerResponse.response.errors,
       result: testHandlerResponse.response.result,
+      success: true,
     };
 
     expect(mockRes.json).toHaveBeenCalledWith(serverResponseDto);
@@ -220,6 +221,7 @@ describe("ExpressAdapter.ts", () => {
     const serverResponseDto: ServerResponseDto<any> = {
       errors: testHandlerResponse.response.errors,
       result: testHandlerResponse.response.result,
+      success: false,
     };
 
     expect(mockRes.json).toHaveBeenCalledWith(serverResponseDto);
@@ -345,7 +347,7 @@ describe("ExpressAdapter.ts", () => {
     httpResponseFactory.error.mockReturnValue(httpResponse);
 
     mockHandler.mockImplementation(() => {
-      throw new AppException(400, ["error"]);
+      throw new AppException(400, ["error"], "ExpressAdapter");
     });
     const middleware = expressAdapter.adapt(mockHandler);
     await middleware(mockReq, mockRes, nextFn);
@@ -354,6 +356,7 @@ describe("ExpressAdapter.ts", () => {
     expect(mockRes.json).toHaveBeenCalledWith({
       errors: ["error"],
       result: null,
+      success: false,
     });
   });
 
@@ -377,6 +380,7 @@ describe("ExpressAdapter.ts", () => {
     expect(mockRes.json).toHaveBeenCalledWith({
       errors: ["error"],
       result: null,
+      success: false,
     });
   });
 });

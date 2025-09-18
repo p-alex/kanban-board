@@ -11,6 +11,7 @@ import RedirectIfLoggedIn from "./routerComponents/RedirectIfLoggedIn";
 import RedirectTo from "./routerComponents/RedirectToRoute";
 
 const BoardsPage = lazy(() => import("./pages/BoardsPage"));
+const BoardPageContainer = lazy(() => import("./pages/BoardPageContainer"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 
@@ -33,14 +34,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/boards/:id/:title"
-                element={
-                  <ProtectedRoute>
-                    <p>boards</p>
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/boards/:id" element={<BoardPageContainer />} />
               <Route
                 path="/login"
                 element={
