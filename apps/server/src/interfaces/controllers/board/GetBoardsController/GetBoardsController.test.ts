@@ -11,14 +11,16 @@ import AppException from "../../../../exceptions/AppException.js";
 import {
   mockBoard,
   mockBoardDto,
+  mockClientBoardDto,
 } from "../../../../__fixtures__/board/index.js";
 import { GetBoardsResponseDto } from "@kanban/dtos/BoardDtoTypes";
+import BoardTransformer from "../../../../domain/board/BoardTransformer/BoardTransformer.js";
 
 describe("GetBoardsController.ts", () => {
   let httpReqMock: IHttpRequest;
 
   let boardRepository: Mocked<BoardRepository>;
-  let boardToDto: Mock;
+  let boardTransformerMock: Mocked<BoardTransformer>;
   let httpResponseFactory: Mocked<HttpResponseFactory>;
 
   let getBoardsController: GetBoardsController;
@@ -30,7 +32,9 @@ describe("GetBoardsController.ts", () => {
       findAllWhereMember: vi.fn().mockResolvedValue([mockBoard, mockBoard]),
     } as unknown as Mocked<BoardRepository>;
 
-    boardToDto = vi.fn().mockReturnValue(mockBoardDto);
+    boardTransformerMock = {
+      clientBoardToDto: vi.fn().mockReturnValue(mockClientBoardDto),
+    } as unknown as Mocked<BoardTransformer>;
 
     httpResponseFactory = {
       success: vi.fn(),
@@ -38,7 +42,7 @@ describe("GetBoardsController.ts", () => {
 
     getBoardsController = new GetBoardsController(
       boardRepository,
-      boardToDto,
+      boardTransformerMock,
       httpResponseFactory
     );
   });
@@ -65,8 +69,10 @@ describe("GetBoardsController.ts", () => {
   it("should transform each board to boardDto", async () => {
     await getBoardsController.handle(httpReqMock);
 
-    expect(boardToDto).toHaveBeenCalledTimes(2);
-    expect(boardToDto).toHaveBeenCalledWith(mockBoard);
+    expect(boardTransformerMock.clientBoardToDto).toHaveBeenCalledTimes(2);
+    expect(boardTransformerMock.clientBoardToDto).toHaveBeenCalledWith(
+      mockBoard
+    );
   });
 
   it("should call httpResponseFactory with correct arguments", async () => {

@@ -55,7 +55,7 @@ describe("BoardCard.tsx", () => {
   it("should display a lock icon if the board is private", async () => {
     render(
       <Wrapper>
-        <BoardCard board={{ ...boardMock, status: "private" }} />
+        <BoardCard board={{ ...boardMock, isPrivate: true }} />
       </Wrapper>
     );
 

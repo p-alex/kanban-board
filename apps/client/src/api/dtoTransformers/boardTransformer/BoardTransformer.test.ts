@@ -5,15 +5,13 @@ import { boardDtoMock, boardMock } from "../../../__fixtures__/board/index.js";
 import { BoardDto } from "@kanban/dtos/BoardDtoTypes";
 
 describe("BoardTransformer.ts", () => {
-  const boardTransformer = new BoardTransformer();
-
   it("should transform from dto to board", () => {
     const result = BoardTransformer.dtoToBoard(boardDtoMock);
 
     const expectedResult: IBoard = {
       id: boardDtoMock.id,
       title: boardDtoMock.title,
-      status: boardDtoMock.status,
+      isPrivate: boardDtoMock.is_private,
       boardRole: boardDtoMock.board_role,
       createdAt: boardDtoMock.created_at,
       isFavorite: boardDtoMock.is_favorite,
@@ -28,7 +26,7 @@ describe("BoardTransformer.ts", () => {
     const expectedResult: BoardDto = {
       id: boardMock.id,
       title: boardMock.title,
-      status: boardMock.status,
+      is_private: boardMock.isPrivate,
       board_role: boardMock.boardRole,
       created_at: boardMock.createdAt,
       is_favorite: boardMock.isFavorite,

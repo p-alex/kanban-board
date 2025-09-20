@@ -4,7 +4,7 @@ import IBoard from "../../api/domain/IBoard";
 export const boardDtoMock: BoardDto = {
   id: "id",
   title: "title",
-  status: "public",
+  is_private: false,
   created_at: "created_at",
   board_role: "admin",
   is_favorite: false,
@@ -13,7 +13,7 @@ export const boardDtoMock: BoardDto = {
 export const boardMock: IBoard = {
   id: "id",
   title: "title",
-  status: "public",
+  isPrivate: false,
   boardRole: "admin",
   createdAt: "created_at",
   isFavorite: false,

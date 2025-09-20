@@ -9,7 +9,7 @@ describe("BoardCardFactory.ts", () => {
   let boardCardFactory: BoardCardFactory;
 
   const boardCardData: BoardCardData = {
-    board_column_id: "board_column_id",
+    board_card_list_id: "board_card_list_id",
     title: "title",
     index: 0,
   };

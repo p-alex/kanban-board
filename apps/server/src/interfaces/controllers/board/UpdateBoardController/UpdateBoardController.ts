@@ -7,15 +7,13 @@ import BoardRepository from "../../../../infrastructure/repositories/board/Board
 import HttpResponseFactory from "../../../../HttpResponseFactory/HttpResponseFactory.js";
 import AppException from "../../../../exceptions/AppException.js";
 import BoardMemberRepository from "../../../../infrastructure/repositories/boardMember/BoardMemberRepository.js";
-import { BoardToDto } from "../../../../domain/board/boardToDto.js";
-import { DtoToBoard } from "../../../../domain/board/dtoToBoard.js";
+import BoardTransformer from "../../../../domain/board/BoardTransformer/BoardTransformer.js";
 
 class UpdateBoardController {
   constructor(
     private readonly _boardMembersRepository: BoardMemberRepository,
     private readonly _updateBoard: BoardRepository["update"],
-    private readonly _dtoToBoard: DtoToBoard,
-    private readonly _boardToDto: BoardToDto,
+    private readonly _boardTransformer: BoardTransformer,
     private readonly _makeHttpSuccessResponse: HttpResponseFactory["success"]
   ) {}
 
@@ -52,11 +50,13 @@ class UpdateBoardController {
       );
     }
 
-    const boardToUpdate = this._dtoToBoard(httpReq.body.toUpdateBoardDto);
+    const boardToUpdate = this._boardTransformer.dtoToClientBoard(
+      httpReq.body.toUpdateBoardDto
+    );
 
     const updatedBoard = await this._updateBoard(boardToUpdate, {});
 
-    const updatedBoardDto = this._boardToDto({
+    const updatedBoardDto = this._boardTransformer.clientBoardToDto({
       ...boardToUpdate,
       ...updatedBoard,
     });

@@ -1,7 +1,7 @@
 import IBoard from "./IBoard.js";
 import { CryptoUtil, DateUtil } from "@kanban/utils";
 
-export type BoardFactoryData = Pick<IBoard, "title" | "status">;
+export type BoardFactoryData = Pick<IBoard, "title" | "is_private">;
 
 class BoardFactory {
   constructor(
@@ -13,7 +13,7 @@ class BoardFactory {
     return {
       id: this._randomUUID(),
       title: data.title,
-      status: data.status,
+      is_private: data.is_private,
       created_at: this._getUtcOfNow(),
     };
   };

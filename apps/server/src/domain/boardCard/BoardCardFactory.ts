@@ -3,7 +3,7 @@ import { CryptoUtil, DateUtil } from "@kanban/utils";
 
 export type BoardCardData = Pick<
   IBoardCard,
-  "title" | "index" | "board_column_id"
+  "title" | "index" | "board_card_list_id"
 >;
 
 class BoardCardFactory {
@@ -15,7 +15,7 @@ class BoardCardFactory {
   create = (data: BoardCardData): IBoardCard => {
     return {
       id: this._randomUUID(),
-      board_column_id: data.board_column_id,
+      board_card_list_id: data.board_card_list_id,
       title: data.title,
       index: data.index,
       description: "",

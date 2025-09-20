@@ -1,7 +1,7 @@
 interface IBoard {
   id: string;
   title: string;
-  status: "public" | "private";
+  is_private: boolean;
   created_at: string;
 }
 

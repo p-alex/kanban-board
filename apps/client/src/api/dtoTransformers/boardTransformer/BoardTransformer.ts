@@ -6,7 +6,7 @@ class BoardTransformer {
     return {
       id: boardDto.id,
       title: boardDto.title,
-      status: boardDto.status,
+      isPrivate: boardDto.is_private,
       boardRole: boardDto.board_role,
       isFavorite: boardDto.is_favorite,
       createdAt: boardDto.created_at,
@@ -17,7 +17,7 @@ class BoardTransformer {
     return {
       id: board.id,
       title: board.title,
-      status: board.status,
+      is_private: board.isPrivate,
       board_role: board.boardRole,
       is_favorite: board.isFavorite,
       created_at: board.createdAt,

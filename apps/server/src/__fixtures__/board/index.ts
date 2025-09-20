@@ -5,14 +5,14 @@ import { iClientBoard } from "../../infrastructure/repositories/board/BoardRepos
 export const mockBoard: IBoard = {
   id: "id",
   title: "title",
-  status: "public",
+  is_private: false,
   created_at: "created_at",
 };
 
 export const mockClientBoard: iClientBoard = {
   id: "id",
   title: "title",
-  status: "public",
+  is_private: false,
   created_at: "created_at",
   board_role: "admin",
   is_favorite: false,
@@ -21,16 +21,16 @@ export const mockClientBoard: iClientBoard = {
 export const mockBoardDto: BoardDto = {
   id: "id",
   title: "title",
-  status: "public",
+  is_private: false,
   created_at: "created_at",
   board_role: "admin",
-  is_favorite: true,
+  is_favorite: false,
 };
 
 export const mockClientBoardDto: BoardDto = {
   id: "id",
   title: "title",
-  status: "public",
+  is_private: false,
   created_at: "created_at",
   board_role: "admin",
   is_favorite: false,

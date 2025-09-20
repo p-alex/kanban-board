@@ -24,7 +24,7 @@ function CreateBoardForm(props: Props) {
   const defaultValues: boardDtoTypes.CreateBoardRequestDto = {
     user_id: auth.user.id,
     title: "",
-    status: "private",
+    is_private: false,
   };
 
   const {
@@ -37,10 +37,7 @@ function CreateBoardForm(props: Props) {
     resolver: zodResolver(boardDtos.createBoardRequestDto),
   });
 
-  const selectFieldValues: boardDtoTypes.CreateBoardRequestDto["status"][] = [
-    "private",
-    "public",
-  ];
+  const selectFieldValues = ["public", "private"];
 
   useEffect(() => {
     if (isSuccess) props.callback();
@@ -58,7 +55,9 @@ function CreateBoardForm(props: Props) {
         <SelectField
           label="status"
           values={selectFieldValues}
-          onChange={(value) => setValue("status", value)}
+          onChange={(value) =>
+            setValue("is_private", value === "public" ? false : true)
+          }
         />
         <PrimaryButton
           type="submit"

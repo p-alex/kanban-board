@@ -2,19 +2,17 @@ import {
   GetPublicBoardRequestDto,
   GetPublicBoardResponseDto,
 } from "@kanban/dtos/BoardDtoTypes";
-import {
-  httpRequestFactory,
-  IHandlerResponse,
-  IHttpRequest,
-} from "../../../adapter/index.js";
+import { IHandlerResponse, IHttpRequest } from "../../../adapter/index.js";
 import BoardRepository from "../../../../infrastructure/repositories/board/BoardRepository.js";
 import httpResponseFactory from "../../../../HttpResponseFactory/index.js";
-import boardToDto from "../../../../domain/board/clientBoardToDto.js";
 import AppException from "../../../../exceptions/AppException.js";
-import CheckIfUserIsAMemberOfBoardUsecase from "../../../../application/usecases/boardMember/CheckIfUserIsAMemberOfBoardUsecase/CheckIfUserIsAMemberOfBoardUsecase.js";
+import BoardTransformer from "../../../../domain/board/BoardTransformer/BoardTransformer.js";
 
 class GetPublicBoardController {
-  constructor(private readonly _boardRepository: BoardRepository) {}
+  constructor(
+    private readonly _boardRepository: BoardRepository,
+    private readonly _boardTransformer: BoardTransformer
+  ) {}
 
   handle = async (
     httpReq: IHttpRequest<GetPublicBoardRequestDto>
@@ -23,7 +21,7 @@ class GetPublicBoardController {
 
     let board = await this._boardRepository.findById(board_id, {});
 
-    if (board.status === "private")
+    if (board.is_private)
       throw new AppException(
         403,
         ["This board is private"],
@@ -32,7 +30,7 @@ class GetPublicBoardController {
 
     return {
       response: httpResponseFactory.success(200, {
-        boardDto: boardToDto(board),
+        boardDto: this._boardTransformer.clientBoardToDto(board),
       }),
     };
   };

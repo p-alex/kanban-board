@@ -27,7 +27,7 @@ function BoardCard({ board }: Props) {
   return (
     <div className="relative border border-(--ui_border_color_lt) dark:border-(--ui_border_color_dt) flex flex-col rounded-(--ui_radius) overflow-hidden">
       <div className="absolute top-0 right-0 flex items-center p-1 z-10">
-        {board.status === "private" && (
+        {board.isPrivate && (
           <div className="w-8 h-8 flex items-center justify-center">
             <ClosedLockIcon data-testid="lock-icon" />
           </div>

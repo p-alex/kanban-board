@@ -12,12 +12,12 @@ import {
 import httpResponseFactory from "../../../../HttpResponseFactory/index.js";
 import { mockBoardMember } from "../../../../__fixtures__/boardMember/index.js";
 import BoardMemberRepository from "../../../../infrastructure/repositories/boardMember/BoardMemberRepository.js";
+import BoardTransformer from "../../../../domain/board/BoardTransformer/BoardTransformer.js";
 
 describe("UpdateBoardController.ts", () => {
   let boardMemberRepository: Mocked<BoardMemberRepository>;
   let updateBoard: Mock;
-  let dtoToBoard: Mock;
-  let boardToDto: Mock;
+  let boardTransformer: Mocked<BoardTransformer>;
 
   let updateBoardController: UpdateBoardController;
 
@@ -28,8 +28,10 @@ describe("UpdateBoardController.ts", () => {
       findOne: vi.fn().mockResolvedValue(mockBoardMember),
     } as unknown as Mocked<BoardMemberRepository>;
     updateBoard = vi.fn().mockResolvedValue(mockBoard);
-    dtoToBoard = vi.fn().mockReturnValue(mockBoard);
-    boardToDto = vi.fn().mockReturnValue(mockBoardDto);
+    boardTransformer = {
+      dtoToClientBoard: vi.fn().mockReturnValue(mockBoard),
+      clientBoardToDto: vi.fn().mockReturnValue(mockBoardDto),
+    } as Mocked<BoardTransformer>;
 
     httpReq = {
       body: {
@@ -43,8 +45,7 @@ describe("UpdateBoardController.ts", () => {
     updateBoardController = new UpdateBoardController(
       boardMemberRepository,
       updateBoard,
-      dtoToBoard,
-      boardToDto,
+      boardTransformer,
       httpResponseFactory.success
     );
   });
@@ -52,7 +53,9 @@ describe("UpdateBoardController.ts", () => {
   it("should tranform board dto to board", async () => {
     await updateBoardController.handle(httpReq);
 
-    expect(dtoToBoard).toHaveBeenCalledWith(httpReq.body.toUpdateBoardDto);
+    expect(boardTransformer.dtoToClientBoard).toHaveBeenCalledWith(
+      httpReq.body.toUpdateBoardDto
+    );
   });
 
   it("should should update board by calling boardRepository.update with correct arguments", async () => {
@@ -64,7 +67,7 @@ describe("UpdateBoardController.ts", () => {
   it("should transform board to dto", async () => {
     await updateBoardController.handle(httpReq);
 
-    expect(boardToDto).toHaveBeenCalledWith(mockBoard);
+    expect(boardTransformer.clientBoardToDto).toHaveBeenCalledWith(mockBoard);
   });
 
   it("should return the correct result", async () => {

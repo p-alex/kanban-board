@@ -6,7 +6,7 @@ interface IBoard {
   isFavorite: boolean;
   boardRole: IBoardMember["role"];
   createdAt: string;
-  status: "public" | "private";
+  isPrivate: boolean;
 }
 
 export default IBoard;

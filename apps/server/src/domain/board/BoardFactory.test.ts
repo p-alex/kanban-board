@@ -13,8 +13,7 @@ describe("BoardFactory.ts", () => {
 
   const boardFactoryData: BoardFactoryData = {
     title: "title",
-    user_id: "user_id",
-    status: "public",
+    is_private: false,
   };
 
   it("should assign a random uuid to id", () => {
@@ -45,7 +44,7 @@ describe("BoardFactory.ts", () => {
     const resultBoard: IBoard = {
       id: "uuid",
       title: "title",
-      status: "public",
+      is_private: false,
       created_at: "currentUTC",
     };
 

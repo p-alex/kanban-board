@@ -56,7 +56,7 @@ where bm.user_id = $1
 
       expect(queryDb).toHaveBeenCalledWith(
         `
-      select boards.*, false as is_favorite, 'viewer'::board_member_role as board_role
+      select boards.*, false as is_favorite, 'viewer'::board_role as board_role
 from boards
 where boards.id = $1;
       `,
@@ -76,8 +76,13 @@ where boards.id = $1;
       await boardRepository.create(mockBoard, { transactionQuery: undefined });
 
       expect(queryDb).toHaveBeenCalledWith(
-        "INSERT INTO boards (id, title, status, created_at) VALUES ($1, $2, $3, $4) RETURNING boards.*, (false) as is_favorite, ('admin') as board_role",
-        [mockBoard.id, mockBoard.title, mockBoard.status, mockBoard.created_at]
+        "INSERT INTO boards (id, title, is_private, created_at) VALUES ($1, $2, $3, $4) RETURNING boards.*, (false) as is_favorite, ('admin') as board_role",
+        [
+          mockBoard.id,
+          mockBoard.title,
+          `${mockBoard.is_private}`,
+          mockBoard.created_at,
+        ]
       );
     });
 
@@ -93,8 +98,8 @@ where boards.id = $1;
       await boardRepository.update(mockBoard, { transactionQuery: undefined });
 
       expect(queryDb).toHaveBeenCalledWith(
-        "UPDATE boards SET title = $1, status = $2 WHERE id = $3 RETURNING *",
-        [mockBoard.title, mockBoard.status, mockBoard.id]
+        "UPDATE boards SET title = $1, is_private = $2 WHERE id = $3 RETURNING *",
+        [mockBoard.title, `${mockBoard.is_private}`, mockBoard.id]
       );
     });
 
@@ -115,7 +120,7 @@ where boards.id = $1;
       );
     });
 
-    it("should use transaction query if passed", async () => {
+    it("should use transactstatusion query if passed", async () => {
       await boardRepository.delete(mockBoard, { transactionQuery });
 
       expect(transactionQuery).toHaveBeenCalled();

@@ -3,12 +3,12 @@ import BoardRepository from "../../../../infrastructure/repositories/board/Board
 import { IHandlerResponse, IHttpRequest } from "../../../adapter/index.js";
 import AppException from "../../../../exceptions/AppException.js";
 import HttpResponseFactory from "../../../../HttpResponseFactory/HttpResponseFactory.js";
-import { BoardToDto } from "../../../../domain/board/boardToDto.js";
+import BoardTransformer from "../../../../domain/board/BoardTransformer/BoardTransformer.js";
 
 class GetBoardsController {
   constructor(
     private readonly _boardRepository: BoardRepository,
-    private readonly _boardToDto: BoardToDto,
+    private readonly _boardTransformer: BoardTransformer,
     private readonly _httpResponseFactory: HttpResponseFactory
   ) {}
 
@@ -23,7 +23,7 @@ class GetBoardsController {
     const boards = await this._boardRepository.findAllWhereMember(user.id, {});
 
     const boardDtos: BoardDto[] = boards.map((board) =>
-      this._boardToDto(board)
+      this._boardTransformer.clientBoardToDto(board)
     );
 
     return {

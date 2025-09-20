@@ -6,16 +6,16 @@ import {
   GetBoardResponseDto,
 } from "@kanban/dtos/BoardDtoTypes";
 import GetBoardController from "./GetBoardController.js";
-import boardToDto from "../../../../domain/board/clientBoardToDto.js";
 import httpResponseFactory from "../../../../HttpResponseFactory/index.js";
 import {
-  mockBoard,
   mockBoardDto,
+  mockClientBoard,
 } from "../../../../__fixtures__/board/index.js";
 import BoardMemberRepository from "../../../../infrastructure/repositories/boardMember/BoardMemberRepository.js";
 import FavoriteBoardRepository from "../../../../infrastructure/repositories/favoriteBoard/FavoriteBoardRepository.js";
 import { mockBoardMember } from "../../../../__fixtures__/boardMember/index.js";
 import { mockFavoriteBoard } from "../../../../__fixtures__/favoriteBoard/index.js";
+import boardTransformer from "../../../../domain/board/BoardTransformer/index.js";
 
 describe("GetBoardController.ts", () => {
   let boardRepository: Mocked<BoardRepository>;
@@ -32,7 +32,7 @@ describe("GetBoardController.ts", () => {
 
   beforeEach(() => {
     boardRepository = {
-      findById: vi.fn().mockResolvedValue(mockBoard),
+      findById: vi.fn().mockResolvedValue(mockClientBoard),
     } as unknown as Mocked<BoardRepository>;
 
     boardMemberRepository = {
@@ -47,7 +47,7 @@ describe("GetBoardController.ts", () => {
       boardRepository,
       boardMemberRepository,
       favoriteBoardRepository,
-      boardToDto,
+      boardTransformer,
       httpResponseFactory
     );
   });
@@ -69,7 +69,7 @@ describe("GetBoardController.ts", () => {
         code: 200,
         errors: [],
         result: {
-          boardDto: mockBoardDto,
+          boardDto: { ...mockBoardDto, is_favorite: true },
         },
         success: true,
       },

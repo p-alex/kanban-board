@@ -5,17 +5,17 @@ import {
 import BoardRepository from "../../../../infrastructure/repositories/board/BoardRepository.js";
 import { IHandlerResponse, IHttpRequest } from "../../../adapter/index.js";
 import HttpResponseFactory from "../../../../HttpResponseFactory/HttpResponseFactory.js";
-import { BoardToDto } from "../../../../domain/board/clientBoardToDto.js";
 import AppException from "../../../../exceptions/AppException.js";
 import BoardMemberRepository from "../../../../infrastructure/repositories/boardMember/BoardMemberRepository.js";
 import FavoriteBoardRepository from "../../../../infrastructure/repositories/favoriteBoard/FavoriteBoardRepository.js";
+import BoardTransformer from "../../../../domain/board/BoardTransformer/BoardTransformer.js";
 
 class GetBoardController {
   constructor(
     private readonly _boardRepository: BoardRepository,
     private readonly _boardMemberRepository: BoardMemberRepository,
     private readonly _favoriteBoardRepository: FavoriteBoardRepository,
-    private readonly _boardToDto: BoardToDto,
+    private readonly _boardTransformer: BoardTransformer,
     private readonly _httpResponseFactory: HttpResponseFactory
   ) {}
 
@@ -43,7 +43,7 @@ class GetBoardController {
 
     const isMember = boardMember !== undefined;
 
-    if (board.status === "private" && !isMember) {
+    if (board.is_private && !isMember) {
       throw new AppException(
         403,
         ["This board is private"],
@@ -59,7 +59,7 @@ class GetBoardController {
 
     const isFavorite = favoriteBoard !== undefined;
 
-    const boardDto = this._boardToDto({
+    const boardDto = this._boardTransformer.clientBoardToDto({
       ...board,
       board_role: isMember ? boardMember.role : "viewer",
       is_favorite: isFavorite,

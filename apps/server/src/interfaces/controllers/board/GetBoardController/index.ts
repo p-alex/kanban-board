@@ -1,4 +1,4 @@
-import boardToDto from "../../../../domain/board/clientBoardToDto.js";
+import boardTransformer from "../../../../domain/board/BoardTransformer/index.js";
 import httpResponseFactory from "../../../../HttpResponseFactory/index.js";
 import boardRepository from "../../../../infrastructure/repositories/board/index.js";
 import boardMemberRepository from "../../../../infrastructure/repositories/boardMember/index.js";
@@ -9,7 +9,7 @@ const getBoardController = new GetBoardController(
   boardRepository,
   boardMemberRepository,
   favoriteBoardRepository,
-  boardToDto,
+  boardTransformer,
   httpResponseFactory
 );
 

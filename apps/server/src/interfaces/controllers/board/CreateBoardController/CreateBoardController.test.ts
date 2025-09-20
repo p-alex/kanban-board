@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, Mock, Mocked, vi } from "vitest";
-import CreateBoardUsecase from "../../../../application/usecases/board/CreateBoardUsecase/CreateBoardUsecase.js";
 import HttpResponseFactory from "../../../../HttpResponseFactory/HttpResponseFactory.js";
 import CreateBoardController from "./CreateBoardController.js";
 import {
@@ -11,13 +10,15 @@ import { CreateBoardRequestDto } from "@kanban/dtos/BoardDtoTypes";
 import {
   mockBoard,
   mockBoardDto,
+  mockClientBoardDto,
 } from "../../../../__fixtures__/board/index.js";
 import CreateBoardService from "../../../../application/services/board/CreateBoardService.js";
+import BoardTransformer from "../../../../domain/board/BoardTransformer/BoardTransformer.js";
 
 describe("CreateBoardController.ts", () => {
   let createBoardService: Mocked<CreateBoardService>;
 
-  let boardToDto: Mock;
+  let boardTransformer: Mocked<BoardTransformer>;
 
   let httpResponseFactory: Mocked<HttpResponseFactory>;
 
@@ -36,7 +37,7 @@ describe("CreateBoardController.ts", () => {
     mockHttpReq = {
       body: {
         title: "title",
-        status: "public",
+        is_private: false,
         user_id: "user_id",
       },
       user: {
@@ -48,7 +49,9 @@ describe("CreateBoardController.ts", () => {
       execute: vi.fn().mockResolvedValue(mockBoard),
     } as unknown as Mocked<CreateBoardService>;
 
-    boardToDto = vi.fn().mockReturnValue(mockBoardDto);
+    boardTransformer = {
+      clientBoardToDto: vi.fn().mockReturnValue(mockClientBoardDto),
+    } as unknown as Mocked<BoardTransformer>;
 
     httpResponseFactory = {
       success: vi.fn().mockReturnValue(mockHttpResponse),
@@ -56,7 +59,7 @@ describe("CreateBoardController.ts", () => {
 
     createBoardController = new CreateBoardController(
       createBoardService,
-      boardToDto,
+      boardTransformer,
       httpResponseFactory
     );
   });
@@ -73,7 +76,7 @@ describe("CreateBoardController.ts", () => {
   it("should convert the created board into a board dto", async () => {
     await createBoardController.handle(mockHttpReq);
 
-    expect(boardToDto).toHaveBeenCalledWith(mockBoard);
+    expect(boardTransformer.clientBoardToDto).toHaveBeenCalledWith(mockBoard);
   });
 
   it("should call httpResponseFactory with correct arguments", async () => {

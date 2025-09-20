@@ -4,7 +4,7 @@ import IUser from "../user/IUser.js";
 interface IBoardMember {
   user_id: IUser["id"];
   board_id: IBoard["id"];
-  role: "admin" | "member" | "viewer";
+  role: "admin" | "member" | "viewer" | "guest";
   joined_at: string;
 }
 
