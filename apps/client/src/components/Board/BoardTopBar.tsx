@@ -20,6 +20,7 @@ function BoardTopBar({ board }: Props) {
 
   const { markBoardAsFavorite, isMarkBoardAsFavoriteLoading } =
     useMarkBoardAsFavorite({ boardId: board.id });
+
   const { unmarkBoardAsFavorite, isUnmarkBoardAsFavoriteLoading } =
     useUnmarkBoardAsFavorite({ boardId: board.id });
 
@@ -65,15 +66,15 @@ function BoardTopBar({ board }: Props) {
         )}
         {board.boardRole === "admin" && (
           <Button
-            icon={<Lock isClosed={board.status === "private"} size={24} />}
+            icon={<Lock isClosed={board.isPrivate} size={24} />}
             className="w-9 h-9 flex items-center justify-center"
             title={`Make this board ${
-              board.status === "public" ? "private" : "public"
+              !board.isPrivate === true ? "public" : "private"
             }`}
             onClick={() =>
               updateBoard({
                 ...board,
-                status: board.status === "private" ? "public" : "private",
+                isPrivate: !board.isPrivate,
               })
             }
             disabled={shouldDisableButtonsWhileLoading}
