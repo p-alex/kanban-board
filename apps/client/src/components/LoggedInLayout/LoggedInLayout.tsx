@@ -10,7 +10,6 @@ interface Props {
 }
 
 function LoggedInLayout(props: Props) {
-  // const localStorage = useLocalStorage();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const auth = useAuthContext();
@@ -27,44 +26,10 @@ function LoggedInLayout(props: Props) {
     }
   };
 
-  // const [isSideBarOpen, setIsSideBarOpen] = useState(
-  //   localStorage.get<boolean>("isSideBarOpen") || false
-  // );
-
-  // const toggleSideBar = () => {
-  //   setIsSideBarOpen((prev) => {
-  //     const nextValue = !prev;
-  //     localStorage.set("isSideBarOpen", nextValue);
-  //     return nextValue;
-  //   });
-  // };
-
   return (
     <>
       <Navbar logout={handleLogout} user={auth.user} />
       <div className="flex justify-end items-start">
-        {/* <AnimatePresence>
-          {isSideBarOpen && (
-            <div data-testid="sidebar">
-              <SideBar toggleSideBar={toggleSideBar} />
-            </div>
-          )}
-        </AnimatePresence>
-        <AnimatePresence>
-          {!isSideBarOpen && <SideBarToggle toggleSideBar={toggleSideBar} />}
-        </AnimatePresence> */}
-        {/* <motion.div
-          initial={{ width: "100%" }}
-          animate={{
-            width: isSideBarOpen ? "calc(100% - 300px)" : "100%",
-          }}
-          transition={{
-            duration: config.animationDuration,
-          }}
-          className="w-full"
-        >
-          {props.children}
-        </motion.div> */}
         <div className="w-full">{props.children}</div>
       </div>
     </>

@@ -88,7 +88,6 @@ describe("RegisterForm.tsx", () => {
     const submitBtn = screen.getByRole("button", { name: /register/i });
     await userEvent.click(submitBtn);
 
-    // There should be 4 errors for username, email, password, confirmPassword
     const errors = screen.getAllByTestId(/textFieldError/i);
 
     expect(errors.length).toBeGreaterThanOrEqual(4);

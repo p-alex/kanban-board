@@ -56,7 +56,7 @@ function usePrivateHttp({
       privateHttp.interceptors.request.eject(requestInterceptor);
       privateHttp.interceptors.response.eject(responseInterceptor);
     };
-  }, []);
+  }, [auth]);
 
   return http;
 }

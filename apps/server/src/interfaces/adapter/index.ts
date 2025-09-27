@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { IAuthenticatedUser } from "../../middleware/AuthShield/index.js";
 
-export type CustomRequest = Request & { user?: IAuthenticatedUser };
+export type CustomRequest = Request & { auth_user?: IAuthenticatedUser };
 
 export function httpRequestFactory(): IHttpRequest {
   return {
@@ -13,9 +13,7 @@ export function httpRequestFactory(): IHttpRequest {
     url: "/url",
     cookies: {},
     accessToken: "",
-    user: {
-      id: "id",
-    },
+    auth_user: null,
   };
 }
 
@@ -28,7 +26,7 @@ export interface IHttpRequest<TBody = any, TParams = any, TQuery = any> {
   url: string;
   cookies: { [key: string]: string };
   accessToken: string;
-  user: IAuthenticatedUser;
+  auth_user: IAuthenticatedUser | null;
 }
 
 export interface ICookie {
@@ -46,7 +44,7 @@ export interface IHandlerResponse<TResponseResult> {
   response: IHttpResponse<TResponseResult>;
   headers?: Record<string, string>;
   cookies?: ICookie[];
-  authenticatedUser?: IAuthenticatedUser;
+  authenticatedUser?: IAuthenticatedUser | null;
 }
 
 export interface IHttpResponse<TResult> {

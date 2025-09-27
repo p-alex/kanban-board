@@ -49,7 +49,7 @@ describe("AuthShield.ts", () => {
   });
 
   it("should call jwt.verify with correct arguments", async () => {
-    await authShield.protect(mockHttpReq);
+    await authShield.protect({})(mockHttpReq);
 
     expect(jwtUtil.verify).toHaveBeenCalledWith(
       mockHttpReq.accessToken,
@@ -58,7 +58,7 @@ describe("AuthShield.ts", () => {
   });
 
   it("should return the correct response with authenticatedUser", async () => {
-    const result = await authShield.protect(mockHttpReq);
+    const result = await authShield.protect({})(mockHttpReq);
 
     const expectedResponse: IHandlerResponse<null> = {
       response: {
@@ -73,33 +73,41 @@ describe("AuthShield.ts", () => {
     expect(result).toEqual(expectedResponse);
   });
 
-  it("should throw AppException if no accessToken is provided", async () => {
-    mockHttpReq.accessToken = "";
-
-    try {
-      await authShield.protect(mockHttpReq);
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppException);
-      if (error instanceof AppException) {
-        expect(error.code).toBe(401);
-        expect(error.errors).toEqual(["Invalid or expired access token"]);
-      }
-    }
-  });
-
   it("should throw AppException if jwt.verify throws an error", async () => {
     (jwtUtil.verify as unknown as Mock).mockRejectedValue(
       new Error("Invalid token")
     );
 
+    await expect(authShield.protect({})(mockHttpReq)).rejects.toThrowError(
+      AppException
+    );
+
     try {
-      await authShield.protect(mockHttpReq);
+      await authShield.protect({})(mockHttpReq);
     } catch (error) {
       expect(error).toBeInstanceOf(AppException);
       if (error instanceof AppException) {
         expect(error.code).toBe(401);
-        expect(error.errors).toEqual(["Invalid or expired access token"]);
+        expect(error.errors).toEqual(["Invalid token or expired."]);
       }
     }
+  });
+
+  it("should let through if letThroughAnyway is true and token invalid", async () => {
+    (jwtUtil.verify as unknown as Mock).mockRejectedValue(
+      new Error("Invalid token")
+    );
+
+    const result = await authShield.protect({ letThroughAnyway: true })(
+      mockHttpReq
+    );
+
+    expect(result.authenticatedUser).toBeNull();
+    expect(result.response).toEqual({
+      code: 200,
+      errors: [],
+      result: null,
+      success: true,
+    });
   });
 });

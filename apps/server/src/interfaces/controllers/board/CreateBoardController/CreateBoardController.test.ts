@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, Mock, Mocked, vi } from "vitest";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import HttpResponseFactory from "../../../../HttpResponseFactory/HttpResponseFactory.js";
 import CreateBoardController from "./CreateBoardController.js";
 import {
@@ -10,20 +10,15 @@ import { CreateBoardRequestDto } from "@kanban/dtos/BoardDtoTypes";
 import {
   mockBoard,
   mockBoardDto,
-  mockClientBoardDto,
 } from "../../../../__fixtures__/board/index.js";
 import CreateBoardService from "../../../../application/services/board/CreateBoardService.js";
 import BoardTransformer from "../../../../domain/board/BoardTransformer/BoardTransformer.js";
 
 describe("CreateBoardController.ts", () => {
   let createBoardService: Mocked<CreateBoardService>;
-
   let boardTransformer: Mocked<BoardTransformer>;
-
   let httpResponseFactory: Mocked<HttpResponseFactory>;
-
   let createBoardController: CreateBoardController;
-
   let mockHttpReq: IHttpRequest<CreateBoardRequestDto>;
 
   const mockHttpResponse: IHttpResponse<null> = {
@@ -40,7 +35,7 @@ describe("CreateBoardController.ts", () => {
         is_private: false,
         user_id: "user_id",
       },
-      user: {
+      auth_user: {
         id: "id",
       },
     } as unknown as IHttpRequest;
@@ -50,7 +45,7 @@ describe("CreateBoardController.ts", () => {
     } as unknown as Mocked<CreateBoardService>;
 
     boardTransformer = {
-      clientBoardToDto: vi.fn().mockReturnValue(mockClientBoardDto),
+      clientBoardToDto: vi.fn().mockReturnValue(mockBoardDto),
     } as unknown as Mocked<BoardTransformer>;
 
     httpResponseFactory = {
@@ -64,19 +59,23 @@ describe("CreateBoardController.ts", () => {
     );
   });
 
-  it("should call create board usecase with correct arguments", async () => {
+  it("should call create board service with correct arguments", async () => {
     await createBoardController.handle(mockHttpReq);
 
     expect(createBoardService.execute).toHaveBeenCalledWith(
       mockHttpReq.body,
-      mockHttpReq.user.id
+      mockHttpReq.auth_user?.id
     );
   });
 
   it("should convert the created board into a board dto", async () => {
     await createBoardController.handle(mockHttpReq);
 
-    expect(boardTransformer.clientBoardToDto).toHaveBeenCalledWith(mockBoard);
+    expect(boardTransformer.clientBoardToDto).toHaveBeenCalledWith({
+      ...mockBoard,
+      is_favorite: false,
+      board_role: "admin",
+    });
   });
 
   it("should call httpResponseFactory with correct arguments", async () => {

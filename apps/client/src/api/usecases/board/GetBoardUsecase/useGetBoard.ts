@@ -1,4 +1,3 @@
-import IBoard from "../../../domain/IBoard";
 import { useQuery } from "@tanstack/react-query";
 import { ServerResponseDto } from "@kanban/dtos/ServerResponseDto";
 import { BoardDto, GetBoardResponseDto } from "@kanban/dtos/BoardDtoTypes";
@@ -11,19 +10,9 @@ interface Props {
   boardId: string;
 }
 
-function useGetBoard({ boardId }: Props): {
-  board: IBoard | null;
-  isGetBoardLoading: boolean;
-  error: string;
-} {
+function useGetBoard({ boardId }: Props) {
   const [error, setError] = useState("");
 
-  if (!boardId)
-    return {
-      board: null,
-      isGetBoardLoading: false,
-      error: "Board does not exist.",
-    };
   const http = usePrivateHttp();
 
   const getBoardRequest = async (): Promise<BoardDto | null> => {
@@ -52,8 +41,9 @@ function useGetBoard({ boardId }: Props): {
   const { data, isLoading } = useQuery({
     queryKey: ["get-board-" + boardId],
     queryFn: () => getBoardRequest(),
-    retry: false,
-    refetchOnWindowFocus: false,
+    retry: true,
+    refetchOnWindowFocus: true,
+    enabled: true,
   });
 
   return {

@@ -12,7 +12,7 @@ describe("BestHttpRequestInterceptorManager", () => {
       url: "/test",
       headers: { "Content-Type": "application/json" },
       method: "get",
-    } as IBestHttpConfig; // minimal config
+    } as IBestHttpConfig;
   });
 
   it("should add an interceptor and return it", () => {

@@ -10,30 +10,35 @@ import httpResponseFactory from "../../../../HttpResponseFactory/index.js";
 import HttpResponseFactory from "../../../../HttpResponseFactory/HttpResponseFactory.js";
 import { SESSION_COOKIE_NAME } from "../../../../application/usecases/auth/CreateRefreshTokenCookieUsecase/CreateRefreshTokenCookieUsecase.js";
 
-describe("Logout.ts", () => {
+describe("LogoutController.ts", () => {
   let mockHttpReq: IHttpRequest;
   let logoutService: Mocked<LogoutService>;
-  let httpResponseFactory: Mocked<HttpResponseFactory>;
+  let httpResponseFactoryMock: Mocked<HttpResponseFactory>;
   let logoutController: LogoutController;
 
   beforeEach(() => {
     mockHttpReq = httpRequestFactory();
+    mockHttpReq.auth_user = { id: "user-id" };
+    mockHttpReq.cookies = { [SESSION_COOKIE_NAME]: "refresh-token" };
 
     logoutService = { execute: vi.fn() } as unknown as Mocked<LogoutService>;
 
-    httpResponseFactory = {
+    httpResponseFactoryMock = {
       success: vi.fn(),
     } as unknown as Mocked<HttpResponseFactory>;
 
-    logoutController = new LogoutController(logoutService, httpResponseFactory);
+    logoutController = new LogoutController(
+      logoutService,
+      httpResponseFactoryMock
+    );
   });
 
   it("should call logout service with the correct arguments", async () => {
     await logoutController.handle(mockHttpReq);
 
     expect(logoutService.execute).toHaveBeenCalledWith(
-      mockHttpReq.user?.id,
-      mockHttpReq.cookies["session"]
+      mockHttpReq.auth_user?.id,
+      mockHttpReq.cookies[SESSION_COOKIE_NAME]
     );
   });
 
@@ -60,7 +65,7 @@ describe("Logout.ts", () => {
       success: true,
     };
 
-    httpResponseFactory.success.mockReturnValue(httpResponseReturn);
+    httpResponseFactoryMock.success.mockReturnValue(httpResponseReturn);
 
     const result = await logoutController.handle(mockHttpReq);
 

@@ -30,7 +30,7 @@ authRouter.post(
 authRouter.post(
   "/logout",
   expressAdapter.adapt(rateLimiter.limit({ maxRequests: 5, windowMs: 1000 })),
-  expressAdapter.adapt(authShield.protect),
+  expressAdapter.adapt(authShield.protect({})),
   expressAdapter.adapt(logoutController.handle, true)
 );
 
@@ -42,7 +42,7 @@ authRouter.get(
 
 authRouter.get(
   "/test",
-  expressAdapter.adapt(authShield.protect),
+  expressAdapter.adapt(authShield.protect({})),
   (req, res) => {
     res.json({ hello: "hello" });
   }

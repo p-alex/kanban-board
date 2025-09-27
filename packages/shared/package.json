@@ -1,0 +1,21 @@
+{
+  "name": "@kanban/shared",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "countLines": "scc ./src"
+  },
+  "exports": {
+    "./boardPermissions": {
+      "import": "./dist/boardPermissions/index.js",
+      "types": "./dist/boardPermissions/index.d.ts"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}

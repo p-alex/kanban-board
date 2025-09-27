@@ -6,10 +6,7 @@ import useAuthContext from "../hooks/useAuthContext/useAuthContext";
 
 function BoardPage() {
   const auth = useAuthContext();
-
   const boardId = useParams<{ id: string }>().id ?? "";
-
-  const { board, error } = useGetBoard({ boardId });
 
   if (!boardId)
     return (
@@ -17,6 +14,8 @@ function BoardPage() {
         <p>No board id provided</p>
       </LoggedInLayout>
     );
+
+  const { board, error } = useGetBoard({ boardId });
 
   if (!board)
     return (

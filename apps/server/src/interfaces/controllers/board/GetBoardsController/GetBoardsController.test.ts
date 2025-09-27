@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, Mock, Mocked, vi } from "vitest";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import BoardRepository from "../../../../infrastructure/repositories/board/BoardRepository.js";
 import HttpResponseFactory from "../../../../HttpResponseFactory/HttpResponseFactory.js";
 import GetBoardsController from "./GetBoardsController.js";
@@ -11,7 +11,6 @@ import AppException from "../../../../exceptions/AppException.js";
 import {
   mockBoard,
   mockBoardDto,
-  mockClientBoardDto,
 } from "../../../../__fixtures__/board/index.js";
 import { GetBoardsResponseDto } from "@kanban/dtos/BoardDtoTypes";
 import BoardTransformer from "../../../../domain/board/BoardTransformer/BoardTransformer.js";
@@ -26,14 +25,15 @@ describe("GetBoardsController.ts", () => {
   let getBoardsController: GetBoardsController;
 
   beforeEach(() => {
-    httpReqMock = { user: { id: "id" } } as IHttpRequest;
-
+    httpReqMock = { auth_user: { id: "id" } } as IHttpRequest;
     boardRepository = {
-      findAllWhereMember: vi.fn().mockResolvedValue([mockBoard, mockBoard]),
+      findAllWhereMemberWithRoleAndIsFavorite: vi
+        .fn()
+        .mockResolvedValue([mockBoard, mockBoard]),
     } as unknown as Mocked<BoardRepository>;
 
     boardTransformerMock = {
-      clientBoardToDto: vi.fn().mockReturnValue(mockClientBoardDto),
+      clientBoardToDto: vi.fn().mockReturnValue(mockBoardDto),
     } as unknown as Mocked<BoardTransformer>;
 
     httpResponseFactory = {
@@ -48,7 +48,7 @@ describe("GetBoardsController.ts", () => {
   });
 
   it("should throw AppException with correct arguments if user is undefined in http request", async () => {
-    httpReqMock.user = { id: "" };
+    httpReqMock.auth_user = undefined as any;
     try {
       await getBoardsController.handle(httpReqMock);
     } catch (error) {
@@ -63,7 +63,9 @@ describe("GetBoardsController.ts", () => {
   it("should call boardRepository with correct arguments", async () => {
     await getBoardsController.handle(httpReqMock);
 
-    expect(boardRepository.findAllWhereMember).toHaveBeenCalledWith("id", {});
+    expect(
+      boardRepository.findAllWhereMemberWithRoleAndIsFavorite
+    ).toHaveBeenCalledWith("id", {});
   });
 
   it("should transform each board to boardDto", async () => {

@@ -10,24 +10,25 @@ import {
   mockBoardDto,
 } from "../../../../__fixtures__/board/index.js";
 import httpResponseFactory from "../../../../HttpResponseFactory/index.js";
-import { mockBoardMember } from "../../../../__fixtures__/boardMember/index.js";
-import BoardMemberRepository from "../../../../infrastructure/repositories/boardMember/BoardMemberRepository.js";
 import BoardTransformer from "../../../../domain/board/BoardTransformer/BoardTransformer.js";
+import CheckIfBoardMemberIsAllowedToPerformActionOnBoardUsecase from "../../../../application/usecases/boardMember/CheckIfBoardMemberIsAllowedToPerformActionOnBoardUsecase/CheckIfBoardMemberIsAllowedToPerformActionOnBoardUsecase.js";
 
 describe("UpdateBoardController.ts", () => {
-  let boardMemberRepository: Mocked<BoardMemberRepository>;
   let updateBoard: Mock;
   let boardTransformer: Mocked<BoardTransformer>;
+  let checkIfBoardMemberIsAllowedToPerformActionOnBoardUsecaseMock: Mocked<CheckIfBoardMemberIsAllowedToPerformActionOnBoardUsecase>;
 
   let updateBoardController: UpdateBoardController;
 
   let httpReq: IHttpRequest<UpdateBoardRequestDto>;
 
   beforeEach(() => {
-    boardMemberRepository = {
-      findOne: vi.fn().mockResolvedValue(mockBoardMember),
-    } as unknown as Mocked<BoardMemberRepository>;
+    checkIfBoardMemberIsAllowedToPerformActionOnBoardUsecaseMock = {
+      execute: vi.fn(),
+    } as unknown as Mocked<CheckIfBoardMemberIsAllowedToPerformActionOnBoardUsecase>;
+
     updateBoard = vi.fn().mockResolvedValue(mockBoard);
+
     boardTransformer = {
       dtoToClientBoard: vi.fn().mockReturnValue(mockBoard),
       clientBoardToDto: vi.fn().mockReturnValue(mockBoardDto),
@@ -37,20 +38,20 @@ describe("UpdateBoardController.ts", () => {
       body: {
         toUpdateBoardDto: mockBoardDto,
       },
-      user: {
+      auth_user: {
         id: "id",
       },
     } as unknown as IHttpRequest;
 
     updateBoardController = new UpdateBoardController(
-      boardMemberRepository,
+      checkIfBoardMemberIsAllowedToPerformActionOnBoardUsecaseMock,
       updateBoard,
       boardTransformer,
       httpResponseFactory.success
     );
   });
 
-  it("should tranform board dto to board", async () => {
+  it("should transform board dto to board", async () => {
     await updateBoardController.handle(httpReq);
 
     expect(boardTransformer.dtoToClientBoard).toHaveBeenCalledWith(
@@ -58,7 +59,7 @@ describe("UpdateBoardController.ts", () => {
     );
   });
 
-  it("should should update board by calling boardRepository.update with correct arguments", async () => {
+  it("should update board by calling boardRepository.update with correct arguments", async () => {
     await updateBoardController.handle(httpReq);
 
     expect(updateBoard).toHaveBeenCalledWith(mockBoard, {});
@@ -67,7 +68,10 @@ describe("UpdateBoardController.ts", () => {
   it("should transform board to dto", async () => {
     await updateBoardController.handle(httpReq);
 
-    expect(boardTransformer.clientBoardToDto).toHaveBeenCalledWith(mockBoard);
+    expect(boardTransformer.clientBoardToDto).toHaveBeenCalledWith({
+      ...mockBoard,
+      ...mockBoard,
+    });
   });
 
   it("should return the correct result", async () => {

@@ -15,7 +15,7 @@ class LogoutController {
 
   handle = async (httpReq: IHttpRequest): Promise<IHandlerResponse<null>> => {
     await this._logoutService.execute(
-      httpReq.user!.id,
+      httpReq.auth_user!.id,
       httpReq.cookies[SESSION_COOKIE_NAME]
     );
 

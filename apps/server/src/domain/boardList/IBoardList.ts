@@ -1,6 +1,6 @@
 import IBoard from "../board/IBoard.js";
 
-interface IBoardCardList {
+interface IBoardList {
   id: string;
   board_id: IBoard["id"];
   title: string;
@@ -8,4 +8,4 @@ interface IBoardCardList {
   created_at: string;
 }
 
-export default IBoardCardList;
+export default IBoardList;

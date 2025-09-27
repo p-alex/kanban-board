@@ -8,7 +8,6 @@ import { LoginResponseDto } from "@kanban/dtos/AuthDtoTypes";
 import { userDtoMock } from "../../../../__fixtures__/user";
 import BestHttpResponseException from "../../../../utils/BestHttp/exceptions/BestHttpResponseException";
 
-// Mock dependencies
 import UserTransformer from "../../../dtoTransformers/userTransformer/UserTransformer";
 import extractApiErrorMessage from "../../../extractApiErrorMessage";
 

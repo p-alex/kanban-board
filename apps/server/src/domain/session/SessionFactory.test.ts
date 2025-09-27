@@ -32,7 +32,6 @@ describe("SessionFactory", () => {
   });
 
   it("should create a session with expected properties", () => {
-    // Arrange
     const userId = "user-123";
     const token = "some-refresh-token";
 
@@ -48,10 +47,8 @@ describe("SessionFactory", () => {
     dateUtil.now.mockReturnValue(nowTimestamp);
     dateUtil.toUtcString.mockReturnValue(expiresAt);
 
-    // Act
     const session: ISession = sessionFactory.create(userId, token);
 
-    // Assert
     expect(cryptoUtil.randomUUID).toHaveBeenCalled();
     expect(cryptoUtil.hmacSHA256).toHaveBeenCalledWith(
       token,

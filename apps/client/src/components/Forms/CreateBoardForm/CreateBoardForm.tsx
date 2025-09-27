@@ -3,7 +3,6 @@ import boardDtos from "@kanban/dtos/BoardDtos";
 import boardDtoTypes from "@kanban/dtos/BoardDtoTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TextFieldGroup from "../../TextFieldGroup";
-import useAuthContext from "../../../hooks/useAuthContext/useAuthContext";
 import PrimaryButton from "../../PrimaryButton";
 import useCreateBoard from "../../../api/usecases/board/CreateBoardUsecase/useCreateBoard";
 import { ModalContentProps } from "../../Modal/Modal";
@@ -18,11 +17,9 @@ interface Props {
 }
 
 function CreateBoardForm(props: Props) {
-  const auth = useAuthContext();
   const { createBoard, isSuccess } = useCreateBoard();
 
   const defaultValues: boardDtoTypes.CreateBoardRequestDto = {
-    user_id: auth.user.id,
     title: "",
     is_private: false,
   };

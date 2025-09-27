@@ -1,5 +1,8 @@
 import IBoard from "../../api/domain/IBoard";
+import notificationCenter from "../../utils/NotificationCenter";
+import BoardContent from "./BoardContent";
 import BoardTopBar from "./BoardTopBar";
+import { isBoardActionAllowed } from "@kanban/shared/boardPermissions";
 
 interface Props {
   board: IBoard;
@@ -21,7 +24,12 @@ export interface ICard {
 function Board({ board }: Props) {
   return (
     <div className="h-(--board_layout_height)">
-      <BoardTopBar board={board} />
+      <BoardTopBar board={board} isBoardActionAllowed={isBoardActionAllowed} />
+      <BoardContent
+        board={board}
+        isBoardActionAllowed={isBoardActionAllowed}
+        notify={notificationCenter.display}
+      />
     </div>
   );
 }

@@ -2,7 +2,6 @@ import { vi, describe, it, expect, beforeEach } from "vitest";
 import VerifySessionUsecase from "./VerifySessionUsecase.js";
 import AppException from "../../../../exceptions/AppException.js";
 
-// Mocks for dependencies
 const mockJwt = {
   verify: vi.fn(),
 };
@@ -69,7 +68,7 @@ describe("VerifySessionUsecase", () => {
     mockJwt.verify.mockResolvedValue({ id: "user1" });
     mockFindSession.execute.mockResolvedValue(session);
     mockDate.dateStringToMs.mockReturnValue(1000);
-    mockDate.now.mockReturnValue(2000); // now > expires_at => expired
+    mockDate.now.mockReturnValue(2000);
     mockSessionRepository.deleteByToken.mockResolvedValue(undefined);
 
     await expect(usecase.execute("token")).rejects.toThrow(AppException);
@@ -87,7 +86,7 @@ describe("VerifySessionUsecase", () => {
     mockJwt.verify.mockResolvedValue({ id: "user1" });
     mockFindSession.execute.mockResolvedValue(session);
     mockDate.dateStringToMs.mockReturnValue(9999999999);
-    mockDate.now.mockReturnValue(1000); // now < expires_at => valid
+    mockDate.now.mockReturnValue(1000);
     mockUserRepository.findById.mockResolvedValue(null);
     mockSessionRepository.deleteByToken.mockResolvedValue(undefined);
 

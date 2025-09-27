@@ -11,7 +11,7 @@ describe("NotificationCenter.ts", () => {
   let notificationCenter: NotificationCenter;
 
   beforeEach(() => {
-    document.body.innerHTML = ""; // Ensure clean DOM
+    document.body.innerHTML = "";
     vi.useFakeTimers();
     notificationCenter = new NotificationCenter();
     notificationCenter.initialize();
@@ -54,15 +54,13 @@ describe("NotificationCenter.ts", () => {
     notificationCenter.display("Test message");
 
     const list = document.getElementById("notificationList")!;
-    expect(list.children.length).toBe(1); // Ensure it shows up
+    expect(list.children.length).toBe(1);
 
-    // Fast-forward the 4s timeout
     vi.advanceTimersByTime(4000);
 
-    // Wait for both timers and microtasks (for .then())
     await vi.runAllTimersAsync();
 
-    expect(list.children.length).toBe(0); // Should be gone
+    expect(list.children.length).toBe(0);
   });
 
   it("notification should be removed on click", async () => {

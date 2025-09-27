@@ -55,7 +55,7 @@ create table
 	);
 
 create table
-	board_card_lists (
+	board_lists (
 		id varchar(255) primary key,
 		board_id varchar(255) REFERENCES boards (id) ON DELETE CASCADE,
 		title varchar(255) NOT NULL,
@@ -66,7 +66,7 @@ create table
 create table
 	board_cards (
 		id varchar(255) primary key,
-		board_card_list_id varchar(255) REFERENCES board_card_lists (id) ON DELETE CASCADE,
+		board_list_id varchar(255) REFERENCES board_lists (id) ON DELETE CASCADE,
 		is_done BOOLEAN DEFAULT false,
 		title varchar(255) NOT NULL,
 		description TEXT NOT NULL,

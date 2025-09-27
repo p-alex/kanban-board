@@ -13,6 +13,7 @@ function useRefreshSession() {
   const refreshRequest = async (): Promise<
     IUsecaseResponse<{ user: IUser; newAccessToken: string } | null>
   > => {
+    auth.handleSetIsLoadingTo(true);
     try {
       const response = await publicHttp.get<
         ServerResponseDto<RefreshSessionResponseDto>
@@ -32,6 +33,8 @@ function useRefreshSession() {
         defaultErrorMessage: "Failed to refresh session",
       });
       return UsecaseResponseFactory.error(errorMessage);
+    } finally {
+      auth.handleSetIsLoadingTo(false);
     }
   };
 

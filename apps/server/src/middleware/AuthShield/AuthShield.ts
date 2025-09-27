@@ -7,6 +7,10 @@ import { JwtUtil } from "@kanban/utils";
 import { IAuthenticatedUser } from "./index.js";
 import HttpResponseFactory from "../../HttpResponseFactory/HttpResponseFactory.js";
 
+type ProtectArgs = {
+  letThroughAnyway?: boolean;
+};
+
 class AuthShield {
   constructor(
     private readonly _jwt: JwtUtil,
@@ -14,31 +18,34 @@ class AuthShield {
     private readonly _httpResponseFactory: HttpResponseFactory
   ) {}
 
-  protect = async (httpReq: IHttpRequest): Promise<IHandlerResponse<null>> => {
-    try {
+  protect =
+    ({ letThroughAnyway = false }: ProtectArgs) =>
+    async (httpReq: IHttpRequest): Promise<IHandlerResponse<null>> => {
       const accessToken = httpReq.accessToken;
 
-      if (!accessToken)
-        throw new AppException(401, ["Must be logged in"], "AuthShield");
+      try {
+        const authenticatedUser = await this._jwt.verify<IAuthenticatedUser>(
+          accessToken,
+          this._accessTokenJwtSecret
+        );
 
-      const authenticatedUser = await this._jwt.verify<IAuthenticatedUser>(
-        accessToken,
-        this._accessTokenJwtSecret
-      );
-
-      return {
-        response: this._httpResponseFactory.success(200, null),
-        authenticatedUser,
-      };
-    } catch (error) {
-      console.error(error);
-      throw new AppException(
-        401,
-        ["Invalid or expired access token"],
-        "AuthShield"
-      );
-    }
-  };
+        return {
+          response: this._httpResponseFactory.success(200, null),
+          authenticatedUser: authenticatedUser,
+        };
+      } catch (error) {
+        if (letThroughAnyway)
+          return {
+            response: this._httpResponseFactory.success(200, null),
+            authenticatedUser: null,
+          };
+        throw new AppException(
+          401,
+          ["Invalid token or expired."],
+          "AuthShield"
+        );
+      }
+    };
 }
 
 export default AuthShield;

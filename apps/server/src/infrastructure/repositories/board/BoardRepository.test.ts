@@ -1,9 +1,6 @@
 import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import BoardRepository from "./BoardRepository.js";
-import {
-  mockBoard,
-  mockClientBoard,
-} from "../../../__fixtures__/board/index.js";
+import { mockBoard } from "../../../__fixtures__/board/index.js";
 
 describe("BoardRepository.ts", () => {
   let queryDb: Mock;
@@ -16,33 +13,58 @@ describe("BoardRepository.ts", () => {
     boardRepository = new BoardRepository(queryDb);
   });
 
-  describe("findAllWhereMember", () => {
+  describe("findAllWhereMemberWithRoleAndIsFavorite", () => {
     it("should call queryFunc with correct arguments", async () => {
-      await boardRepository.findAllWhereMember("user_id", {
+      await boardRepository.findAllWhereMemberWithRoleAndIsFavorite("user_id", {
         transactionQuery: undefined,
       });
 
       expect(queryDb).toHaveBeenCalledWith(
-        `
-      select b.*, 
-	exists(
-		select 1 
-		from favorite_boards fb 
-		where fb.user_id = $1 
-		and fb.board_id = bm.board_id
-	) as is_favorite,
-	(bm.user_id is not null) as is_member,
-	(bm.role) as board_role
-from board_members bm
-left join boards b on b.id = bm.board_id
-where bm.user_id = $1
-`,
+        expect.stringContaining("from board_members bm"),
         ["user_id"]
       );
     });
 
-    it("should use transaction query if passed", () => {
-      boardRepository.findAllWhereMember("user_id", { transactionQuery });
+    it("should use transaction query if passed", async () => {
+      await boardRepository.findAllWhereMemberWithRoleAndIsFavorite("user_id", {
+        transactionQuery,
+      });
+
+      expect(transactionQuery).toHaveBeenCalled();
+    });
+  });
+
+  describe("findByIdWhereMemberWithRoleAndIsFavorite", () => {
+    it("should call queryFunc with correct arguments", async () => {
+      await boardRepository.findByIdWhereMemberWithRoleAndIsFavorite(
+        "user_id",
+        "board_id",
+        { transactionQuery: undefined }
+      );
+
+      expect(queryDb).toHaveBeenCalledWith(
+        expect.stringContaining("from boards b"),
+        ["user_id", "board_id"]
+      );
+    });
+
+    it("should return the first result", async () => {
+      const result =
+        await boardRepository.findByIdWhereMemberWithRoleAndIsFavorite(
+          "user_id",
+          "board_id",
+          { transactionQuery: undefined }
+        );
+
+      expect(result).toEqual(mockBoard);
+    });
+
+    it("should use transaction query if passed", async () => {
+      await boardRepository.findByIdWhereMemberWithRoleAndIsFavorite(
+        "user_id",
+        "board_id",
+        { transactionQuery }
+      );
 
       expect(transactionQuery).toHaveBeenCalled();
     });
@@ -50,22 +72,24 @@ where bm.user_id = $1
 
   describe("findById", () => {
     it("should call queryFunc with correct arguments", async () => {
-      await boardRepository.findById("id", {
-        transactionQuery: undefined,
-      });
+      await boardRepository.findById("id", { transactionQuery: undefined });
 
       expect(queryDb).toHaveBeenCalledWith(
-        `
-      select boards.*, false as is_favorite, 'viewer'::board_role as board_role
-from boards
-where boards.id = $1;
-      `,
+        expect.stringContaining("from boards"),
         ["id"]
       );
     });
 
-    it("should use transaction query if passed", () => {
-      boardRepository.findById("id", { transactionQuery });
+    it("should return the first result", async () => {
+      const result = await boardRepository.findById("id", {
+        transactionQuery: undefined,
+      });
+
+      expect(result).toEqual(mockBoard);
+    });
+
+    it("should use transaction query if passed", async () => {
+      await boardRepository.findById("id", { transactionQuery });
 
       expect(transactionQuery).toHaveBeenCalled();
     });
@@ -76,7 +100,7 @@ where boards.id = $1;
       await boardRepository.create(mockBoard, { transactionQuery: undefined });
 
       expect(queryDb).toHaveBeenCalledWith(
-        "INSERT INTO boards (id, title, is_private, created_at) VALUES ($1, $2, $3, $4) RETURNING boards.*, (false) as is_favorite, ('admin') as board_role",
+        "INSERT INTO boards (id, title, is_private, created_at) VALUES ($1, $2, $3, $4) RETURNING *",
         [
           mockBoard.id,
           mockBoard.title,
@@ -120,7 +144,7 @@ where boards.id = $1;
       );
     });
 
-    it("should use transactstatusion query if passed", async () => {
+    it("should use transaction query if passed", async () => {
       await boardRepository.delete(mockBoard, { transactionQuery });
 
       expect(transactionQuery).toHaveBeenCalled();

@@ -93,7 +93,7 @@ describe("ResourceValidator.ts", () => {
   it("should return error response with validation errors if validation fails", async () => {
     const schema = z.object({
       email: z.string().email(),
-      id: z.number(), // Intentionally expect number
+      id: z.number(),
     });
 
     const validateFn = resourceValidator.validate(schema);
@@ -102,7 +102,7 @@ describe("ResourceValidator.ts", () => {
     expect(result.response).toEqual({
       code: 400,
       errors: expect.arrayContaining([
-        expect.stringContaining("Expected number"), // Zod error
+        expect.stringContaining("Expected number"),
       ]),
       result: null,
       success: false,

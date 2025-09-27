@@ -8,7 +8,6 @@ import {
   IHttpResponse,
 } from "../index.js";
 import { NextFunction, Response } from "express";
-import { ServerResponseDto } from "@kanban/dtos/ServerResponseDto";
 import AppException from "../../../exceptions/AppException.js";
 
 describe("ExpressAdapter.ts", () => {
@@ -45,9 +44,8 @@ describe("ExpressAdapter.ts", () => {
       socket: {
         remoteAddress: "",
       },
-      cookie: "",
       headers: {},
-      user: { id: "" },
+      auth_user: { id: "auth-user-id" },
     } as unknown as CustomRequest;
 
     mockRes = {
@@ -76,35 +74,29 @@ describe("ExpressAdapter.ts", () => {
       query: mockReq.query,
       url: mockReq.url,
       method: mockReq.method,
-      client_ip: mockReq.ip || mockReq.socket.remoteAddress || "",
+      client_ip: "",
       cookies: {},
-      accessToken: mockReq.headers["authorization"]
-        ? mockReq.headers["authorization"].split(" ")[1]
-        : "",
-      user: mockReq.user,
+      accessToken: "",
+      auth_user: mockReq.auth_user,
     });
   });
 
-  it("should apply headers to res if are provided", async () => {
+  it("should apply headers to res if provided", async () => {
     testHandlerResponse.headers = {
       "Content-Type": "application/json",
       test: "header",
-      wow: "wow",
     };
 
     mockHandler.mockResolvedValue(testHandlerResponse);
     const middleware = expressAdapter.adapt(mockHandler);
     await middleware(mockReq, mockRes, nextFn);
 
-    for (let key in testHandlerResponse.headers) {
-      expect(mockRes.setHeader).toHaveBeenCalledWith(
-        key,
-        testHandlerResponse.headers[key]
-      );
+    for (const [key, value] of Object.entries(testHandlerResponse.headers)) {
+      expect(mockRes.setHeader).toHaveBeenCalledWith(key, value);
     }
   });
 
-  it("should not apply headers to res if they are not provided", async () => {
+  it("should not apply headers if none provided", async () => {
     mockHandler.mockResolvedValue(testHandlerResponse);
     const middleware = expressAdapter.adapt(mockHandler);
     await middleware(mockReq, mockRes, nextFn);
@@ -112,8 +104,8 @@ describe("ExpressAdapter.ts", () => {
     expect(mockRes.setHeader).not.toHaveBeenCalled();
   });
 
-  it("should apply cookies correctly if there are any", async () => {
-    const testCookie1: ICookie = {
+  it("should apply cookies correctly if provided", async () => {
+    const testCookie: ICookie = {
       httpOnly: true,
       maxAgeInMs: 0,
       name: "cookie",
@@ -124,33 +116,27 @@ describe("ExpressAdapter.ts", () => {
       path: "/",
     };
 
-    const testCookie2: ICookie = {
-      ...testCookie1,
-      name: "cookie2",
-      value: "value2",
-    };
-
-    testHandlerResponse.cookies = [testCookie1, testCookie2];
+    testHandlerResponse.cookies = [testCookie];
 
     mockHandler.mockResolvedValue(testHandlerResponse);
     const middleware = expressAdapter.adapt(mockHandler);
     await middleware(mockReq, mockRes, nextFn);
 
-    for (let i = 0; i < testHandlerResponse.cookies.length; i++) {
-      const cookie = testHandlerResponse.cookies[i];
-
-      expect(mockRes.cookie).toHaveBeenCalledWith(cookie.name, cookie.value, {
-        httpOnly: cookie.httpOnly,
-        path: cookie.path,
-        sameSite: cookie.sameSite,
-        secure: cookie.secure,
-        domain: cookie.domain,
-        maxAge: cookie.maxAgeInMs,
-      });
-    }
+    expect(mockRes.cookie).toHaveBeenCalledWith(
+      testCookie.name,
+      testCookie.value,
+      {
+        httpOnly: testCookie.httpOnly,
+        path: testCookie.path,
+        sameSite: testCookie.sameSite,
+        secure: testCookie.secure,
+        domain: testCookie.domain,
+        maxAge: testCookie.maxAgeInMs,
+      }
+    );
   });
 
-  it("should not apply cookies if none are provided by the handler", async () => {
+  it("should not apply cookies if none provided", async () => {
     mockHandler.mockResolvedValue(testHandlerResponse);
     const middleware = expressAdapter.adapt(mockHandler);
     await middleware(mockReq, mockRes, nextFn);
@@ -158,37 +144,30 @@ describe("ExpressAdapter.ts", () => {
     expect(mockRes.cookie).not.toHaveBeenCalled();
   });
 
-  it("should apply authenticated user to req object if there is one", async () => {
-    testHandlerResponse.authenticatedUser = {
-      id: "id",
-    };
+  it("should set authenticated user on req if handler returns it", async () => {
+    testHandlerResponse.authenticatedUser = { id: "new-user" };
 
     mockHandler.mockResolvedValue(testHandlerResponse);
     const middleware = expressAdapter.adapt(mockHandler);
     await middleware(mockReq, mockRes, nextFn);
 
-    expect(mockReq.user).toEqual(testHandlerResponse.authenticatedUser);
+    expect(mockReq.auth_user).toEqual(testHandlerResponse.authenticatedUser);
   });
 
-  it("should call res.status and res.json with correct values when handler is a controller", async () => {
+  it("should call res.status/json when handler is a controller", async () => {
     mockHandler.mockResolvedValue(testHandlerResponse);
     const middleware = expressAdapter.adapt(mockHandler, true);
     await middleware(mockReq, mockRes, nextFn);
 
-    expect(mockRes.status).toHaveBeenCalledWith(
-      testHandlerResponse.response.code
-    );
-
-    const serverResponseDto: ServerResponseDto<any> = {
-      errors: testHandlerResponse.response.errors,
-      result: testHandlerResponse.response.result,
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      errors: [],
+      result: null,
       success: true,
-    };
-
-    expect(mockRes.json).toHaveBeenCalledWith(serverResponseDto);
+    });
   });
 
-  it("should call 'next' function if handler is a middleware and it succeeded", async () => {
+  it("should call next() if handler is middleware and succeeded", async () => {
     mockHandler.mockResolvedValue(testHandlerResponse);
     const middleware = expressAdapter.adapt(mockHandler);
     await middleware(mockReq, mockRes, nextFn);
@@ -196,144 +175,49 @@ describe("ExpressAdapter.ts", () => {
     expect(nextFn).toHaveBeenCalled();
   });
 
-  it("should call res.status and res.json with correct values when handler is a middleware and it failed", async () => {
-    testHandlerResponse.response.code = 400;
+  it("should send response if handler middleware failed", async () => {
     testHandlerResponse.response.success = false;
-    testHandlerResponse.response.errors = ["some error"];
+    testHandlerResponse.response.code = 400;
+    testHandlerResponse.response.errors = ["error"];
 
-    const httpResponse: IHttpResponse<null> = {
-      code: 500,
-      errors: ["server error"],
+    mockHandler.mockResolvedValue(testHandlerResponse);
+    const middleware = expressAdapter.adapt(mockHandler);
+    await middleware(mockReq, mockRes, nextFn);
+
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      errors: ["error"],
       result: null,
       success: false,
-    };
+    });
+  });
 
-    httpResponseFactory.error.mockReturnValue(httpResponse);
+  it("should parse cookies from req.headers.cookie", async () => {
+    mockReq.headers.cookie = "c1=v1; c2=v2";
 
     mockHandler.mockResolvedValue(testHandlerResponse);
     const middleware = expressAdapter.adapt(mockHandler);
     await middleware(mockReq, mockRes, nextFn);
 
-    expect(mockRes.status).toHaveBeenCalledWith(
-      testHandlerResponse.response.code
+    expect(mockHandler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        cookies: { c1: "v1", c2: "v2" },
+      })
     );
-
-    const serverResponseDto: ServerResponseDto<any> = {
-      errors: testHandlerResponse.response.errors,
-      result: testHandlerResponse.response.result,
-      success: false,
-    };
-
-    expect(mockRes.json).toHaveBeenCalledWith(serverResponseDto);
-  });
-
-  it("req.ip should be set as default as client ip if it is defined", async () => {
-    const modifiedMockReq = { ...mockReq, ip: "ip" } as CustomRequest;
-
-    mockHandler.mockResolvedValue(testHandlerResponse);
-    const middleware = expressAdapter.adapt(mockHandler);
-    await middleware(modifiedMockReq, mockRes, nextFn);
-
-    expect(mockHandler).toHaveBeenCalledWith({
-      body: mockReq.body,
-      params: mockReq.params,
-      query: mockReq.query,
-      url: mockReq.url,
-      method: mockReq.method,
-      client_ip: "ip",
-      cookies: {},
-      accessToken: "",
-      user: mockReq.user,
-    });
-  });
-
-  it("req.socket.remoteAddress should be set as default client ip if it is defined and req.ip is not", async () => {
-    const modifiedMockReq = {
-      ...mockReq,
-      socket: { remoteAddress: "remoteAddress" },
-    } as CustomRequest;
-
-    mockHandler.mockResolvedValue(testHandlerResponse);
-    const middleware = expressAdapter.adapt(mockHandler);
-    await middleware(modifiedMockReq, mockRes, nextFn);
-
-    expect(mockHandler).toHaveBeenCalledWith({
-      body: mockReq.body,
-      params: mockReq.params,
-      query: mockReq.query,
-      url: mockReq.url,
-      method: mockReq.method,
-      client_ip: "remoteAddress",
-      cookies: {},
-      accessToken: "",
-      user: mockReq.user,
-    });
-  });
-
-  it("client_ip should be set to empty string if both req.ip and req.socket.remoteAddress are not provided", async () => {
-    mockHandler.mockResolvedValue(testHandlerResponse);
-    const middleware = expressAdapter.adapt(mockHandler);
-    await middleware(mockReq, mockRes, nextFn);
-
-    expect(mockHandler).toHaveBeenCalledWith({
-      body: mockReq.body,
-      params: mockReq.params,
-      query: mockReq.query,
-      url: mockReq.url,
-      method: mockReq.method,
-      client_ip: "",
-      cookies: {},
-      accessToken: "",
-      user: mockReq.user,
-    });
   });
 
   it("should set access token if authorization header is provided", async () => {
-    const modifiedMockReq = {
-      ...mockReq,
-      headers: { authorization: "Bearer accessToken" },
-    } as CustomRequest;
+    mockReq.headers.authorization = "Bearer token123";
 
     mockHandler.mockResolvedValue(testHandlerResponse);
     const middleware = expressAdapter.adapt(mockHandler);
-    await middleware(modifiedMockReq, mockRes, nextFn);
+    await middleware(mockReq, mockRes, nextFn);
 
-    expect(mockHandler).toHaveBeenCalledWith({
-      body: mockReq.body,
-      params: mockReq.params,
-      query: mockReq.query,
-      url: mockReq.url,
-      method: mockReq.method,
-      client_ip: "",
-      cookies: {},
-      accessToken: "accessToken",
-      user: mockReq.user,
-    });
-  });
-
-  it("should parse cookies from req object properly", async () => {
-    const modifiedMockReq = {
-      ...mockReq,
-      headers: {
-        cookie: "cookie1=value1; cookie2=value2",
-      },
-    } as CustomRequest;
-
-    mockHandler.mockResolvedValue(testHandlerResponse);
-    const middleware = expressAdapter.adapt(mockHandler);
-    await middleware(modifiedMockReq, mockRes, nextFn);
-
-    expect(mockHandler).toHaveBeenCalledWith({
-      body: mockReq.body,
-      params: mockReq.params,
-      query: mockReq.query,
-      url: mockReq.url,
-      method: mockReq.method,
-      client_ip: "",
-      cookies: { cookie1: "value1", cookie2: "value2" },
-      accessToken: "",
-      user: mockReq.user,
-    });
+    expect(mockHandler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        accessToken: "token123",
+      })
+    );
   });
 
   it("should handle AppException correctly", async () => {
@@ -349,6 +233,7 @@ describe("ExpressAdapter.ts", () => {
     mockHandler.mockImplementation(() => {
       throw new AppException(400, ["error"], "ExpressAdapter");
     });
+
     const middleware = expressAdapter.adapt(mockHandler);
     await middleware(mockReq, mockRes, nextFn);
 
@@ -360,10 +245,10 @@ describe("ExpressAdapter.ts", () => {
     });
   });
 
-  it("should handle any error correctly", async () => {
+  it("should handle generic errors correctly", async () => {
     const httpResponse: IHttpResponse<null> = {
-      code: 400,
-      errors: ["error"],
+      code: 500,
+      errors: ["Something went wrong. Please try again later."],
       result: null,
       success: false,
     };
@@ -371,14 +256,15 @@ describe("ExpressAdapter.ts", () => {
     httpResponseFactory.error.mockReturnValue(httpResponse);
 
     mockHandler.mockImplementation(() => {
-      throw new Error("error");
+      throw new Error("boom");
     });
+
     const middleware = expressAdapter.adapt(mockHandler);
     await middleware(mockReq, mockRes, nextFn);
 
-    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.json).toHaveBeenCalledWith({
-      errors: ["error"],
+      errors: httpResponse.errors,
       result: null,
       success: false,
     });

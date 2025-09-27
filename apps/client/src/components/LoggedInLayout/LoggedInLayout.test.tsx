@@ -35,34 +35,4 @@ describe("LoggedInLayout.tsx", () => {
     render(<Component />);
     expect(screen.getByText("hello")).toBeInTheDocument();
   });
-
-  // it("should not display side bar if isSideBarVisible is set to false in localStorage", () => {
-  //   getMock.mockReturnValue(false);
-  //   render(<Component />);
-  //   expect(screen.queryByTestId("sidebar")).not.toBeInTheDocument();
-  // });
-
-  // it("should display side bar if isSideBarVisible is set to true in localStorage", () => {
-  //   getMock.mockReturnValue(true);
-  //   render(<Component />);
-  //   expect(screen.queryByTestId("sidebar")).toBeInTheDocument();
-  // });
-
-  // it("should toggle side bar", async () => {
-  //   getMock.mockReturnValue(false);
-  //   render(<Component />);
-  //   expect(screen.queryByTestId("sidebar")).not.toBeInTheDocument();
-  //   const sidebarToggle = screen.getByTestId("sideBarToggle");
-  //   await userEvent.click(sidebarToggle);
-  //   expect(screen.queryByTestId("sidebar")).toBeInTheDocument();
-  // });
-
-  // it("should set isSideBarOpen value in localstorage every time the side bar is toggled", async () => {
-  //   getMock.mockReturnValue(false);
-  //   render(<Component />);
-  //   const sidebarToggle = screen.getByTestId("sideBarToggle");
-  //   await userEvent.click(sidebarToggle);
-  //   expect(setMock).toHaveBeenCalledWith("isSideBarOpen", true);
-  //   await userEvent.click(sidebarToggle);
-  // });
 });

@@ -22,25 +22,27 @@ function Navbar(props: Props) {
         <BigLogo />
       </div>
       <div className="flex flex-1 justify-center">
-        <VisibilityProvider
-          toggle={({ toggleVisibility }) => (
-            <PrimaryButton className="w-max" onClick={toggleVisibility}>
-              Create Board
-            </PrimaryButton>
-          )}
-          content={(visibilityContentProps) => (
-            <Modal
-              content={(modalProps) => (
-                <CreateBoardForm
-                  modalProps={modalProps}
-                  callback={() => visibilityContentProps.toggleVisibility()}
-                />
-              )}
-              toggleOff={visibilityContentProps.toggleVisibility}
-            />
-          )}
-          options={{ shouldTrapFocus: true }}
-        />
+        {auth.isLoggedIn && (
+          <VisibilityProvider
+            toggle={({ toggleVisibility }) => (
+              <PrimaryButton className="w-max" onClick={toggleVisibility}>
+                Create Board
+              </PrimaryButton>
+            )}
+            content={(visibilityContentProps) => (
+              <Modal
+                content={(modalProps) => (
+                  <CreateBoardForm
+                    modalProps={modalProps}
+                    callback={() => visibilityContentProps.toggleVisibility()}
+                  />
+                )}
+                toggleOff={visibilityContentProps.toggleVisibility}
+              />
+            )}
+            options={{ shouldTrapFocus: true }}
+          />
+        )}
       </div>
       <div className="flex-1 justify-end">
         <div className="flex items-center gap-2 flex-1 justify-end">

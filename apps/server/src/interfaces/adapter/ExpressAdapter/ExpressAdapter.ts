@@ -25,9 +25,7 @@ class ExpressAdapter {
         this._applyCookies(res, handlerRes.cookies);
 
         if (handlerRes.authenticatedUser) {
-          req.user = {
-            id: handlerRes.authenticatedUser.id,
-          };
+          req.auth_user = handlerRes.authenticatedUser;
         }
 
         if (!isController && handlerRes.response.success) {
@@ -55,7 +53,7 @@ class ExpressAdapter {
       accessToken: req.headers["authorization"]
         ? req.headers["authorization"].split(" ")[1]
         : "",
-      user: req?.user ? req.user : { id: "" },
+      auth_user: req.auth_user?.id ? req.auth_user : null,
     };
   };
 

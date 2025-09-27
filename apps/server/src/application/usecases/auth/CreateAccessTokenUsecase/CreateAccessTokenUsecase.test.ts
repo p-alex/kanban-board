@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { JwtUtil, DateUtil, TimeConverter } from "@kanban/utils";
 import CreateAccessTokenUsecase from "./CreateAccessTokenUsecase.js";
 
-// Mock dependencies
 const mockJwt = { sign: vi.fn() };
 const mockDateUtil = { now: vi.fn() };
 const mockTimeConverter = { toSeconds: vi.fn() };
@@ -38,8 +37,8 @@ describe("CreateAccessTokenUsecase", () => {
         return issuedAtSeconds;
       })
       .mockImplementationOnce((val, unit) => {
-        expect(val).toBe(1);
-        expect(unit).toBe("second");
+        expect(val).toBe(15);
+        expect(unit).toBe("minute");
         return expiryTimeInSec;
       });
 
@@ -52,7 +51,7 @@ describe("CreateAccessTokenUsecase", () => {
       fakeIssuedAtMs,
       "milisecond"
     );
-    expect(mockTimeConverter.toSeconds).toHaveBeenCalledWith(1, "second");
+    expect(mockTimeConverter.toSeconds).toHaveBeenCalledWith(15, "minute");
 
     expect(mockJwt.sign).toHaveBeenCalledWith(
       { id: userId },

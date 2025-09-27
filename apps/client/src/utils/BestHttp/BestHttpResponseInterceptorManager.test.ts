@@ -100,7 +100,7 @@ describe("BestHttpResponseInterceptorManager", () => {
     const result = await manager.runAll(successResponse, config);
 
     expect(successCb).not.toHaveBeenCalled();
-    expect(result.data).toEqual(successResponse.data); // original unchanged
+    expect(result.data).toEqual(successResponse.data);
   });
 
   it("should handle async successCb and errorCb", async () => {

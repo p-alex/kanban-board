@@ -15,12 +15,16 @@ class GetBoardsController {
   handle = async (
     httpReq: IHttpRequest
   ): Promise<IHandlerResponse<GetBoardsResponseDto>> => {
-    const user = httpReq.user;
+    const user = httpReq.auth_user;
 
     if (!user)
       throw new AppException(401, ["Must be logged in"], "GetBoardsController");
 
-    const boards = await this._boardRepository.findAllWhereMember(user.id, {});
+    const boards =
+      await this._boardRepository.findAllWhereMemberWithRoleAndIsFavorite(
+        user.id,
+        {}
+      );
 
     const boardDtos: BoardDto[] = boards.map((board) =>
       this._boardTransformer.clientBoardToDto(board)

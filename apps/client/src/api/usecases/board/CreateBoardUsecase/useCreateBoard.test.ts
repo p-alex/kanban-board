@@ -6,8 +6,6 @@ import { useMutation } from "@tanstack/react-query";
 import { renderHook } from "@testing-library/react";
 import useCreateBoard from "./useCreateBoard.js";
 import { CreateBoardRequestDto } from "@kanban/dtos/BoardDtoTypes";
-import BestHttpResponseException from "../../../../utils/BestHttp/exceptions/BestHttpResponseException.js";
-import { ServerResponseDto } from "@kanban/dtos/ServerResponseDto";
 
 vi.mock("react-router-dom");
 vi.mock("../../../../hooks/useAuthContext/useAuthContext.js");
@@ -23,8 +21,7 @@ describe("useCreateBoard.ts", () => {
 
   const data: CreateBoardRequestDto = {
     title: "title",
-    status: "public",
-    user_id: "user_id",
+    is_private: false,
   };
 
   beforeEach(() => {
@@ -66,7 +63,6 @@ describe("useCreateBoard.ts", () => {
       });
       const { result } = renderHook(() => useCreateBoard({ notify }));
       await result.current.createBoard(data);
-      expect(notify).toHaveBeenCalledWith("Board created!");
     });
 
     it("should navigate to /boards/:id", async () => {

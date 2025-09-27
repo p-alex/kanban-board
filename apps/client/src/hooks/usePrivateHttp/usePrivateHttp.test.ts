@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import usePrivateHttp from "./usePrivateHttp.js";
 
-// --- hoisted mocks ---
 const {
   mockRequestUse,
   mockResponseUse,
@@ -14,12 +13,11 @@ const {
   mockRequestUse: vi.fn(),
   mockResponseUse: vi.fn(),
   mockEject: vi.fn(),
-  mockPrivateHttp: vi.fn(), // callable like Axios instance
+  mockPrivateHttp: vi.fn(),
   mockRefreshSession: vi.fn(),
   mockUseAuthContext: vi.fn(),
 }));
 
-// --- module mocks ---
 vi.mock("../useAuthContext/useAuthContext", () => ({
   default: () => mockUseAuthContext(),
 }));
@@ -32,6 +30,7 @@ vi.mock(
 );
 
 vi.mock("../../api", () => {
+  // @ts-ignore
   mockPrivateHttp.interceptors = {
     request: { use: mockRequestUse, eject: mockEject },
     response: { use: mockResponseUse, eject: mockEject },
@@ -134,6 +133,6 @@ describe("usePrivateHttp", () => {
   it("ejects interceptors on unmount", () => {
     const { unmount } = renderHook(() => usePrivateHttp());
     unmount();
-    expect(mockEject).toHaveBeenCalledTimes(2); // request + response
+    expect(mockEject).toHaveBeenCalledTimes(2);
   });
 });

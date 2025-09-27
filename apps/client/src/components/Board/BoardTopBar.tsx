@@ -1,3 +1,7 @@
+import {
+  BoardPermission,
+  IsBoardActionAllowed,
+} from "@kanban/shared/boardPermissions";
 import IBoard from "../../api/domain/IBoard";
 import useMarkBoardAsFavorite from "../../api/usecases/board/MarkBoardAsFavoriteUsecase/useMarkBoardAsFavorite";
 import useUnmarkBoardAsFavorite from "../../api/usecases/board/UnmarkBoardAsFavoriteUsecase/useUnmarkBoardAsFavorite";
@@ -11,9 +15,10 @@ export const BOARD_TOP_BAR_TEST_ID = "boardTopBar";
 
 interface Props {
   board: IBoard;
+  isBoardActionAllowed: IsBoardActionAllowed;
 }
 
-function BoardTopBar({ board }: Props) {
+function BoardTopBar({ board, isBoardActionAllowed }: Props) {
   const { updateBoard, isUpdateBoardLoading } = useUpdateBoard({
     boardId: board.id,
   });
@@ -45,7 +50,10 @@ function BoardTopBar({ board }: Props) {
       <TextWithEdit
         callbackFunc={(title) => updateBoard({ ...board, title })}
         disabled={shouldDisableButtonsWhileLoading}
-        canEdit={board.boardRole === "admin"}
+        canEdit={isBoardActionAllowed(
+          board.boardRole,
+          BoardPermission.UPDATE_BOARD
+        )}
         maxChars={24}
         className="font-regular text-md"
       >
@@ -53,7 +61,7 @@ function BoardTopBar({ board }: Props) {
       </TextWithEdit>
 
       <div className="flex items-center gap-2">
-        {board.boardRole !== "viewer" && (
+        {board.boardRole !== "guest" && (
           <Button
             icon={<Star isFull={board.isFavorite} size={24} />}
             className="w-9 h-9 flex items-center justify-center"
@@ -64,12 +72,15 @@ function BoardTopBar({ board }: Props) {
             disabled={shouldDisableButtonsWhileLoading}
           />
         )}
-        {board.boardRole === "admin" && (
+        {isBoardActionAllowed(
+          board.boardRole,
+          BoardPermission.UPDATE_BOARD
+        ) && (
           <Button
             icon={<Lock isClosed={board.isPrivate} size={24} />}
             className="w-9 h-9 flex items-center justify-center"
             title={`Make this board ${
-              !board.isPrivate === true ? "public" : "private"
+              board.isPrivate === true ? "public" : "private"
             }`}
             onClick={() =>
               updateBoard({

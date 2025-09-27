@@ -25,7 +25,7 @@ describe("GetBoardController.ts", () => {
 
   const httpReq: Partial<IHttpRequest<any, GetBoardRequestDto>> = {
     params: { id: "id" },
-    user: {
+    auth_user: {
       id: "id",
     },
   };
@@ -43,7 +43,10 @@ describe("GetBoardController.ts", () => {
       findOne: vi.fn().mockResolvedValue(mockFavoriteBoard),
     } as unknown as Mocked<FavoriteBoardRepository>;
 
+    const isBoardActionAllowed = vi.fn().mockReturnValue(true);
+
     getBoardController = new GetBoardController(
+      isBoardActionAllowed,
       boardRepository,
       boardMemberRepository,
       favoriteBoardRepository,
@@ -61,7 +64,7 @@ describe("GetBoardController.ts", () => {
     );
   });
 
-  it("return the correct response", async () => {
+  it("should return the correct response", async () => {
     const result = await getBoardController.handle(httpReq as IHttpRequest);
 
     const expectedResult: IHandlerResponse<GetBoardResponseDto> = {

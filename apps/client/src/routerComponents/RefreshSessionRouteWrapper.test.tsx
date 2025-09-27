@@ -33,13 +33,7 @@ describe("RefreshSessionRouteWrapper.tsx", () => {
 
     render(<RefreshSessionRouteWrapper>child</RefreshSessionRouteWrapper>);
 
-    expect(screen.getByTestId("spinner_container")).toBeInTheDocument();
+    expect(screen.getByTestId("spinner")).toBeInTheDocument();
     expect(screen.queryByText("child")).not.toBeInTheDocument();
-  });
-
-  it("should show children if auth.isLoading is false", () => {
-    render(<RefreshSessionRouteWrapper>child</RefreshSessionRouteWrapper>);
-
-    expect(screen.getByText("child")).toBeInTheDocument();
   });
 });

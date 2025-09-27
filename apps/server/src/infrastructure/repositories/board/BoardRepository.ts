@@ -11,7 +11,10 @@ export interface iClientBoard extends IBoard {
 class BoardRepository {
   constructor(private readonly _queryDB: QueryDb) {}
 
-  findAllWhereMember = async (user_id: string, options: RepositoryOptions) => {
+  findAllWhereMemberWithRoleAndIsFavorite = async (
+    user_id: string,
+    options: RepositoryOptions
+  ) => {
     const queryFunc = this.getQueryFunction(options);
 
     const result = await queryFunc<iClientBoard>(
@@ -35,7 +38,7 @@ where bm.user_id = $1
     return result;
   };
 
-  findByIdWhereMember = async (
+  findByIdWhereMemberWithRoleAndIsFavorite = async (
     user_id: string,
     board_id: string,
     options: RepositoryOptions
@@ -58,11 +61,9 @@ where b.id = $2
   findById = async (board_id: IBoard["id"], options: RepositoryOptions) => {
     const queryFunc = this.getQueryFunction(options);
 
-    const result = await queryFunc<iClientBoard>(
+    const result = await queryFunc<IBoard>(
       `
-      select boards.*, false as is_favorite, 'viewer'::board_role as board_role
-from boards
-where boards.id = $1;
+      select boards.* from boards where boards.id = $1
       `,
       [board_id]
     );
@@ -73,8 +74,8 @@ where boards.id = $1;
   create = async (board: IBoard, options: RepositoryOptions) => {
     const queryFunc = this.getQueryFunction(options);
 
-    const result = await queryFunc<iClientBoard>(
-      "INSERT INTO boards (id, title, is_private, created_at) VALUES ($1, $2, $3, $4) RETURNING boards.*, (false) as is_favorite, ('admin') as board_role",
+    const result = await queryFunc<IBoard>(
+      "INSERT INTO boards (id, title, is_private, created_at) VALUES ($1, $2, $3, $4) RETURNING *",
       [board.id, board.title, `${board.is_private}`, board.created_at]
     );
 

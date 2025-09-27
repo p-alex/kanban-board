@@ -34,7 +34,6 @@ function useCreateBoard({
       >("/boards", boardData);
 
       if (data.success && data.result) {
-        notify("Board created!");
         navigate("/boards/" + data.result.boardDto.id);
       }
     } catch (error) {
